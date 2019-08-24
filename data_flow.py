@@ -16,7 +16,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms.functional as F
-
+from torchvision import datasets, transforms
 
 """
 create a list of file (full directory)
@@ -41,9 +41,6 @@ def get_train_val_list(data_path):
     print("train size ", len(train))
     print("val size ", len(val))
     return train, val
-
-
-
 
 def load_data(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -94,3 +91,27 @@ class ListDataset(Dataset):
         if self.transform is not None:
             img = self.transform(img)
         return img, target
+
+def get_dataloader(train_list, val_list):
+    train_loader = torch.utils.data.DataLoader(
+        ListDataset(train_list,
+                            shuffle=True,
+                            transform=transforms.Compose([
+                                transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                            std=[0.229, 0.224, 0.225]),
+                            ]),
+                            train=True,
+                            batch_size=1,
+                            num_workers=1),
+        batch_size=1)
+
+    test_loader = torch.utils.data.DataLoader(
+        ListDataset(val_list,
+                            shuffle=False,
+                            transform=transforms.Compose([
+                                transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                            std=[0.229, 0.224, 0.225]),
+                            ]), train=False),
+        batch_size=1)
+
+    return train_loader, test_loader
