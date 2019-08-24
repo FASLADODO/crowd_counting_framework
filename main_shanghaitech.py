@@ -2,6 +2,7 @@ from args_util import real_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 import torch
 from torch import nn
 from models import CSRNet
@@ -39,8 +40,8 @@ if __name__ == "__main__":
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator = create_supervised_evaluator(model,
                                             metrics={
-                                                'mae': MeanAbsoluteError(),
-                                                'mse': MeanSquaredError(),
+                                                'mae': CrowdCountingMeanAbsoluteError(),
+                                                'mse': CrowdCountingMeanSquaredError(),
                                                 'nll': Loss(loss_fn)
                                             }, device=device)
     print(model)
