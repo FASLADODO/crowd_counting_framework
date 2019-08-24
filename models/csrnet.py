@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch
 from torchvision import models
 
+
 class CSRNet(nn.Module):
     def __init__(self, load_weights=False):
         super(CSRNet, self).__init__()
@@ -21,6 +22,10 @@ class CSRNet(nn.Module):
         x = self.frontend(x)
         x = self.backend(x)
         x = self.output_layer(x)
+
+        # remove channel dimension
+        # (N, C_{out}, H_{out}, W_{out}) => (N, H_{out}, W_{out})
+        x = torch.squeeze(x, dim=1)
         return x
 
     def _initialize_weights(self):

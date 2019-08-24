@@ -53,6 +53,7 @@ def load_data(img_path, train=True):
 
     return img, target
 
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  num_workers=4):
@@ -92,7 +93,8 @@ class ListDataset(Dataset):
             img = self.transform(img)
         return img, target
 
-def get_dataloader(train_list, val_list):
+
+def get_dataloader(train_list, val_list, test_list):
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
                             shuffle=True,
@@ -105,7 +107,7 @@ def get_dataloader(train_list, val_list):
                             num_workers=1),
         batch_size=1)
 
-    test_loader = torch.utils.data.DataLoader(
+    val_loader = torch.utils.data.DataLoader(
         ListDataset(val_list,
                             shuffle=False,
                             transform=transforms.Compose([
@@ -114,4 +116,13 @@ def get_dataloader(train_list, val_list):
                             ]), train=False),
         batch_size=1)
 
-    return train_loader, test_loader
+    test_loader = torch.utils.data.DataLoader(
+        ListDataset(test_list,
+                    shuffle=False,
+                    transform=transforms.Compose([
+                        transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                    std=[0.229, 0.224, 0.225]),
+                    ]), train=False),
+        batch_size=1)
+
+    return train_loader, val_loader, test_loader

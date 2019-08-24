@@ -1,0 +1,1 @@
+python main_shanghaitech.py --input /data/cv_data/ShanghaiTech/part_A --epochs 10

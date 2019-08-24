@@ -49,5 +49,25 @@ def real_args_parse():
     parser.add_argument('--input', action="store",  type=str)
     parser.add_argument('--output', action="store", type=str)
     parser.add_argument('--model', action="store", default="csrnet")
+
+    # args with default value
+    parser.add_argument('--lr', action="store", default=1e-7, type=float)
+    parser.add_argument('--momentum', action="store", default=0.95, type=float)
+    parser.add_argument('--decay', action="store", default=5*1e-4, type=float)
+    parser.add_argument('--epochs', action="store", default=1, type=int)
+
+    # args.original_lr = 1e-7
+    # args.lr = 1e-7
+    # args.batch_size = 1
+    # args.momentum = 0.95
+    # args.decay = 5 * 1e-4
+    # args.start_epoch = 0
+    # args.epochs = 120
+    # args.steps = [-1, 1, 100, 150]
+    # args.scales = [1, 1, 1, 1]
+    # args.workers = 4
+    # args.seed = time.time()
+    # args.print_freq = 30
+
     arg = parser.parse_args()
     return arg
