@@ -1,0 +1,1 @@
+python main_ucfcc50.py --input /data/cv_data/UCFCrowdCountingDataset_CVPR13_with_people_density_map/UCF_CC_50 --epochs 10

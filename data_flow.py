@@ -33,14 +33,17 @@ def create_training_image_list(data_path):
     return image_path_list
 
 
-def get_train_val_list(data_path):
+def get_train_val_list(data_path, test_size=0.1):
     DATA_PATH = data_path
     image_path_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
-    train, val = train_test_split(image_path_list, test_size=0.1)
+    if len(image_path_list) is 0:
+        image_path_list = glob.glob(os.path.join(DATA_PATH, "*.jpg"))
+    train, val = train_test_split(image_path_list, test_size=test_size)
 
     print("train size ", len(train))
     print("val size ", len(val))
     return train, val
+
 
 def load_data(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -54,9 +57,20 @@ def load_data(img_path, train=True):
     return img, target
 
 
+def load_data_ucf_cc50(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    target = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                        interpolation=cv2.INTER_CUBIC) * 64
+
+    return img, target
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
-                 num_workers=4):
+                 num_workers=4, dataset_name="shanghaitech"):
         """
         if you have different image size, then batch_size must be 1
         :param root:
@@ -81,6 +95,12 @@ class ListDataset(Dataset):
         self.seen = seen
         self.batch_size = batch_size
         self.num_workers = num_workers
+        self.dataset_name = dataset_name
+        # load data fn
+        if dataset_name is "shanghaitech":
+            self.load_data_fn = load_data
+        elif dataset_name is "ucf_cc_50":
+            self.load_data_fn = load_data_ucf_cc50
 
     def __len__(self):
         return self.nSamples
@@ -94,7 +114,7 @@ class ListDataset(Dataset):
         return img, target
 
 
-def get_dataloader(train_list, val_list, test_list):
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech"):
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
                             shuffle=True,
@@ -104,8 +124,8 @@ def get_dataloader(train_list, val_list, test_list):
                             ]),
                             train=True,
                             batch_size=1,
-                            num_workers=1),
-        batch_size=1)
+                            num_workers=4, dataset_name=dataset_name),
+        batch_size=1, num_workers=4)
 
     val_loader = torch.utils.data.DataLoader(
         ListDataset(val_list,
@@ -113,16 +133,18 @@ def get_dataloader(train_list, val_list, test_list):
                             transform=transforms.Compose([
                                 transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                                             std=[0.229, 0.224, 0.225]),
-                            ]), train=False),
+                            ]), train=False, dataset_name=dataset_name),
         batch_size=1)
-
-    test_loader = torch.utils.data.DataLoader(
-        ListDataset(test_list,
-                    shuffle=False,
-                    transform=transforms.Compose([
-                        transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                    std=[0.229, 0.224, 0.225]),
-                    ]), train=False),
-        batch_size=1)
+    if test_list is not None:
+        test_loader = torch.utils.data.DataLoader(
+            ListDataset(test_list,
+                        shuffle=False,
+                        transform=transforms.Compose([
+                            transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                        std=[0.229, 0.224, 0.225]),
+                        ]), train=False, dataset_name=dataset_name),
+            batch_size=1)
+    else:
+        test_loader = None
 
     return train_loader, val_loader, test_loader

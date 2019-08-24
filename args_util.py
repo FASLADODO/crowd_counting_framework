@@ -36,6 +36,22 @@ def make_meow_args(gpu="0", task="task_one_"):
     return args
 
 
+def like_real_args_parse(data_input):
+    args = Meow()
+    args.input = data_input
+    args.original_lr = 1e-7
+    args.lr = 1e-7
+    args.batch_size = 1
+    args.momentum = 0.95
+    args.decay = 5 * 1e-4
+    args.start_epoch = 0
+    args.epochs = 120
+    args.steps = [-1, 1, 100, 150]
+    args.scales = [1, 1, 1, 1]
+    args.workers = 4
+    args.print_freq = 30
+
+
 def real_args_parse():
     """
     this is not dummy

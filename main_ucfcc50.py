@@ -2,6 +2,7 @@ from args_util import real_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 import torch
 from torch import nn
 from models import CSRNet
@@ -13,16 +14,14 @@ if __name__ == "__main__":
     args = real_args_parse()
     print(args)
     DATA_PATH = args.input
-    TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
-    TEST_PATH = os.path.join(DATA_PATH, "test_data")
 
 
     # create list
-    train_list, val_list = get_train_val_list(TRAIN_PATH)
-    test_list = create_training_image_list(TEST_PATH)
+    train_list, val_list = get_train_val_list(DATA_PATH, test_size=0.2)
+    test_list = None
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list)
+    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="ucf_cc_50")
 
 
     # model
@@ -39,18 +38,16 @@ if __name__ == "__main__":
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator = create_supervised_evaluator(model,
                                             metrics={
-                                                'mae': MeanAbsoluteError(),
-                                                'mse': MeanSquaredError(),
+                                                'mae': CrowdCountingMeanAbsoluteError(),
+                                                'mse': CrowdCountingMeanSquaredError(),
                                                 'nll': Loss(loss_fn)
                                             }, device=device)
     print(model)
 
-    print(args)
-
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_training_loss(trainer):
-        print("Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
+        print("Epoch[{}] Interation [{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.iteration, trainer.state.output))
 
 
     @trainer.on(Events.EPOCH_COMPLETED)
