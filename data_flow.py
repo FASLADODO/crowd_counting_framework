@@ -68,6 +68,21 @@ def load_data_ucf_cc50(img_path, train=True):
 
     return img, target
 
+def load_data_ucf_cc50_pancnn(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                        interpolation=cv2.INTER_CUBIC) * 64
+    target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
+                        interpolation=cv2.INTER_CUBIC) * 64*2
+    target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
+                        interpolation=cv2.INTER_CUBIC) * 64*4
+
+    return img, (target1, target2, target3)
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  num_workers=4, dataset_name="shanghaitech"):
@@ -101,6 +116,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data
         elif dataset_name is "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
+        elif dataset_name is "ucf_cc_50_pacnn":
+            self.load_data_fn = load_data_ucf_cc50_pancnn
 
     def __len__(self):
         return self.nSamples
@@ -108,7 +125,7 @@ class ListDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.lines[index]
-        img, target = load_data(img_path, self.train)
+        img, target = self.load_data_fn(img_path, self.train)
         if self.transform is not None:
             img = self.transform(img)
         return img, target

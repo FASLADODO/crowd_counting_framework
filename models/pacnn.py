@@ -5,6 +5,7 @@ import numpy as np
 
 # ssim lost function
 
+
 class PACNN(nn.Module):
     def __init__(self):
         super(PACNN, self).__init__()
@@ -26,12 +27,8 @@ class PACNN(nn.Module):
         de3 = self.de3_11((self.de3net(x)))
         return de1, de2, de3
 
+
 if __name__ == "__main__":
-    # backbone = models.vgg19(pretrained=True)
-    # print(backbone)
-    # de1net = backbone[0:16]
-    # de2net = backbone[0:23]
-    # de3net = backbone[0:26]
     net = PACNN()
     print(net.de1net)
     img = torch.rand(1, 3, 320, 320)
@@ -39,5 +36,3 @@ if __name__ == "__main__":
     print(de1.size())
     print(de2.size())
     print(de3.size())
-    # net = PACNN()
-    # print(net)
