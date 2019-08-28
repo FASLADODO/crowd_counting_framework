@@ -3,6 +3,8 @@ import torch
 from torchvision import models
 import numpy as np
 
+# ssim lost function
+
 class PACNN(nn.Module):
     def __init__(self):
         super(PACNN, self).__init__()
