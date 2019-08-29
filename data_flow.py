@@ -74,12 +74,29 @@ def load_data_ucf_cc50_pancnn(img_path, train=True):
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
 
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= -1:
+
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 64*2
+                        interpolation=cv2.INTER_CUBIC) * 64 #*2
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 64*4
+                        interpolation=cv2.INTER_CUBIC) * 64 #*4
 
     return img, (target1, target2, target3)
 

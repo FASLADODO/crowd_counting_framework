@@ -25,7 +25,7 @@ class PACNN(nn.Module):
         de1 = self.de1_11((self.de1net(x)))
         de2 = self.de2_11((self.de2net(x)))
         de3 = self.de3_11((self.de3net(x)))
-        return de1, de2, de3
+        return de1.squeeze(0), de2.squeeze(0), de3.squeeze(0)
 
 
 if __name__ == "__main__":
