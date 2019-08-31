@@ -45,7 +45,6 @@ if __name__ == "__main__":
     criterion_mse = nn.MSELoss(size_average=False).to(device)
     criterion_ssim = pytorch_ssim.SSIM(window_size=11).to(device)
 
-
     optimizer = torch.optim.SGD(net.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
