@@ -130,6 +130,7 @@ def data_augmentation(img, target):
 
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
+                 debug=False,
                  num_workers=4, dataset_name="shanghaitech"):
         """
         if you have different image size, then batch_size must be 1
@@ -138,6 +139,7 @@ class ListDataset(Dataset):
         :param shuffle:
         :param transform:
         :param train:
+        :param debug: will print path of image
         :param seen:
         :param batch_size:
         :param num_workers:
@@ -151,6 +153,7 @@ class ListDataset(Dataset):
         self.lines = root
         self.transform = transform
         self.train = train
+        self.debug = debug
         self.shape = shape
         self.seen = seen
         self.batch_size = batch_size
@@ -170,6 +173,8 @@ class ListDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.lines[index]
+        if self.debug:
+            print(img_path)
         img, target = self.load_data_fn(img_path, self.train)
         if self.transform is not None:
             img = self.transform(img)

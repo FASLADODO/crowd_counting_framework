@@ -16,9 +16,10 @@ import pytorch_ssim
 from hard_code_variable import HardCodeVariable
 from visualize_util import save_img, save_density_map
 
-
-if __name__ == "__main__":
+def visualize_ucf_cc_50_pacnn():
     HARD_CODE = HardCodeVariable()
+    saved_folder = "visualize/test_dataloader"
+    os.makedirs(saved_folder, exist_ok=True)
     DATA_PATH = HARD_CODE.UCF_CC_50_PATH
     train_list, val_list = get_train_val_list(DATA_PATH, test_size=0.2)
     test_list = None
@@ -33,14 +34,20 @@ if __name__ == "__main__":
                     ]),
                     train=True,
                     batch_size=1,
-                    num_workers=4, dataset_name="ucf_cc_50_pacnn"),
+                    num_workers=4, dataset_name="ucf_cc_50_pacnn", debug=True),
         batch_size=1, num_workers=4)
 
     img, label = next(iter(train_loader_pacnn))
 
     print(img.shape)
-    save_img(img, "pacnn_loader_img.png")
-    save_density_map(label[0].numpy()[0], "pacnn_loader_density1.png")
-    save_density_map(label[1].numpy()[0], "pacnn_loader_density2.png")
-    save_density_map(label[2].numpy()[0], "pacnn_loader_density3.png")
+    save_img(img, os.path.join(saved_folder, "pacnn_loader_img.png"))
+    save_density_map(label[0].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density1.png"))
+    save_density_map(label[1].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density2.png"))
+    save_density_map(label[2].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density3.png"))
 
+
+
+
+
+if __name__ == "__main__":
+    visualize_ucf_cc_50_pacnn()
