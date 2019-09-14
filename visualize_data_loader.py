@@ -46,8 +46,5 @@ def visualize_ucf_cc_50_pacnn():
     save_density_map(label[2].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density3.png"))
 
 
-
-
-
 if __name__ == "__main__":
     visualize_ucf_cc_50_pacnn()
