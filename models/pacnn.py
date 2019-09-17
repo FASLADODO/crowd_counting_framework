@@ -9,7 +9,7 @@ import numpy as np
 class PACNN(nn.Module):
     def __init__(self):
         super(PACNN, self).__init__()
-        self.backbone =  models.vgg16(pretrained=True).features
+        self.backbone = models.vgg16(pretrained=True).features
         self.de1net = self.backbone[0:23]
         self.de1_11 = nn.Conv2d(512, 1, kernel_size=1)
         self.de2net = self.backbone[0:30]
@@ -27,12 +27,30 @@ class PACNN(nn.Module):
         de3 = self.de3_11((self.de3net(x)))
         return de1.squeeze(0), de2.squeeze(0), de3.squeeze(0)
 
+def count_param(net):
+    pytorch_total_params = sum(p.numel() for p in net.parameters())
+    return pytorch_total_params
+
+def parameter_count_test():
+    net = PACNN()
+    total_real = count_param(net)
+    print("total real ", total_real)
+    backbone = count_param(net.backbone)
+    conv611 = count_param(net.conv6_1_1)
+    de1_11 = count_param(net.de1_11)
+    de2_11 = count_param(net.de2_11)
+    de3_11 = count_param(net.de3_11)
+    sum_of_part = backbone + de1_11 + de2_11 + de3_11 + conv611
+    print(sum_of_part)
+
+
 
 if __name__ == "__main__":
-    net = PACNN()
-    print(net.de1net)
-    img = torch.rand(1, 3, 320, 320)
-    de1, de2, de3 = net(img)
-    print(de1.size())
-    print(de2.size())
-    print(de3.size())
+    parameter_count_test()
+    # net = PACNN()
+    # print(net.de1net)
+    # img = torch.rand(1, 3, 320, 320)
+    # de1, de2, de3 = net(img)
+    # print(de1.size())
+    # print(de2.size())
+    # print(de3.size())

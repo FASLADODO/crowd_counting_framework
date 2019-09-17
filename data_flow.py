@@ -71,7 +71,48 @@ def load_data_ucf_cc50(img_path, train=True):
 
     return img, target
 
-def load_data_ucf_cc50_pancnn(img_path, train=True):
+
+def load_data_shanghaitech_pacnn(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= -1:
+
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                        interpolation=cv2.INTER_CUBIC) * 64
+    target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
+                        interpolation=cv2.INTER_CUBIC) * 64 #*2
+    target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
+                        interpolation=cv2.INTER_CUBIC) * 64 #*4
+
+    return img, (target1, target2, target3)
+
+
+def load_data_ucf_cc50_pacnn(img_path, train=True):
+    """
+    dataloader for UCF-CC-50 dataset
+    label with 3 density map d1, d2, d3 for pacnn
+    :param img_path:
+    :param train:
+    :return:
+    """
     gt_path = img_path.replace('.jpg', '.h5')
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
@@ -128,6 +169,7 @@ def data_augmentation(img, target):
         img = img.transpose(Image.FLIP_LEFT_RIGHT)
     return img, target
 
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
@@ -165,7 +207,9 @@ class ListDataset(Dataset):
         elif dataset_name is "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name is "ucf_cc_50_pacnn":
-            self.load_data_fn = load_data_ucf_cc50_pancnn
+            self.load_data_fn = load_data_ucf_cc50_pacnn
+        elif dataset_name is "shanghaitech_pacnn":
+            self.load_data_fn = load_data_shanghaitech_pacnn
 
     def __len__(self):
         return self.nSamples
