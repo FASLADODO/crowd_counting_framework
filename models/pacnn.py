@@ -31,7 +31,7 @@ class PACNN(nn.Module):
 
 
 class PACNNWithPerspectiveMap(nn.Module):
-    def __init__(self):
+    def __init__(self, perspective_aware_mode=False):
         super(PACNNWithPerspectiveMap, self).__init__()
         self.backbone = models.vgg16(pretrained=True).features
         self.de1net = self.backbone[0:23]
@@ -56,13 +56,13 @@ class PACNNWithPerspectiveMap(nn.Module):
         self.perspective_11 = nn.Conv2d(512, 1, kernel_size=1)
 
         # deconvolution upsampling
-        self.up12 = nn.ConvTranspose2d(512, 1, 2, 2)
-        self.up23 = nn.ConvTranspose2d(512, 1, 2, 2)
-        self.up_perspective = nn.ConvTranspose2d(512, 1, 2, 2)
+        self.up12 = nn.ConvTranspose2d(1, 1, 2, 2)
+        self.up23 = nn.ConvTranspose2d(1, 1, 2, 2)
+        self.up_perspective = nn.ConvTranspose2d(1, 1, 2, 2)
 
         # if true, use perspective aware
         # if false, use average
-        self.perspective_aware_mode = False
+        self.perspective_aware_mode = perspective_aware_mode
 
     def forward(self, x):
         de1 = self.de1_11((self.de1net(x)))
@@ -73,7 +73,7 @@ class PACNNWithPerspectiveMap(nn.Module):
             pespective_w = self.up_perspective(pespective_w_s)
             # TODO: code more here
             de23 = pespective_w_s * de2 + (1 - pespective_w_s)*(de2 + self.up23(de3))
-            de = pespective_w * de1 + (1 - pespective_w)*(de2 + self.up12(de23))
+            de = pespective_w * de1 + (1 - pespective_w)*(de1 + self.up12(de23))
         else:
             de23 = (de2 + self.up23(de3))/2
             de = (de1 + self.up12(de23))/2
