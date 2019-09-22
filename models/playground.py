@@ -25,8 +25,8 @@ class M0(nn.Module):
         return d
 
 def deconvolutuion():
-    transpose = nn.ConvTranspose2d(3, 1, 2, 2)
-    in_tensor = torch.rand((1, 3, 224, 224))
+    transpose = nn.ConvTranspose2d(3, 1, 1, 2, output_padding=1)
+    in_tensor = torch.rand((1, 3, 40, 40))
     out = transpose(in_tensor)
     print(out.size())
 

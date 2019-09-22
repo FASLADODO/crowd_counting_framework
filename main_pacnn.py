@@ -126,10 +126,12 @@ if __name__ == "__main__":
 
     # evaluate
 
-    best_checkpoint = torch.load("test2checkpoint.pth.tar")
-    net = PACNN().to(device)
+
+    net = PACNNWithPerspectiveMap(PACNN_PERSPECTIVE_AWARE_MODEL).to(device)
     print(net)
-    net.load_state_dict(best_checkpoint['state_dict'])
+
+    # best_checkpoint = torch.load("test2checkpoint.pth.tar")
+    # net.load_state_dict(best_checkpoint['state_dict'])
 
     # device = "cpu"
     mae_calculator_d1 = MAECalculator()

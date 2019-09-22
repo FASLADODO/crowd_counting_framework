@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+import torch.nn.functional as F
 
 from torchvision import models
 import numpy as np
@@ -78,8 +79,18 @@ class PACNNWithPerspectiveMap(nn.Module):
             #try:
             pespective_w_s = None
             pespective_w = None
-            de23 = (de2 + self.up23(de3))/2
-            de = (de1 + self.up12(de23))/2
+            upde3 = self.up23(de3)
+            pad_3_0 = de2.size()[2] - upde3.size()[2]
+            pad_3_1 = de2.size()[3] - upde3.size()[3]
+            upde3pad = F.pad(upde3,(0, pad_3_1, 0, pad_3_0), value=0)
+            de23 = (de2 + upde3pad)/2
+
+            upde23 = self.up12(de23)
+            pad_23_0 = de1.size()[2] - upde23.size()[2]
+            pad_23_1 = de1.size()[3] - upde23.size()[3]
+            upde23pad = F.pad(upde23, (0, pad_23_1, 0, pad_23_0), value=0)
+
+            de = (de1 + upde23pad)/2
             # except Exception as e:
             #     print("EXECEPTION ", e)
             #     print(x.size())
