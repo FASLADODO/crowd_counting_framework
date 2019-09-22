@@ -24,13 +24,20 @@ class M0(nn.Module):
         d = self.backbone(x)
         return d
 
+def deconvolutuion():
+    transpose = nn.ConvTranspose2d(3, 1, 2, 2)
+    in_tensor = torch.rand((1, 3, 224, 224))
+    out = transpose(in_tensor)
+    print(out.size())
+
 
 if __name__ == "__main__":
-    m0 = M0()
-    m1 = M1()
-
-    m0_param = list(m0.parameters())
-    m1_param = list(m1.parameters())
-
-    print(len(m0_param))
-    print(len(m1_param))
+    deconvolutuion()
+    # m0 = M0()
+    # m1 = M1()
+    #
+    # m0_param = list(m0.parameters())
+    # m1_param = list(m1.parameters())
+    #
+    # print(len(m0_param))
+    # print(len(m1_param))

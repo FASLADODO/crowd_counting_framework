@@ -1,7 +1,9 @@
 import torch.nn as nn
 import torch
+
 from torchvision import models
 import numpy as np
+import copy
 
 # ssim lost function
 
@@ -26,6 +28,52 @@ class PACNN(nn.Module):
         de2 = self.de2_11((self.de2net(x)))
         de3 = self.de3_11((self.de3net(x)))
         return de1.squeeze(0), de2.squeeze(0), de3.squeeze(0)
+
+
+class PACNNWithPerspectiveMap(nn.Module):
+    def __init__(self):
+        super(PACNNWithPerspectiveMap, self).__init__()
+        self.backbone = models.vgg16(pretrained=True).features
+        self.de1net = self.backbone[0:23]
+
+        self.de2net = self.backbone[0:30]
+
+
+        list_vgg16 = list(self.backbone)
+        self.conv6_1_1 = nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        list_vgg16.append(self.conv6_1_1)
+        self.de3net = nn.Sequential(*list_vgg16)
+
+
+        self.conv5_2_3_stack = copy.deepcopy(self.backbone[23:30])
+        self.perspective_net = nn.Sequential(self.backbone[0:23], self.conv5_2_3_stack)
+
+
+        # 1 1 convolution
+        self.de1_11 = nn.Conv2d(512, 1, kernel_size=1)
+        self.de2_11 = nn.Conv2d(512, 1, kernel_size=1)
+        self.de3_11 = nn.Conv2d(512, 1, kernel_size=1)
+        self.perspective_11 = nn.Conv2d(512, 1, kernel_size=1)
+
+        # deconvolution upsampling
+        self.up12 = nn.ConvTranspose2d(512, 1, 2, 2)
+        self.up23 = nn.ConvTranspose2d(512, 1, 2, 2)
+
+        # if true, use perspective aware
+        # if false, use average
+        self.perspective_aware_mode = False
+
+    def forward(self, x):
+        de1 = self.de1_11((self.de1net(x)))
+        de2 = self.de2_11((self.de2net(x)))
+        de3 = self.de3_11((self.de3net(x)))
+        if self.perspective_aware_mode:
+            respective = self.perspective_11(self.perspective_net)
+            # TODO: code more here
+        else:
+            de23 = (de2 + self.up23(de3))/2
+            de = (de1 + self.up12(de23))/2
+        return de
 
 def count_param(net):
     pytorch_total_params = sum(p.numel() for p in net.parameters())
