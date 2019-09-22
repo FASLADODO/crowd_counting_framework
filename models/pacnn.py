@@ -58,6 +58,7 @@ class PACNNWithPerspectiveMap(nn.Module):
         # deconvolution upsampling
         self.up12 = nn.ConvTranspose2d(512, 1, 2, 2)
         self.up23 = nn.ConvTranspose2d(512, 1, 2, 2)
+        self.up_perspective = nn.ConvTranspose2d(512, 1, 2, 2)
 
         # if true, use perspective aware
         # if false, use average
@@ -68,8 +69,11 @@ class PACNNWithPerspectiveMap(nn.Module):
         de2 = self.de2_11((self.de2net(x)))
         de3 = self.de3_11((self.de3net(x)))
         if self.perspective_aware_mode:
-            respective = self.perspective_11(self.perspective_net)
+            pespective_w_s = self.perspective_11(self.perspective_net(x))
+            pespective_w = self.up_perspective(pespective_w_s)
             # TODO: code more here
+            de23 = pespective_w_s * de2 + (1 - pespective_w_s)*(de2 + self.up23(de3))
+            de = pespective_w * de1 + (1 - pespective_w)*(de2 + self.up12(de23))
         else:
             de23 = (de2 + self.up23(de3))/2
             de = (de1 + self.up12(de23))/2
@@ -90,8 +94,6 @@ def parameter_count_test():
     de3_11 = count_param(net.de3_11)
     sum_of_part = backbone + de1_11 + de2_11 + de3_11 + conv611
     print(sum_of_part)
-
-
 
 if __name__ == "__main__":
     parameter_count_test()
