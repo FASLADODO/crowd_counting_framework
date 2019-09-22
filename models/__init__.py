@@ -1,2 +1,2 @@
 from .csrnet import CSRNet
-from .pacnn import PACNN
+from .pacnn import PACNN, PACNNWithPerspectiveMap

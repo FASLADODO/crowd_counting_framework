@@ -75,9 +75,16 @@ class PACNNWithPerspectiveMap(nn.Module):
             de23 = pespective_w_s * de2 + (1 - pespective_w_s)*(de2 + self.up23(de3))
             de = pespective_w * de1 + (1 - pespective_w)*(de1 + self.up12(de23))
         else:
+            #try:
+            pespective_w_s = None
+            pespective_w = None
             de23 = (de2 + self.up23(de3))/2
             de = (de1 + self.up12(de23))/2
-        return de
+            # except Exception as e:
+            #     print("EXECEPTION ", e)
+            #     print(x.size())
+            #     print(de2.size(), de3.size())
+        return de1, de2, de3, pespective_w_s, pespective_w, de
 
 def count_param(net):
     pytorch_total_params = sum(p.numel() for p in net.parameters())

@@ -6,7 +6,7 @@ from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCo
 import torch
 from torch import nn
 import torch.nn.functional as F
-from models import CSRNet,PACNN
+from models import CSRNet, PACNN, PACNNWithPerspectiveMap
 import os
 import cv2
 from torchvision import datasets, transforms
@@ -26,6 +26,7 @@ if __name__ == "__main__":
     print(args)
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
+    PACNN_PERSPECTIVE_AWARE_MODEL = False
 
     # create list
     if DATASET_NAME is "shanghaitech":
@@ -64,9 +65,9 @@ if __name__ == "__main__":
         batch_size=1, num_workers=4)
 
     # create model
-    net = PACNN().to(device)
+    net = PACNNWithPerspectiveMap(perspective_aware_mode=PACNN_PERSPECTIVE_AWARE_MODEL).to(device)
     criterion_mse = nn.MSELoss(size_average=False).to(device)
-    criterion_ssim = pytorch_ssim.SSIM(window_size=11).to(device)
+    criterion_ssim = pytorch_ssim.SSIM(window_size=5).to(device)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr,
                                 momentum=args.momentum,
@@ -84,18 +85,22 @@ if __name__ == "__main__":
 
             # load data
             d1_label, d2_label, d3_label = label
-            d1_label = d1_label.to(device)
-            d2_label = d2_label.to(device)
-            d3_label = d3_label.to(device)
+            d1_label = d1_label.to(device).unsqueeze(0)
+            d2_label = d2_label.to(device).unsqueeze(0)
+            d3_label = d3_label.to(device).unsqueeze(0)
 
             # forward pass
 
-            d1, d2, d3 = net(train_img.to(device))
-            loss_1 = criterion_mse(d1, d1_label) + criterion_ssim(d1.unsqueeze(0), d1_label.unsqueeze(0))
-            loss_2 = criterion_mse(d2, d2_label) + criterion_ssim(d2.unsqueeze(0), d2_label.unsqueeze(0))
-            loss_3 = criterion_mse(d3, d3_label) + criterion_ssim(d3.unsqueeze(0), d3_label.unsqueeze(0))
-
+            d1, d2, d3, p_s, p, d = net(train_img.to(device))
+            loss_1 = criterion_mse(d1, d1_label) + criterion_ssim(d1, d1_label)
+            loss_2 = criterion_mse(d2, d2_label) + criterion_ssim(d2, d2_label)
+            loss_3 = criterion_mse(d3, d3_label) + criterion_ssim(d3, d3_label)
             loss = loss_1 + loss_2 + loss_3
+            if PACNN_PERSPECTIVE_AWARE_MODEL:
+                # TODO: loss for perspective map here
+                pass
+            loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
+            loss += loss_d
             loss.backward()
             optimizer.step()
             loss_sum += loss.item()
