@@ -1,3 +1,4 @@
+from comet_ml import Experiment
 from args_util import real_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -18,6 +19,15 @@ from evaluator import MAECalculator
 from model_util import save_checkpoint
 
 if __name__ == "__main__":
+    # import comet_ml in the top of your file
+
+
+    MODEL_SAVE_NAME = "dev4"
+    # Add the following code anywhere in your machine learning file
+    experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
+                            project_name="pacnn-dev", workspace="ttpro1995")
+    experiment.set_name(MODEL_SAVE_NAME)
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # device = "cpu"
@@ -27,6 +37,8 @@ if __name__ == "__main__":
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
     PACNN_PERSPECTIVE_AWARE_MODEL = False
+
+
 
     # create list
     if DATASET_NAME is "shanghaitech":
@@ -72,7 +84,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.SGD(net.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
-    for e in range(1):
+    for e in range(10):
         print("start epoch ", e)
         loss_sum = 0
         sample = 0
@@ -107,20 +119,24 @@ if __name__ == "__main__":
             sample += 1
             optimizer.zero_grad()
             counting += 1
+
             if counting%10 ==0:
-                print("counting ", counting, " -- avg loss", loss_sum/sample)
+                avg_loss_ministep =  loss_sum/sample
+                print("counting ", counting, " -- avg loss ", avg_loss_ministep)
+                experiment.log_metric("avg_loss_ministep", avg_loss_ministep)
             # if counting == 100:
             #     break
-
         end_time = time()
         avg_loss = loss_sum/sample
         epoch_time = end_time - start_time
+        print("==END epoch ", e, " =============================================")
         print(epoch_time, avg_loss, sample)
-
+        experiment.log_metric("avg_loss_epoch", avg_loss)
+        print("=================================================================")
 
         save_checkpoint({
             'state_dict': net.state_dict(),
-        }, False, "test2")
+        }, False, MODEL_SAVE_NAME)
 
 
 
@@ -130,13 +146,18 @@ if __name__ == "__main__":
     net = PACNNWithPerspectiveMap(PACNN_PERSPECTIVE_AWARE_MODEL).to(device)
     print(net)
 
-    # best_checkpoint = torch.load("test2checkpoint.pth.tar")
-    # net.load_state_dict(best_checkpoint['state_dict'])
+    best_checkpoint = torch.load(MODEL_SAVE_NAME + "checkpoint.pth.tar")
+    net.load_state_dict(best_checkpoint['state_dict'])
 
     # device = "cpu"
+    # TODO d1_val  155.97279205322266
+    # d2_val  35.46327234903971
+    # d3_val  23.07176342010498
+    # why d2 and d3 mse too low
     mae_calculator_d1 = MAECalculator()
     mae_calculator_d2 = MAECalculator()
     mae_calculator_d3 = MAECalculator()
+    mae_calculator_final = MAECalculator()
     with torch.no_grad():
         for val_img, label in val_loader_pacnn:
             net.eval()
@@ -144,7 +165,7 @@ if __name__ == "__main__":
             d1_label, d2_label, d3_label = label
 
             # forward pass
-            d1, d2, d3 = net(val_img.to(device))
+            d1, d2, d3, p_s, p, d = net(val_img.to(device))
 
             d1_label = d1_label.to(device)
             d2_label = d2_label.to(device)
@@ -154,9 +175,15 @@ if __name__ == "__main__":
             mae_calculator_d1.eval(d1.cpu().detach().numpy(), d1_label.cpu().detach().numpy())
             mae_calculator_d2.eval(d2.cpu().detach().numpy(), d2_label.cpu().detach().numpy())
             mae_calculator_d3.eval(d3.cpu().detach().numpy(), d3_label.cpu().detach().numpy())
+            mae_calculator_final.eval(d.cpu().detach().numpy(), d1_label.cpu().detach().numpy())
         print("count ", mae_calculator_d1.count)
         print("d1_val ", mae_calculator_d1.get_mae())
         print("d2_val ", mae_calculator_d2.get_mae())
         print("d3_val ", mae_calculator_d3.get_mae())
+        print("dfinal_val ", mae_calculator_final.get_mae())
+        experiment.log_metric("d1_val", mae_calculator_d1.get_mae())
+        experiment.log_metric("d2_val", mae_calculator_d2.get_mae())
+        experiment.log_metric("d3_val", mae_calculator_d3.get_mae())
+        experiment.log_metric("dfinal_val", mae_calculator_final.get_mae())
 
 
