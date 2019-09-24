@@ -34,7 +34,7 @@ def visualize_ucf_cc_50_pacnn():
                     ]),
                     train=True,
                     batch_size=1,
-                    num_workers=4, dataset_name="ucf_cc_50_pacnn", debug=True),
+                    num_workers=4, dataset_name="shanghaitech_pacnn", debug=True),
         batch_size=1, num_workers=4)
 
     img, label = next(iter(train_loader_pacnn))
@@ -44,6 +44,9 @@ def visualize_ucf_cc_50_pacnn():
     save_density_map(label[0].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density1.png"))
     save_density_map(label[1].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density2.png"))
     save_density_map(label[2].numpy()[0], os.path.join(saved_folder,"pacnn_loader_density3.png"))
+    print("count1 ", label[0].numpy()[0].sum())
+    print("count2 ", label[1].numpy()[0].sum())
+    print("count3 ", label[2].numpy()[0].sum())
 
 
 if __name__ == "__main__":

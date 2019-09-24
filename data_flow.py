@@ -98,9 +98,9 @@ def load_data_shanghaitech_pacnn(img_path, train=True):
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 64 *2
+                        interpolation=cv2.INTER_CUBIC) * 256
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 64 *4
+                        interpolation=cv2.INTER_CUBIC) * 1024
 
     return img, (target1, target2, target3)
 
@@ -138,9 +138,9 @@ def load_data_ucf_cc50_pacnn(img_path, train=True):
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 64 #*2
+                        interpolation=cv2.INTER_CUBIC) * 256
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 64 #*4
+                        interpolation=cv2.INTER_CUBIC) * 1024
 
     return img, (target1, target2, target3)
 
