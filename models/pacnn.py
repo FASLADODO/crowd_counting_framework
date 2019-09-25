@@ -72,9 +72,28 @@ class PACNNWithPerspectiveMap(nn.Module):
         if self.perspective_aware_mode:
             pespective_w_s = self.perspective_11(self.perspective_net(x))
             pespective_w = self.up_perspective(pespective_w_s)
+
+
             # TODO: code more here
-            de23 = pespective_w_s * de2 + (1 - pespective_w_s)*(de2 + self.up23(de3))
-            de = pespective_w * de1 + (1 - pespective_w)*(de1 + self.up12(de23))
+            upde3 = self.up23(de3)
+            pad_3_0 = de2.size()[2] - upde3.size()[2]
+            pad_3_1 = de2.size()[3] - upde3.size()[3]
+            upde3pad = F.pad(upde3, (0, pad_3_1, 0, pad_3_0), value=0)
+            de23_a = pespective_w_s * de2
+            de23_b = (1 - pespective_w_s)*(de2 + upde3pad)
+            de23 = de23_a + de23_b
+
+            upde23 = self.up12(de23)
+            pad_23_0 = de1.size()[2] - upde23.size()[2]
+            pad_23_1 = de1.size()[3] - upde23.size()[3]
+            upde23pad = F.pad(upde23, (0, pad_23_1, 0, pad_23_0), value=0)
+
+            pad_perspective_0 = de1.size()[2] - pespective_w.size()[2]
+            pad_perspective_1 = de1.size()[3] - pespective_w.size()[3]
+            pespective_w_pad = F.pad(pespective_w, (0, pad_perspective_1, 0, pad_perspective_0), value=0)
+            de_a = pespective_w_pad * de1
+            de_b = (1 - pespective_w_pad)*(de1 + upde23pad)
+            de = de_a + de_b
         else:
             #try:
             pespective_w_s = None

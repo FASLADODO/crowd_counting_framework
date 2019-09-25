@@ -42,3 +42,11 @@ class TestPACNNWithPerspectiveMap(TestCase):
         image = torch.rand(1, 3, 224, 224)
         _, _, _, _, _, density_map = net(image)
         print(density_map.size())
+
+    def test_perspective_aware_schema_pacnn_pad(self):
+        net = PACNNWithPerspectiveMap(perspective_aware_mode=True)
+        # image
+        # batch size, channel, h, w
+        image = torch.rand(1, 3, 330, 512)
+        _, _, _, _, _, density_map = net(image)
+        print(density_map.size())

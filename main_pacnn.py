@@ -28,9 +28,10 @@ if __name__ == "__main__":
     MODEL_SAVE_NAME = "dev5"
     # Add the following code anywhere in your machine learning file
     experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
-                            project_name="pacnn-dev", workspace="ttpro1995")
+                            project_name="pacnn-dev2", workspace="ttpro1995")
     experiment.set_name(MODEL_SAVE_NAME)
-
+    experiment.log_parameter("PACNN_PERSPECTIVE_AWARE_MODEL", True)
+    experiment.log_parameter("desc", "test pacnn with perspective aware")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # device = "cpu"
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     print(args)
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
-    PACNN_PERSPECTIVE_AWARE_MODEL = False
+    PACNN_PERSPECTIVE_AWARE_MODEL = True
 
 
 
