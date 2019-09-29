@@ -1,8 +1,6 @@
 from comet_ml import Experiment
 from args_util import real_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
-from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
-from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 import torch
 from torch import nn
@@ -18,14 +16,14 @@ from evaluator import MAECalculator
 
 from model_util import save_checkpoint
 
-import apex
-from apex import amp
+# import apex
+# from apex import amp
 
 if __name__ == "__main__":
     # import comet_ml in the top of your file
 
 
-    MODEL_SAVE_NAME = "dev5"
+    MODEL_SAVE_NAME = "dev7"
     # Add the following code anywhere in your machine learning file
     experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
                             project_name="pacnn-dev2", workspace="ttpro1995")
@@ -40,6 +38,7 @@ if __name__ == "__main__":
     print(args)
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
+    TOTAL_EPOCH = args.epochs
     PACNN_PERSPECTIVE_AWARE_MODEL = True
 
 
@@ -89,10 +88,14 @@ if __name__ == "__main__":
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
     # Allow Amp to perform casts as required by the opt_level
-    net, optimizer = amp.initialize(net, optimizer, opt_level="O1", enabled=False)
+    # net, optimizer = amp.initialize(net, optimizer, opt_level="O1", enabled=False)
 
-    for e in range(10):
-        print("start epoch ", e)
+    current_save_model_name = ""
+    current_epoch = 0
+    while (current_epoch < TOTAL_EPOCH):
+        experiment.log_current_epoch(current_epoch)
+        current_epoch += 1
+        print("start epoch ", current_epoch)
         loss_sum = 0
         sample = 0
         start_time = time()
@@ -120,9 +123,9 @@ if __name__ == "__main__":
                 pass
             loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
             loss += loss_d
-            # loss.backward()
-            with amp.scale_loss(loss, optimizer) as scaled_loss:
-                scaled_loss.backward()
+            loss.backward()
+            # with amp.scale_loss(loss, optimizer) as scaled_loss:
+            #     scaled_loss.backward()
             optimizer.step()
             optimizer.zero_grad()
             loss_sum += loss.item()
@@ -135,20 +138,26 @@ if __name__ == "__main__":
                 experiment.log_metric("avg_loss_ministep", avg_loss_ministep)
             # if counting == 100:
             #     break
+
         end_time = time()
         avg_loss = loss_sum/sample
         epoch_time = end_time - start_time
-        print("==END epoch ", e, " =============================================")
+        print("==END epoch ", current_epoch, " =============================================")
         print(epoch_time, avg_loss, sample)
         experiment.log_metric("avg_loss_epoch", avg_loss)
         print("=================================================================")
 
-        save_checkpoint({
+        current_save_model_name = save_checkpoint({
                 'model': net.state_dict(),
                 'optimizer': optimizer.state_dict(),
+                'e': current_epoch,
+                'PACNN_PERSPECTIVE_AWARE_MODEL': PACNN_PERSPECTIVE_AWARE_MODEL
                 # 'amp': amp.state_dict()
-        }, False, MODEL_SAVE_NAME)
+        }, False, MODEL_SAVE_NAME+"_"+str(current_epoch)+"_")
 
+        experiment.log_asset(current_save_model_name)
+
+        # end 1 epoch
 
         # after epoch evaluate
         mae_calculator_d1 = MAECalculator()
@@ -189,7 +198,7 @@ if __name__ == "__main__":
     net = PACNNWithPerspectiveMap(PACNN_PERSPECTIVE_AWARE_MODEL).to(device)
     print(net)
 
-    best_checkpoint = torch.load(MODEL_SAVE_NAME + "checkpoint.pth.tar")
+    best_checkpoint = torch.load(current_save_model_name)
     net.load_state_dict(best_checkpoint['model'])
 
     # device = "cpu"
