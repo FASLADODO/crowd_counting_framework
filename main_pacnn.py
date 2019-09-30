@@ -117,7 +117,9 @@ if __name__ == "__main__":
             loss_1 = criterion_mse(d1, d1_label) + criterion_ssim(d1, d1_label)
             loss_2 = criterion_mse(d2, d2_label) + criterion_ssim(d2, d2_label)
             loss_3 = criterion_mse(d3, d3_label) + criterion_ssim(d3, d3_label)
-            loss = loss_1 + loss_2 + loss_3
+            loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
+            loss = loss_d + loss_1 + loss_2 + loss_3
+
             if PACNN_PERSPECTIVE_AWARE_MODEL:
                 # TODO: loss for perspective map here
                 pass
