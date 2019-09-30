@@ -20,28 +20,28 @@ from model_util import save_checkpoint
 # from apex import amp
 
 if __name__ == "__main__":
-    # import comet_ml in the top of your file
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
-    MODEL_SAVE_NAME = "dev7"
     # Add the following code anywhere in your machine learning file
     experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
                             project_name="pacnn-dev2", workspace="ttpro1995")
-    experiment.set_name(MODEL_SAVE_NAME)
-    experiment.log_parameter("PACNN_PERSPECTIVE_AWARE_MODEL", True)
-    experiment.log_parameter("desc", "test pacnn with perspective aware")
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # device = "cpu"
-    print(device)
     args = real_args_parse()
+    print(device)
     print(args)
+
+
+    MODEL_SAVE_NAME = args.task_id
+    MODEL_SAVE_INTERVAL = 10
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
     TOTAL_EPOCH = args.epochs
-    PACNN_PERSPECTIVE_AWARE_MODEL = True
+    PACNN_PERSPECTIVE_AWARE_MODEL = args.PACNN_PERSPECTIVE_AWARE_MODEL
 
-
+    experiment.set_name(args.task_id)
+    experiment.log_parameter("DATA_PATH", DATA_PATH)
+    experiment.log_parameter("PACNN_PERSPECTIVE_AWARE_MODEL", PACNN_PERSPECTIVE_AWARE_MODEL)
+    experiment.log_parameter("train", "train without p")
 
     # create list
     if DATASET_NAME is "shanghaitech":
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     current_save_model_name = ""
     current_epoch = 0
-    while (current_epoch < TOTAL_EPOCH):
+    while current_epoch < TOTAL_EPOCH:
         experiment.log_current_epoch(current_epoch)
         current_epoch += 1
         print("start epoch ", current_epoch)
@@ -132,30 +132,33 @@ if __name__ == "__main__":
             sample += 1
             counting += 1
 
-            if counting%10 ==0:
-                avg_loss_ministep =  loss_sum/sample
+            if counting % 100 == 0:
+                avg_loss_ministep = loss_sum/sample
                 print("counting ", counting, " -- avg loss ", avg_loss_ministep)
                 experiment.log_metric("avg_loss_ministep", avg_loss_ministep)
             # if counting == 100:
             #     break
+            # end dataloader loop
 
         end_time = time()
         avg_loss = loss_sum/sample
         epoch_time = end_time - start_time
         print("==END epoch ", current_epoch, " =============================================")
         print(epoch_time, avg_loss, sample)
+        experiment.log_metric("epoch_time", epoch_time)
         experiment.log_metric("avg_loss_epoch", avg_loss)
         print("=================================================================")
 
-        current_save_model_name = save_checkpoint({
-                'model': net.state_dict(),
-                'optimizer': optimizer.state_dict(),
-                'e': current_epoch,
-                'PACNN_PERSPECTIVE_AWARE_MODEL': PACNN_PERSPECTIVE_AWARE_MODEL
-                # 'amp': amp.state_dict()
-        }, False, MODEL_SAVE_NAME+"_"+str(current_epoch)+"_")
-
-        experiment.log_asset(current_save_model_name)
+        if current_epoch % MODEL_SAVE_INTERVAL == 0:
+            current_save_model_name = save_checkpoint({
+                    'model': net.state_dict(),
+                    'optimizer': optimizer.state_dict(),
+                    'e': current_epoch,
+                    'PACNN_PERSPECTIVE_AWARE_MODEL': PACNN_PERSPECTIVE_AWARE_MODEL
+                    # 'amp': amp.state_dict()
+            }, False, MODEL_SAVE_NAME+"_"+str(current_epoch)+"_")
+            experiment.log_asset(current_save_model_name)
+            print("saved ", current_save_model_name)
 
         # end 1 epoch
 
