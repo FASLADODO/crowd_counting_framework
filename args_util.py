@@ -67,8 +67,9 @@ def real_args_parse():
     parser.add_argument('--model', action="store", default="pacnn")
 
     # args with default value
+    parser.add_argument('--load_model', action="store", default="", type=str)
     parser.add_argument('--lr', action="store", default=1e-8, type=float)
-    parser.add_argument('--momentum', action="store", default=0.95, type=float)
+    parser.add_argument('--momentum', action="store", default=0.9, type=float)
     parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
     parser.add_argument('--epochs', action="store", default=1, type=int)
 

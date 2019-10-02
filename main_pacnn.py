@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 
     MODEL_SAVE_NAME = args.task_id
-    MODEL_SAVE_INTERVAL = 10
+    MODEL_SAVE_INTERVAL = 5
     DATA_PATH = args.input
     DATASET_NAME = "shanghaitech"
     TOTAL_EPOCH = args.epochs
@@ -42,6 +42,8 @@ if __name__ == "__main__":
     experiment.log_parameter("DATA_PATH", DATA_PATH)
     experiment.log_parameter("PACNN_PERSPECTIVE_AWARE_MODEL", PACNN_PERSPECTIVE_AWARE_MODEL)
     experiment.log_parameter("train", "train without p")
+    experiment.log_parameter("momentum", args.momentum)
+    experiment.log_parameter("lr", args.lr)
 
     # create list
     if DATASET_NAME is "shanghaitech":
@@ -92,6 +94,18 @@ if __name__ == "__main__":
 
     current_save_model_name = ""
     current_epoch = 0
+
+    # load model
+    load_model = args.load_model
+    if len(load_model) > 0:
+        checkpoint = torch.load(load_model)
+        net.load_state_dict(checkpoint['model'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        current_epoch = checkpoint['e']
+        print("load ", load_model, "  epoch ", str(current_epoch))
+    else:
+        print("new model")
+
     while current_epoch < TOTAL_EPOCH:
         experiment.log_current_epoch(current_epoch)
         current_epoch += 1
