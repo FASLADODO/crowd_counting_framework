@@ -13,11 +13,11 @@ from data_flow import ListDataset
 import pytorch_ssim
 from time import time
 from evaluator import MAECalculator
-
+import torch.backends.cudnn as cudnn
 from model_util import save_checkpoint
 
-# import apex
-# from apex import amp
+import apex
+from apex import amp
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -37,6 +37,11 @@ if __name__ == "__main__":
     DATASET_NAME = "shanghaitech"
     TOTAL_EPOCH = args.epochs
     PACNN_PERSPECTIVE_AWARE_MODEL = args.PACNN_PERSPECTIVE_AWARE_MODEL
+
+    APEX_AMP = True
+    if APEX_AMP:
+        cudnn.benchmark = True
+        assert torch.backends.cudnn.enabled, "Amp requires cudnn backend to be enabled."
 
     experiment.set_name(args.task_id)
     experiment.log_parameter("DATA_PATH", DATA_PATH)
@@ -89,8 +94,14 @@ if __name__ == "__main__":
     optimizer = torch.optim.SGD(net.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.decay)
-    # Allow Amp to perform casts as required by the opt_level
-    # net, optimizer = amp.initialize(net, optimizer, opt_level="O1", enabled=False)
+
+    if APEX_AMP:
+        # Allow Amp to perform casts as required by the opt_level
+        net, optimizer = amp.initialize(net, optimizer, opt_level="O3", enabled=APEX_AMP,
+                                        keep_batchnorm_fp32=True)
+                                        # loss_scale="dynamic"
+
+
 
     current_save_model_name = ""
     current_epoch = 0
@@ -102,6 +113,8 @@ if __name__ == "__main__":
         net.load_state_dict(checkpoint['model'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         current_epoch = checkpoint['e']
+        if APEX_AMP:
+            amp.load_state_dict(checkpoint['amp'])
         print("load ", load_model, "  epoch ", str(current_epoch))
     else:
         print("new model")
@@ -139,11 +152,17 @@ if __name__ == "__main__":
                 pass
             loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
             loss += loss_d
-            loss.backward()
-            # with amp.scale_loss(loss, optimizer) as scaled_loss:
-            #     scaled_loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
+
+            optimizer.zero_grad()  # make optimizer grad = 0
+
+            if APEX_AMP:
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
+            else:
+                loss.backward() # calculate grad for optimizer
+
+            optimizer.step()  # optimize param
+
             loss_sum += loss.item()
             sample += 1
             counting += 1
@@ -166,12 +185,16 @@ if __name__ == "__main__":
         print("=================================================================")
 
         if current_epoch % MODEL_SAVE_INTERVAL == 0:
+            amp_state_dict = None
+            if APEX_AMP:
+                amp_state_dict = amp.state_dict()
+
             current_save_model_name = save_checkpoint({
                     'model': net.state_dict(),
                     'optimizer': optimizer.state_dict(),
                     'e': current_epoch,
-                    'PACNN_PERSPECTIVE_AWARE_MODEL': PACNN_PERSPECTIVE_AWARE_MODEL
-                    # 'amp': amp.state_dict()
+                    'PACNN_PERSPECTIVE_AWARE_MODEL': PACNN_PERSPECTIVE_AWARE_MODEL,
+                    'amp':  amp_state_dict  # amp.state_dict()
             }, False, MODEL_SAVE_NAME+"_"+str(current_epoch)+"_")
             experiment.log_asset(current_save_model_name)
             print("saved ", current_save_model_name)
