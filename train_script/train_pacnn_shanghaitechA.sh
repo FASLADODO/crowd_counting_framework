@@ -14,9 +14,17 @@
 
 # trained 30
 
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state1_attemp3_30_checkpoint.pth.tar \
+#--epochs 151 \
+#--lr 1e-7 \
+#--task_id train_state1_attemp4
+
+
 python main_pacnn.py \
 --input data/ShanghaiTech/part_A \
---load_model saved_model/train_state1_attemp3_30_checkpoint.pth.tar \
+--load_model saved_model/train_state1_attemp4_35_checkpoint.pth.tar \
 --epochs 151 \
---lr 1e-7 \
---task_id train_state1_attemp4
+--lr 1e-8 \
+--task_id train_state1_attemp5

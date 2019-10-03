@@ -139,11 +139,14 @@ if __name__ == "__main__":
                 pass
             loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
             loss += loss_d
-            loss.backward()
+
             # with amp.scale_loss(loss, optimizer) as scaled_loss:
             #     scaled_loss.backward()
-            optimizer.step()
+
             optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
             loss_sum += loss.item()
             sample += 1
             counting += 1
