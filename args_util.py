@@ -75,6 +75,9 @@ def real_args_parse():
 
     # pacnn setting only
     parser.add_argument('--PACNN_PERSPECTIVE_AWARE_MODEL', action="store_true", default=False)
+    parser.add_argument('--PACNN_MUTILPLE_SCALE_LOSS', action="store", default=True,
+                        help="True: compare each of  density map/perspective map scale with gt for loss."
+                             " False: only compare final density map and final density perspective map")
 
     # args.original_lr = 1e-7
     # args.lr = 1e-7

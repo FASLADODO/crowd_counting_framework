@@ -37,10 +37,12 @@ if __name__ == "__main__":
     DATASET_NAME = "shanghaitech"
     TOTAL_EPOCH = args.epochs
     PACNN_PERSPECTIVE_AWARE_MODEL = args.PACNN_PERSPECTIVE_AWARE_MODEL
+    PACNN_MUTILPLE_SCALE_LOSS = args.PACNN_MUTILPLE_SCALE_LOSS
 
     experiment.set_name(args.task_id)
     experiment.log_parameter("DATA_PATH", DATA_PATH)
     experiment.log_parameter("PACNN_PERSPECTIVE_AWARE_MODEL", PACNN_PERSPECTIVE_AWARE_MODEL)
+    experiment.log_parameter("PACNN_MUTILPLE_SCALE_LOSS", PACNN_MUTILPLE_SCALE_LOSS)
     experiment.log_parameter("train", "train without p")
     experiment.log_parameter("momentum", args.momentum)
     experiment.log_parameter("lr", args.lr)
@@ -128,17 +130,22 @@ if __name__ == "__main__":
             # forward pass
 
             d1, d2, d3, p_s, p, d = net(train_img.to(device))
-            loss_1 = criterion_mse(d1, d1_label) + criterion_ssim(d1, d1_label)
-            loss_2 = criterion_mse(d2, d2_label) + criterion_ssim(d2, d2_label)
-            loss_3 = criterion_mse(d3, d3_label) + criterion_ssim(d3, d3_label)
             loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
-            loss = loss_d + loss_1 + loss_2 + loss_3
+            loss = loss_d
+
+            if PACNN_MUTILPLE_SCALE_LOSS:
+                loss_1 = criterion_mse(d1, d1_label) + criterion_ssim(d1, d1_label)
+                loss_2 = criterion_mse(d2, d2_label) + criterion_ssim(d2, d2_label)
+                loss_3 = criterion_mse(d3, d3_label) + criterion_ssim(d3, d3_label)
+                loss += loss_1 + loss_2 + loss_3
+
 
             if PACNN_PERSPECTIVE_AWARE_MODEL:
                 # TODO: loss for perspective map here
                 pass
-            loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
-            loss += loss_d
+            # what is this, loss_d count 2 ?
+            ## loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
+            ## loss += loss_d
 
             # with amp.scale_loss(loss, optimizer) as scaled_loss:
             #     scaled_loss.backward()

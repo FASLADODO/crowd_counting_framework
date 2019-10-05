@@ -22,9 +22,27 @@
 #--task_id train_state1_attemp4
 
 
-python main_pacnn.py \
---input data/ShanghaiTech/part_A \
---load_model saved_model/train_state1_attemp4_35_checkpoint.pth.tar \
---epochs 151 \
---lr 1e-8 \
---task_id train_state1_attemp5
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state1_attemp4_35_checkpoint.pth.tar \
+#--epochs 151 \
+#--lr 1e-8 \
+#--task_id train_state1_attemp5
+
+################3
+
+## TODO: train this
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state1_attemp5_40_checkpoint.pth.tar \
+#--epochs 300 \
+#--lr 1e-8 \
+#--task_id train_state1_attemp6
+
+
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state1_attemp6_120_checkpoint.pth.tar \
+#--epochs 300 \
+#--lr 1e-9 \
+#--task_id train_state1_attemp7
