@@ -24,22 +24,23 @@ if __name__ == "__main__":
 
     # Add the following code anywhere in your machine learning file
     experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
-                            project_name="pacnn-dev2", workspace="ttpro1995", disabled=True)
+                            project_name="pacnn-dev2", workspace="ttpro1995")
 
     args = real_args_parse()
-    device = "cpu"
     print(device)
     print(args)
 
 
 
     MODEL_SAVE_NAME = args.task_id
+    TEST = args.test
     MODEL_SAVE_INTERVAL = 5
     DATA_PATH = args.input
     TOTAL_EPOCH = args.epochs
     PACNN_PERSPECTIVE_AWARE_MODEL = args.PACNN_PERSPECTIVE_AWARE_MODEL
     PACNN_MUTILPLE_SCALE_LOSS = args.PACNN_MUTILPLE_SCALE_LOSS
     DATASET_NAME = "shanghaitech_pacnn"
+
     if PACNN_PERSPECTIVE_AWARE_MODEL:
         DATASET_NAME = "shanghaitech_pacnn_with_perspective"
 
@@ -87,6 +88,18 @@ if __name__ == "__main__":
                     num_workers=4, dataset_name="shanghaitech_pacnn"),
         batch_size=1, num_workers=4)
 
+    test_loader_pacnn = torch.utils.data.DataLoader(
+        ListDataset(test_list,
+                    shuffle=False,
+                    transform=transforms.Compose([
+                        transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                    std=[0.229, 0.224, 0.225]),
+                    ]),
+                    train=False,
+                    batch_size=1,
+                    num_workers=4, dataset_name="shanghaitech_pacnn"),
+        batch_size=1, num_workers=4)
+
     # create model
     net = PACNNWithPerspectiveMap(perspective_aware_mode=PACNN_PERSPECTIVE_AWARE_MODEL).to(device)
     criterion_mse = nn.MSELoss(size_average=False).to(device)
@@ -111,6 +124,41 @@ if __name__ == "__main__":
         print("load ", load_model, "  epoch ", str(current_epoch))
     else:
         print("new model")
+
+    if TEST:
+        print("test model")
+        mae_calculator_d1 = MAECalculator()
+        mae_calculator_d2 = MAECalculator()
+        mae_calculator_d3 = MAECalculator()
+        mae_calculator_final = MAECalculator()
+        with torch.no_grad():
+            for val_img, label in test_loader_pacnn:
+                net.eval()
+                # load data
+                d1_label, d2_label, d3_label = label
+
+                # forward pass
+                d1, d2, d3, p_s, p, d = net(val_img.to(device))
+
+                d1_label = d1_label.to(device)
+                d2_label = d2_label.to(device)
+                d3_label = d3_label.to(device)
+
+                # score
+                mae_calculator_d1.eval(d1.cpu().detach().numpy(), d1_label.cpu().detach().numpy())
+                mae_calculator_d2.eval(d2.cpu().detach().numpy(), d2_label.cpu().detach().numpy())
+                mae_calculator_d3.eval(d3.cpu().detach().numpy(), d3_label.cpu().detach().numpy())
+                mae_calculator_final.eval(d.cpu().detach().numpy(), d1_label.cpu().detach().numpy())
+            print("count ", mae_calculator_d1.count)
+            print("d1_val ", mae_calculator_d1.get_mae())
+            print("d2_val ", mae_calculator_d2.get_mae())
+            print("d3_val ", mae_calculator_d3.get_mae())
+            print("dfinal_val ", mae_calculator_final.get_mae())
+            experiment.log_metric("d1_val", mae_calculator_d1.get_mae())
+            experiment.log_metric("d2_val", mae_calculator_d2.get_mae())
+            experiment.log_metric("d3_val", mae_calculator_d3.get_mae())
+            experiment.log_metric("dfinal_val", mae_calculator_final.get_mae())
+        exit()
 
     while current_epoch < TOTAL_EPOCH:
         experiment.log_current_epoch(current_epoch)
@@ -153,18 +201,35 @@ if __name__ == "__main__":
                 # TODO: loss for perspective map here
                 pad_p_0 = perspective_p.size()[2] - p.size()[2]
                 pad_p_1 = perspective_p.size()[3] - p.size()[3]
-                p_pad = F.pad(p, (0, pad_p_1, 0, pad_p_0), mode='replicate')
+                if pad_p_0 == 0:
+                    pad_p_0 = -perspective_p.size()[2]
+                if pad_p_1 == 0:
+                    pad_p_1 = -perspective_p.size()[3]
 
-                loss_p = criterion_mse(p_pad, perspective_p) + criterion_ssim(p_pad, perspective_p)
+                # p_pad = F.pad(p, (0, pad_p_1, 0, pad_p_0), mode='replicate')
+                perspective_p_pad = perspective_p[:,:, 0:-pad_p_0, 0:-pad_p_1]
+
+                # print(p.shape)
+                # print(perspective_p.shape)
+                # print(pad_p_0, pad_p_1)
+                # print(perspective_p_pad.shape)
+                loss_p = criterion_mse(p, perspective_p_pad) + criterion_ssim(p, perspective_p_pad)
 
                 loss += loss_p
                 if PACNN_MUTILPLE_SCALE_LOSS:
                     pad_s_0 = perspective_s.size()[2] - p_s.size()[2]
                     pad_s_1 = perspective_s.size()[3] - p_s.size()[3]
-                    p_s_pad = F.pad(perspective_s, (0, pad_s_1, 0, pad_s_0),
-                                             mode='replicate')
+                    # p_s_pad = F.pad(perspective_s, (0, pad_s_1, 0, pad_s_0),
+                    #                          mode='replicate')
 
-                    loss_p_s = criterion_mse(p_s_pad, perspective_s) + criterion_ssim(p_s_pad, perspective_s)
+                    if pad_s_0 == 0:
+                        pad_s_0 = -perspective_s.size()[2]
+                    if pad_s_1 == 0:
+                        pad_s_1 = -perspective_s.size()[3]
+
+                    perspective_s_pad = perspective_s[:,:, 0:-pad_s_0, 0:-pad_s_1]
+
+                    loss_p_s = criterion_mse(p_s, perspective_s_pad) + criterion_ssim(p_s, perspective_s_pad)
                     loss += loss_p_s
 
             # what is this, loss_d count 2 ?

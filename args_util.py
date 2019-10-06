@@ -72,6 +72,7 @@ def real_args_parse():
     parser.add_argument('--momentum', action="store", default=0.9, type=float)
     parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
     parser.add_argument('--epochs', action="store", default=1, type=int)
+    parser.add_argument('--test', action="store_true", default=False)
 
     # pacnn setting only
     parser.add_argument('--PACNN_PERSPECTIVE_AWARE_MODEL', action="store", default=0, type=int)

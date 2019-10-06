@@ -138,6 +138,8 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
             perspective = np.fliplr(perspective)
 
+    perspective /= np.max(perspective)
+
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
@@ -146,10 +148,10 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * 1024
 
     perspective_s = cv2.resize(perspective, (int(perspective.shape[1] / 16), int(perspective.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 256
+                        interpolation=cv2.INTER_CUBIC)
 
     perspective_p = cv2.resize(perspective, (int(perspective.shape[1] / 8), int(perspective.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                        interpolation=cv2.INTER_CUBIC)
 
     return img, (target1, target2, target3, perspective_s, perspective_p)
 

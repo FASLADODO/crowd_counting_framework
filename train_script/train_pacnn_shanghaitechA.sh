@@ -58,15 +58,28 @@
 
 ####################
 
-python main_pacnn.py \
---input data/ShanghaiTech/part_A \
---load_model saved_model/train_state1_attemp7_180_checkpoint.pth.tar \
---epochs 500 \
---lr 1e-9 \
---PACNN_PERSPECTIVE_AWARE_MODEL 1 \
---PACNN_MUTILPLE_SCALE_LOSS 1 \
---task_id train_state2_attemp1
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state1_attemp7_180_checkpoint.pth.tar \
+#--epochs 500 \
+#--lr 1e-9 \
+#--PACNN_PERSPECTIVE_AWARE_MODEL 1 \
+#--PACNN_MUTILPLE_SCALE_LOSS 1 \
+#--task_id train_state2_attemp1
 
+
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state2_attemp1_185_checkpoint.pth.tar \
+#--epochs 500 \
+#--lr 3e-10 \
+#--momentum 0.7 \
+#--PACNN_PERSPECTIVE_AWARE_MODEL 1 \
+#--PACNN_MUTILPLE_SCALE_LOSS 1 \
+#--task_id train_state2_attemp2
+
+
+# momentum
 
 #--input data/ShanghaiTech/part_A \
 #--load_model saved_model/train_state1_attemp7_180_checkpoint.pth.tar
@@ -75,3 +88,32 @@ python main_pacnn.py \
 #--PACNN_PERSPECTIVE_AWARE_MODEL 1
 #--PACNN_MUTILPLE_SCALE_LOSS 1
 #--task_id dev
+
+
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state2_attemp2_220_checkpoint.pth.tar \
+#--epochs 500 \
+#--lr 3e-10 \
+#--momentum 0.7 \
+#--PACNN_PERSPECTIVE_AWARE_MODEL 1 \
+#--PACNN_MUTILPLE_SCALE_LOSS 0 \
+#--task_id train_state2_attemp3
+
+#python main_pacnn.py \
+#--input data/ShanghaiTech/part_A \
+#--load_model saved_model/train_state2_attemp3_240_checkpoint.pth.tar \
+#--epochs 600 \
+#--lr 1e-9 \
+#--momentum 0.9 \
+#--PACNN_PERSPECTIVE_AWARE_MODEL 1 \
+#--PACNN_MUTILPLE_SCALE_LOSS 0 \
+#--task_id train_state2_attemp4
+
+python main_pacnn.py \
+--input data/ShanghaiTech/part_A \
+--load_model saved_model/train_state2_attemp4_265_checkpoint.pth.tar \
+--PACNN_PERSPECTIVE_AWARE_MODEL 1 \
+--PACNN_MUTILPLE_SCALE_LOSS 0 \
+--test \
+--task_id test
