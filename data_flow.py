@@ -118,7 +118,7 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
-    perspective = np.array(h5py.File(p_path, "r")['pmap'])
+    perspective = np.array(h5py.File(p_path, "r")['pmap']).astype(np.float32)
     perspective = np.rot90(perspective, k=3)
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))

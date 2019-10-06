@@ -24,11 +24,13 @@ if __name__ == "__main__":
 
     # Add the following code anywhere in your machine learning file
     experiment = Experiment(api_key="S3mM1eMq6NumMxk2QJAXASkUM",
-                            project_name="pacnn-dev2", workspace="ttpro1995")
+                            project_name="pacnn-dev2", workspace="ttpro1995", disabled=True)
 
     args = real_args_parse()
+    device = "cpu"
     print(device)
     print(args)
+
 
 
     MODEL_SAVE_NAME = args.task_id
@@ -50,12 +52,12 @@ if __name__ == "__main__":
     experiment.log_parameter("lr", args.lr)
 
     # create list
-    if DATASET_NAME is "shanghaitech":
+    if  "shanghaitech" in DATASET_NAME:
         TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
         TEST_PATH = os.path.join(DATA_PATH, "test_data")
         train_list, val_list = get_train_val_list(TRAIN_PATH)
         test_list = create_training_image_list(TEST_PATH)
-    elif DATASET_NAME is "ucf_cc_50":
+    elif "ucf_cc_50" in DATASET_NAME:
         train_list, val_list = get_train_val_list(DATA_PATH, test_size=0.2)
         test_list = None
 
@@ -70,7 +72,7 @@ if __name__ == "__main__":
                     ]),
                     train=True,
                     batch_size=1,
-                    num_workers=4, dataset_name="shanghaitech_pacnn"),
+                    num_workers=4, dataset_name=DATASET_NAME),
         batch_size=1, num_workers=4)
 
     val_loader_pacnn = torch.utils.data.DataLoader(
@@ -149,10 +151,20 @@ if __name__ == "__main__":
 
             if PACNN_PERSPECTIVE_AWARE_MODEL:
                 # TODO: loss for perspective map here
-                loss_p = criterion_mse(p, perspective_p) + criterion_ssim(p, perspective_p)
+                pad_p_0 = perspective_p.size()[2] - p.size()[2]
+                pad_p_1 = perspective_p.size()[3] - p.size()[3]
+                p_pad = F.pad(p, (0, pad_p_1, 0, pad_p_0), mode='replicate')
+
+                loss_p = criterion_mse(p_pad, perspective_p) + criterion_ssim(p_pad, perspective_p)
+
                 loss += loss_p
                 if PACNN_MUTILPLE_SCALE_LOSS:
-                    loss_p_s = criterion_mse(p_s, perspective_s) + criterion_ssim(p_s, perspective_s)
+                    pad_s_0 = perspective_s.size()[2] - p_s.size()[2]
+                    pad_s_1 = perspective_s.size()[3] - p_s.size()[3]
+                    p_s_pad = F.pad(perspective_s, (0, pad_s_1, 0, pad_s_0),
+                                             mode='replicate')
+
+                    loss_p_s = criterion_mse(p_s_pad, perspective_s) + criterion_ssim(p_s_pad, perspective_s)
                     loss += loss_p_s
 
             # what is this, loss_d count 2 ?
