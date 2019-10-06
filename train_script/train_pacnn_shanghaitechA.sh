@@ -46,3 +46,12 @@
 #--epochs 300 \
 #--lr 1e-9 \
 #--task_id train_state1_attemp7
+
+#### no loss for d1, d2, d3 but only count d_final
+python main_pacnn.py \
+--input data/ShanghaiTech/part_A \
+--load_model saved_model/train_state1_attemp7_180_checkpoint.pth.tar \
+--epochs 300 \
+--lr 1e-9 \
+--PACNN_MUTILPLE_SCALE_LOSS False \
+--task_id train_state1_attemp8_finalloss

@@ -114,12 +114,12 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
     :return:
     """
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
-    p_path = img_path.replace(".jpg", ".mat").replace("images", "p_map")
+    p_path = img_path.replace(".jpg", ".mat").replace("images", "pmap")
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
-    perspective = np.array(h5py.File(p_path, "r"))
-
+    perspective = np.array(h5py.File(p_path, "r")['pmap'])
+    perspective = np.rot90(perspective, k=3)
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
         if random.randint(0, 9) <= -1:
@@ -132,7 +132,7 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
 
         img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
         target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
-        perspective = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+        perspective = perspective[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
         if random.random() > 0.8:
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
@@ -148,10 +148,11 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
     perspective_s = cv2.resize(perspective, (int(perspective.shape[1] / 16), int(perspective.shape[0] / 16)),
                         interpolation=cv2.INTER_CUBIC) * 256
 
-    perspective_m = cv2.resize(perspective, (int(perspective.shape[1] / 8), int(perspective.shape[0] / 8)),
+    perspective_p = cv2.resize(perspective, (int(perspective.shape[1] / 8), int(perspective.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
 
-    return img, (target1, target2, target3, perspective_s, perspective_m)
+    return img, (target1, target2, target3, perspective_s, perspective_p)
+
 
 def load_data_ucf_cc50_pacnn(img_path, train=True):
     """
@@ -258,6 +259,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_ucf_cc50_pacnn
         elif dataset_name is "shanghaitech_pacnn":
             self.load_data_fn = load_data_shanghaitech_pacnn
+        elif dataset_name is "shanghaitech_pacnn_with_perspective":
+            self.load_data_fn = load_data_shanghaitech_pacnn_with_perspective
 
     def __len__(self):
         return self.nSamples
