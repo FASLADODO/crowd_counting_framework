@@ -48,6 +48,7 @@ def visualize_ucf_cc_50_pacnn():
     print("count2 ", label[1].numpy()[0].sum())
     print("count3 ", label[2].numpy()[0].sum())
 
+
 def visualize_shanghaitech_pacnn_with_perspective():
     HARD_CODE = HardCodeVariable()
     saved_folder = "visualize/test_dataloader"

@@ -34,10 +34,12 @@ if __name__ == "__main__":
     MODEL_SAVE_NAME = args.task_id
     MODEL_SAVE_INTERVAL = 5
     DATA_PATH = args.input
-    DATASET_NAME = "shanghaitech"
     TOTAL_EPOCH = args.epochs
     PACNN_PERSPECTIVE_AWARE_MODEL = args.PACNN_PERSPECTIVE_AWARE_MODEL
     PACNN_MUTILPLE_SCALE_LOSS = args.PACNN_MUTILPLE_SCALE_LOSS
+    DATASET_NAME = "shanghaitech_pacnn"
+    if PACNN_PERSPECTIVE_AWARE_MODEL:
+        DATASET_NAME = "shanghaitech_pacnn_with_perspective"
 
     experiment.set_name(args.task_id)
     experiment.log_parameter("DATA_PATH", DATA_PATH)
@@ -122,7 +124,12 @@ if __name__ == "__main__":
             optimizer.zero_grad()
 
             # load data
-            d1_label, d2_label, d3_label = label
+            if PACNN_PERSPECTIVE_AWARE_MODEL:
+                d1_label, d2_label, d3_label, perspective_s, perspective_p = label
+                perspective_s = perspective_s.to(device).unsqueeze(0)
+                perspective_p = perspective_p.to(device).unsqueeze(0)
+            else:
+                d1_label, d2_label, d3_label = label
             d1_label = d1_label.to(device).unsqueeze(0)
             d2_label = d2_label.to(device).unsqueeze(0)
             d3_label = d3_label.to(device).unsqueeze(0)
@@ -142,7 +149,12 @@ if __name__ == "__main__":
 
             if PACNN_PERSPECTIVE_AWARE_MODEL:
                 # TODO: loss for perspective map here
-                pass
+                loss_p = criterion_mse(p, perspective_p) + criterion_ssim(p, perspective_p)
+                loss += loss_p
+                if PACNN_MUTILPLE_SCALE_LOSS:
+                    loss_p_s = criterion_mse(p_s, perspective_s) + criterion_ssim(p_s, perspective_s)
+                    loss += loss_p_s
+
             # what is this, loss_d count 2 ?
             ## loss_d = criterion_mse(d, d1_label) + criterion_ssim(d, d1_label)
             ## loss += loss_d
