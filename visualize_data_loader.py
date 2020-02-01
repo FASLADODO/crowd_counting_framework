@@ -53,7 +53,7 @@ def visualize_shanghaitech_pacnn_with_perspective():
     HARD_CODE = HardCodeVariable()
     saved_folder = "visualize/test_dataloader"
     os.makedirs(saved_folder, exist_ok=True)
-    DATA_PATH = HARD_CODE.SHANGHAITECH_PATH
+    DATA_PATH = HARD_CODE.SHANGHAITECH_PATH_PART_A
     train_list, val_list = get_train_val_list(DATA_PATH, test_size=0.2)
     test_list = None
 
