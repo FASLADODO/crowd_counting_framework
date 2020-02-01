@@ -9,8 +9,10 @@ DATAPATH=/data
 # mv perspective-shanghaitech.zip $DATAPATH
 # mv shanghaitech-with-people-density-map.zip $DATAPATH
 
-unzip perspective-shanghaitech.zip $DATAPATH
-unzip shanghaitech-with-people-density-map.zip $DATAPATH
+
+
+unzip $DATAPATH/perspective-shanghaitech.zip -d $DATAPATH
+unzip $DATAPATH/shanghaitech-with-people-density-map.zip -d $DATAPATH
 
 # put perspective
 mv  $DATAPATH/perspective-ShanghaiTech/A/train_pmap/  $DATAPATH/ShanghaiTech/part_A/train_data/pmap/
