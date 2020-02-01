@@ -40,8 +40,17 @@ if __name__ == "__main__":
         image_folder_list = [train_path_a, train_path_b, test_path_a, test_path_b]
         for image_root_path in image_folder_list:
             image_path_list = glob.glob(os.path.join(image_root_path, "images", "*.jpg"))
+            density_path_list = glob.glob(os.path.join(image_root_path, "ground-truth-h5", "*.h5"))
             count_img = len(image_path_list)
+            count_density_map = len(density_path_list)
             first_img = image_path_list[0]
+            first_density_map = density_path_list[0]
             print("in folder " + image_root_path)
-            print("--- there are total " + str(count_img))
+            print("--- total image" + str(count_img))
             print('--- first img ' + first_img)
+            print("--- total density map " + str(count_density_map))
+            print("--- first density map " + str(first_density_map))
+            if count_img == count_density_map:
+                print("--- number of density map = number of image")
+            else:
+                print("xxxxx number of density map !!!!!= number of image")
