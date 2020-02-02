@@ -10,7 +10,7 @@ from torchvision import transforms
 from models.context_aware_network import CANNet
 from data_util import ShanghaiTechDataPath
 from hard_code_variable import HardCodeVariable
-from visualize_util import save_img, save_density_map
+from visualize_util import save_img, save_density_map, save_density_map_with_colorrange
 
 _description="""
 This file run predict
@@ -92,17 +92,29 @@ for i in range(len(img_paths)):
     pred.append(pred_sum)
     gt.append(np.sum(groundtruth))
     print("done ", i, "pred ",pred_sum, " gt ", np.sum(groundtruth))
-    ## print out visual
-    name_prefix = os.path.join(saved_folder, "sample_"+str(i))
-    save_img(img_original_1, name_prefix+"_img1.png")
-    save_img(img_original_2, name_prefix + "_img2.png")
-    save_img(img_original_3, name_prefix + "_img3.png")
-    save_img(img_original_4, name_prefix + "_img4.png")
 
-    save_density_map(density_1.squeeze(), name_prefix + "_pred1.png")
-    save_density_map(density_2.squeeze(), name_prefix + "_pred2.png")
-    save_density_map(density_3.squeeze(), name_prefix + "_pred3.png")
-    save_density_map(density_4.squeeze(), name_prefix + "_pred4.png")
+    max_people_per_pix = 0
+    if density_1.max() > max_people_per_pix:
+        max_people_per_pix = density_1.max()
+    if density_2.max() > max_people_per_pix:
+        max_people_per_pix = density_2.max()
+    if density_3.max() > max_people_per_pix:
+        max_people_per_pix = density_3.max()
+    if density_4.max() > max_people_per_pix:
+        max_people_per_pix = density_4.max()
+
+    ## print out visual
+    if IS_VISUAL:
+        name_prefix = os.path.join(saved_folder, "sample_"+str(i))
+        save_img(img_original_1, name_prefix+"_img1.png")
+        save_img(img_original_2, name_prefix + "_img2.png")
+        save_img(img_original_3, name_prefix + "_img3.png")
+        save_img(img_original_4, name_prefix + "_img4.png")
+
+        save_density_map_with_colorrange(density_1.squeeze(), name_prefix + "_pred1.png", 0, 0.18)
+        save_density_map_with_colorrange(density_2.squeeze(), name_prefix + "_pred2.png", 0, 0.18)
+        save_density_map_with_colorrange(density_3.squeeze(), name_prefix + "_pred3.png", 0, 0.18)
+        save_density_map_with_colorrange(density_4.squeeze(), name_prefix + "_pred4.png", 0, 0.18)
     ##
 
 print(len(pred))
@@ -112,3 +124,4 @@ rmse = np.sqrt(mean_squared_error(pred,gt))
 
 print('MAE: ',mae)
 print('RMSE: ',rmse)
+print("max people per pix ", max_people_per_pix)
