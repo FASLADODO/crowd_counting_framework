@@ -50,6 +50,25 @@ def visualize_ucf_cc_50_pacnn():
     print("count3 ", label[2].numpy()[0].sum())
 
 
+def visualize_shanghaitech_keepfull():
+    HARD_CODE = HardCodeVariable()
+    shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
+    shanghaitech_data_part_a_train = shanghaitech_data.get_a().get_train().get()
+    saved_folder = "visualize/test_dataloader_shanghaitech"
+    os.makedirs(saved_folder, exist_ok=True)
+    train_list, val_list = get_train_val_list(shanghaitech_data_part_a_train, test_size=0.2)
+    test_list = None
+    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_keepfull", visualize_mode=True)
+
+    # do with train loader
+    train_loader_iter = iter(train_loader)
+    for i in range(10):
+        img, label = next(train_loader_iter)
+        save_img(img, os.path.join(saved_folder, "train_img" + str(i) +".png"))
+        save_density_map(label.numpy()[0][0], os.path.join(saved_folder, "train_label" + str(i) +".png"))
+
+
+
 def visualize_shanghaitech_pacnn_with_perspective():
     HARD_CODE = HardCodeVariable()
     shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
@@ -95,4 +114,5 @@ def visualize_shanghaitech_pacnn_with_perspective():
     print("s5 ", label[4].shape)
 
 if __name__ == "__main__":
-    visualize_shanghaitech_pacnn_with_perspective()
+    # visualize_shanghaitech_pacnn_with_perspective()
+    visualize_shanghaitech_keepfull()

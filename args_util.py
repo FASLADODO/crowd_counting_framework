@@ -3,7 +3,7 @@ contain dummy args with config
 helpfull for copy paste Kaggle
 """
 import argparse
-
+from hard_code_variable import HardCodeVariable
 
 def make_args(gpu="0", task="task_one_"):
     """
@@ -62,8 +62,8 @@ def real_args_parse():
     parser.add_argument("--task_id", action="store", default="dev")
     parser.add_argument('-a', action="store_true", default=False)
 
-    parser.add_argument('--input', action="store",  type=str)
-    parser.add_argument('--output', action="store", type=str)
+    parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--output', action="store", type=str, default="saved_model")
     parser.add_argument('--model', action="store", default="pacnn")
 
     # args with default value
