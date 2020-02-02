@@ -75,6 +75,7 @@ if __name__ == "__main__":
 
     # docs on save and load
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-    save_handler = Checkpoint(to_save, DiskSaver('saved_model/context_aware_network', create_dir=True))
+    save_handler = Checkpoint(to_save, DiskSaver('saved_model/context_aware_network', create_dir=True), filename_prefix=args.task_id)
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler)
+
     trainer.run(train_loader, max_epochs=args.epochs)
