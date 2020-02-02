@@ -3,7 +3,7 @@ contain dummy args with config
 helpfull for copy paste Kaggle
 """
 import argparse
-
+from hard_code_variable import HardCodeVariable
 
 def make_args(gpu="0", task="task_one_"):
     """
@@ -52,6 +52,32 @@ def like_real_args_parse(data_input):
     args.print_freq = 30
 
 
+def context_aware_network_args_parse():
+    """
+    this is not dummy
+    if you are going to make all-in-one notebook, ignore this
+    :return:
+    """
+    parser = argparse.ArgumentParser(description='CrowdCounting Context Aware Network')
+    parser.add_argument("--task_id", action="store", default="dev")
+    parser.add_argument('-a', action="store_true", default=False)
+
+    parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--output', action="store", type=str, default="saved_model/context_aware_network")
+    parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
+
+    # args with default value
+    parser.add_argument('--load_model', action="store", default="", type=str)
+    parser.add_argument('--lr', action="store", default=1e-8, type=float)
+    parser.add_argument('--momentum', action="store", default=0.9, type=float)
+    parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
+    parser.add_argument('--epochs', action="store", default=1, type=int)
+    parser.add_argument('--test', action="store_true", default=False)
+
+
+    arg = parser.parse_args()
+    return arg
+
 def real_args_parse():
     """
     this is not dummy
@@ -62,8 +88,8 @@ def real_args_parse():
     parser.add_argument("--task_id", action="store", default="dev")
     parser.add_argument('-a', action="store_true", default=False)
 
-    parser.add_argument('--input', action="store",  type=str)
-    parser.add_argument('--output', action="store", type=str)
+    parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--output', action="store", type=str, default="saved_model")
     parser.add_argument('--model', action="store", default="pacnn")
 
     # args with default value

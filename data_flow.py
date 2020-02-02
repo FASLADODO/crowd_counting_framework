@@ -46,6 +46,13 @@ def get_train_val_list(data_path, test_size=0.1):
 
 
 def load_data(img_path, train=True):
+    """
+    get a sample
+    :deprecate: use load_data_shanghaiTech now
+    :param img_path:
+    :param train:
+    :return:
+    """
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
@@ -55,6 +62,54 @@ def load_data(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * 64
 
     return img, target
+
+
+def load_data_shanghaitech(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= -1:
+
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                        interpolation=cv2.INTER_CUBIC) * 64
+    target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
+
+
+def load_data_shanghaitech_keepfull(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    if train:
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                        interpolation=cv2.INTER_CUBIC) * 64
+
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    # np.expand_dims(target1, axis=0)  # again
+    return img, target1
 
 
 def load_data_ucf_cc50(img_path, train=True):
@@ -254,7 +309,9 @@ class ListDataset(Dataset):
         self.dataset_name = dataset_name
         # load data fn
         if dataset_name is "shanghaitech":
-            self.load_data_fn = load_data
+            self.load_data_fn = load_data_shanghaitech
+        if dataset_name is "shanghaitech_keepfull":
+            self.load_data_fn = load_data_shanghaitech_keepfull
         elif dataset_name is "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name is "ucf_cc_50_pacnn":
@@ -278,35 +335,43 @@ class ListDataset(Dataset):
         return img, target
 
 
-def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech"):
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False):
+    if visualize_mode:
+        transformer = transforms.Compose([
+            transforms.ToTensor()
+        ])
+    else:
+        transformer = transforms.Compose([
+                                    transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                                            std=[0.229, 0.224, 0.225]),
+                            ])
+
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
-                            shuffle=True,
-                            transform=transforms.Compose([
-                                transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                            std=[0.229, 0.224, 0.225]),
-                            ]),
-                            train=True,
-                            batch_size=1,
-                            num_workers=4, dataset_name=dataset_name),
-        batch_size=1, num_workers=4)
+                    shuffle=True,
+                    transform=transformer,
+                    train=True,
+                    batch_size=1,
+                    num_workers=4,
+                    dataset_name=dataset_name),
+        batch_size=1,
+        num_workers=4)
 
     val_loader = torch.utils.data.DataLoader(
         ListDataset(val_list,
-                            shuffle=False,
-                            transform=transforms.Compose([
-                                transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                            std=[0.229, 0.224, 0.225]),
-                            ]), train=False, dataset_name=dataset_name),
+                    shuffle=False,
+                    transform=transformer,
+                    train=False,
+                    dataset_name=dataset_name),
         batch_size=1)
+
     if test_list is not None:
         test_loader = torch.utils.data.DataLoader(
             ListDataset(test_list,
                         shuffle=False,
-                        transform=transforms.Compose([
-                            transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                        std=[0.229, 0.224, 0.225]),
-                        ]), train=False, dataset_name=dataset_name),
+                        transform=transformer,
+                        train=False,
+                        dataset_name=dataset_name),
             batch_size=1)
     else:
         test_loader = None
