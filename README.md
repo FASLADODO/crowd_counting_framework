@@ -9,3 +9,11 @@ conda install ignite -c pytorch
 conda install h5py
 conda install scikit-learn
 ```
+
+### make data folder
+Let make `/data` folder at root
+```
+cd /
+sudo mkdir data
+sudo chown -R tt /data/
+```

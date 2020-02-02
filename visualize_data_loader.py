@@ -14,6 +14,7 @@ from data_flow import ListDataset
 import pytorch_ssim
 
 from hard_code_variable import HardCodeVariable
+from data_util import ShanghaiTechDataPath
 from visualize_util import save_img, save_density_map
 
 def visualize_ucf_cc_50_pacnn():
@@ -51,10 +52,12 @@ def visualize_ucf_cc_50_pacnn():
 
 def visualize_shanghaitech_pacnn_with_perspective():
     HARD_CODE = HardCodeVariable()
+    shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
+    shanghaitech_data_part_a_train = shanghaitech_data.get_a().get_train().get()
     saved_folder = "visualize/test_dataloader"
     os.makedirs(saved_folder, exist_ok=True)
-    DATA_PATH = HARD_CODE.SHANGHAITECH_PATH
-    train_list, val_list = get_train_val_list(DATA_PATH, test_size=0.2)
+    DATA_PATH = HARD_CODE.SHANGHAITECH_PATH_PART_A
+    train_list, val_list = get_train_val_list(shanghaitech_data_part_a_train, test_size=0.2)
     test_list = None
 
     # create data loader
