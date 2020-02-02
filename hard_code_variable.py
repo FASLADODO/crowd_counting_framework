@@ -20,7 +20,7 @@ if __name__ == "__main__":
     """
     Test if path is working 
     """
-    hard_code =HardCodeVariable()
+    hard_code = HardCodeVariable()
     if os.path.exists(hard_code.SHANGHAITECH_PATH):
         print("exist " + hard_code.SHANGHAITECH_PATH)
         print("let see if we have train, test folder")
