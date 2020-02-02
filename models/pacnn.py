@@ -73,8 +73,6 @@ class PACNNWithPerspectiveMap(nn.Module):
             pespective_w_s = self.perspective_11(self.perspective_net(x))
             pespective_w = self.up_perspective(pespective_w_s)
 
-
-            # TODO: code more here
             upde3 = self.up23(de3)
             pad_3_0 = de2.size()[2] - upde3.size()[2]
             pad_3_1 = de2.size()[3] - upde3.size()[3]
@@ -133,9 +131,9 @@ def parameter_count_test():
     print(sum_of_part)
 
 if __name__ == "__main__":
-    parameter_count_test()
-    # net = PACNN()
-    # print(net.de1net)
+    # parameter_count_test()
+    net = PACNN()
+    print(net.de1net)
     # img = torch.rand(1, 3, 320, 320)
     # de1, de2, de3 = net(img)
     # print(de1.size())
