@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm as CM
 import os
 import numpy as np
+import time
 
 from PIL import Image
 
@@ -31,3 +32,10 @@ def save_img(imgnp, name):
     # plt.show()
     # im = Image.fromarray(imgnp[0].permute(1, 2, 0).numpy())
     # im.save(name)
+
+def get_readable_time():
+    """
+    make human readable time with format year-month-day hour-minute
+    :return: a string of human readable time (ex: '2020-02-24 10:31' )
+    """
+    return time.strftime('%Y-%m-%d %H:%M')

@@ -5,6 +5,7 @@ from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
 from ignite.engine import Engine
 from ignite.handlers import Checkpoint, DiskSaver
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
+from visualize_util import get_readable_time
 
 import torch
 from torch import nn
@@ -55,14 +56,16 @@ if __name__ == "__main__":
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
     def log_training_loss(trainer):
-        print("Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
+        timestamp = get_readable_time()
+        print(timestamp + " Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
 
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
         evaluator.run(train_loader)
         metrics = evaluator.state.metrics
-        print("Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+        timestamp = get_readable_time()
+        print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
 
 
@@ -70,12 +73,13 @@ if __name__ == "__main__":
     def log_validation_results(trainer):
         evaluator.run(val_loader)
         metrics = evaluator.state.metrics
-        print("Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+        timestamp = get_readable_time()
+        print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
 
     # docs on save and load
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-    save_handler = Checkpoint(to_save, DiskSaver('saved_model/context_aware_network', create_dir=True), filename_prefix=args.task_id)
+    save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True), filename_prefix=args.task_id)
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler)
 
     trainer.run(train_loader, max_epochs=args.epochs)
