@@ -113,7 +113,10 @@ class AttnCanAdcrowdNet(nn.Module):
         x = F.relu(self.concat_filter_layer_3(x))
 
         x = self.output_layer(x)
-        x = nn.functional.upsample(x, scale_factor=8, mode='bilinear') / 64.0
+
+        # this cause too much dimension mismatch problem
+        # so we desampling label instead
+        # x = nn.functional.upsample(x, scale_factor=8, mode='bilinear') / 64.0
         return x
 
     def _initialize_weights(self):
