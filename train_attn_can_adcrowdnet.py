@@ -77,21 +77,13 @@ if __name__ == "__main__":
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
 
-    def score_function(engine):
-        """
-        saver score function
-        :param engine:
-        :return:
-        """
-        engine.state.metrics['mae']
+
 
     # docs on save and load
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
     save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
                               filename_prefix=args.task_id,
-                              n_saved=5,
-                              score_function=score_function,
-                              score_name="mae")
+                              n_saved=5)
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=3), save_handler)
 
