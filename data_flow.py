@@ -94,6 +94,34 @@ def load_data_shanghaitech(img_path, train=True):
     return img, target1
 
 
+def load_data_shanghaitech_same_size_density_map(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= -1:
+
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = target
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
+
 def load_data_shanghaitech_keepfull(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img = Image.open(img_path).convert('RGB')
@@ -311,6 +339,8 @@ class ListDataset(Dataset):
         # load data fn
         if dataset_name is "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
+        if dataset_name is "shanghaitech_same_size_density_map":
+            self.load_data_fn = load_data_shanghaitech_same_size_density_map
         if dataset_name is "shanghaitech_keepfull":
             self.load_data_fn = load_data_shanghaitech_keepfull
         elif dataset_name is "ucf_cc_50":
