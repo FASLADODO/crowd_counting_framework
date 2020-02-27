@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
-    test_list = create_training_image_list(TEST_PATH)
+    test_list = None
 
     # create data loader
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_keepfull")

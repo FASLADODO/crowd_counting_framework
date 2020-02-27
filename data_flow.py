@@ -279,7 +279,7 @@ def data_augmentation(img, target):
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
-                 num_workers=4, dataset_name="shanghaitech"):
+                 num_workers=0, dataset_name="shanghaitech"):
         """
         if you have different image size, then batch_size must be 1
         :param root:
@@ -352,7 +352,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     transform=transformer,
                     train=True,
                     batch_size=1,
-                    num_workers=4,
+                    num_workers=0,
                     dataset_name=dataset_name),
         batch_size=1,
         num_workers=4)
@@ -363,7 +363,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     transform=transformer,
                     train=False,
                     dataset_name=dataset_name),
-        num_workers=4,
+        num_workers=0,
         batch_size=1)
 
     if test_list is not None:
@@ -373,7 +373,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         transform=transformer,
                         train=False,
                         dataset_name=dataset_name),
-            num_workers=4,
+            num_workers=0,
             batch_size=1)
     else:
         test_loader = None
