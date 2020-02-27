@@ -93,6 +93,6 @@ if __name__ == "__main__":
                               score_function=score_function,
                               score_name="mae")
 
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=2), save_handler)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=3), save_handler)
 
     trainer.run(train_loader, max_epochs=args.epochs)

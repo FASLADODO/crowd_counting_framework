@@ -363,6 +363,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     transform=transformer,
                     train=False,
                     dataset_name=dataset_name),
+        num_workers=4,
         batch_size=1)
 
     if test_list is not None:
@@ -372,6 +373,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         transform=transformer,
                         train=False,
                         dataset_name=dataset_name),
+            num_workers=4,
             batch_size=1)
     else:
         test_loader = None
