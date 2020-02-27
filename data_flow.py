@@ -89,7 +89,8 @@ def load_data_shanghaitech(img_path, train=True):
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
-    target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
 
