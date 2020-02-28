@@ -38,8 +38,7 @@ if __name__ == "__main__":
     # loss function
     loss_fn = nn.MSELoss(size_average=False).to(device)
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
+    optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
