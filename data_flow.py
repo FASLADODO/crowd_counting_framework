@@ -338,19 +338,19 @@ class ListDataset(Dataset):
         self.dataset_name = dataset_name
         print("in ListDataset dataset_name is |" + dataset_name + "|")
         # load data fn
-        if dataset_name is "shanghaitech":
+        if dataset_name == "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
-        if dataset_name is "shanghaitech_same_size_density_map":
+        if dataset_name == "shanghaitech_same_size_density_map":
             self.load_data_fn = load_data_shanghaitech_same_size_density_map
-        if dataset_name is "shanghaitech_keepfull":
+        if dataset_name == "shanghaitech_keepfull":
             self.load_data_fn = load_data_shanghaitech_keepfull
-        elif dataset_name is "ucf_cc_50":
+        elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
-        elif dataset_name is "ucf_cc_50_pacnn":
+        elif dataset_name == "ucf_cc_50_pacnn":
             self.load_data_fn = load_data_ucf_cc50_pacnn
-        elif dataset_name is "shanghaitech_pacnn":
+        elif dataset_name == "shanghaitech_pacnn":
             self.load_data_fn = load_data_shanghaitech_pacnn
-        elif dataset_name is "shanghaitech_pacnn_with_perspective":
+        elif dataset_name == "shanghaitech_pacnn_with_perspective":
             self.load_data_fn = load_data_shanghaitech_pacnn_with_perspective
 
     def __len__(self):
