@@ -1,4 +1,4 @@
-from args_util import my_args_marse
+from args_util import my_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
@@ -16,7 +16,7 @@ import os
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
-    args = my_args_marse()
+    args = my_args_parse()
     print(args)
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")

@@ -78,7 +78,8 @@ def context_aware_network_args_parse():
     arg = parser.parse_args()
     return arg
 
-def my_args_marse():
+
+def my_args_parse():
     parser = argparse.ArgumentParser(description='CrowdCounting Context Aware Network')
     parser.add_argument("--task_id", action="store", default="dev")
     parser.add_argument('-a', action="store_true", default=False)
@@ -93,6 +94,8 @@ def my_args_marse():
     parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
     parser.add_argument('--epochs', action="store", default=1, type=int)
     parser.add_argument('--test', action="store_true", default=False)
+    arg = parser.parse_args()
+    return arg
 
 def real_args_parse():
     """
