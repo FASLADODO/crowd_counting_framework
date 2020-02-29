@@ -22,10 +22,13 @@ if __name__ == "__main__":
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
     dataset_name = args.datasetname
-    if (dataset_name=="shanghaitech"):
+    if dataset_name=="shanghaitech":
         print("will use shanghaitech dataset with crop ")
-    if dataset_name == "shanghaitech_keepfull":
+    elif dataset_name == "shanghaitech_keepfull":
         print("will use shanghaitech_keepfull")
+    else:
+        print("cannot detect dataset_name")
+        print("current dataset_name is ", dataset_name)
 
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
