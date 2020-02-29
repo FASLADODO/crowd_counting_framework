@@ -25,14 +25,13 @@ if __name__ == "__main__":
     if (dataset_name=="shanghaitech"):
         print("will use shanghaitech dataset with crop ")
     if dataset_name == "shanghaitech_keepfull":
-        print("")
+        print("will use shanghaitech_keepfull")
 
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
     test_list = None
 
     # create data loader
-
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name)
 
 
