@@ -21,14 +21,17 @@ if __name__ == "__main__":
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
-
+    dataset_name = args.datasetname
+    if (dataset_name=="shanghaitech"):
+        print("so true")
 
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
     test_list = None
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech")
+
+    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name)
 
 
     # model
