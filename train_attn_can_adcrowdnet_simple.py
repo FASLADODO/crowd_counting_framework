@@ -9,7 +9,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import AttnCanAdcrowdNetSimpleV1
+from models import AttnCanAdcrowdNetSimpleV2
 import os
 
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
 
     # model
-    model = AttnCanAdcrowdNetSimpleV1()
+    model = AttnCanAdcrowdNetSimpleV2()
     model = model.to(device)
 
     # loss function
