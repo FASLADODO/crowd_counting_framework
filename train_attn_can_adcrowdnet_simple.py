@@ -36,7 +36,7 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # loss function
-    loss_fn = nn.MSELoss().to(device)
+    loss_fn = nn.MSELoss(reduction='sum').to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
