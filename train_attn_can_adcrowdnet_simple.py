@@ -23,7 +23,9 @@ if __name__ == "__main__":
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
     dataset_name = args.datasetname
     if (dataset_name=="shanghaitech"):
-        print("so true")
+        print("will use shanghaitech dataset with crop ")
+    if dataset_name == "shanghaitech_keepfull":
+        print("")
 
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
