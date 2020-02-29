@@ -336,6 +336,7 @@ class ListDataset(Dataset):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.dataset_name = dataset_name
+        print("in ListDataset dataset_name is ", dataset_name)
         # load data fn
         if dataset_name is "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
