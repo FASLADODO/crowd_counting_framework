@@ -28,7 +28,7 @@ if __name__ == "__main__":
     test_list = None
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=args.datasetname)
+    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech")
 
 
     # model
