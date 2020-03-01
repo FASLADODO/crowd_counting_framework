@@ -37,6 +37,7 @@ if __name__ == "__main__":
     # create data loader
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name)
 
+    print("len train_loader ", len(train_loader))
 
     # model
     model = AttnCanAdcrowdNetSimpleV3()
