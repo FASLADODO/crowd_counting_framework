@@ -67,6 +67,9 @@ if __name__ == "__main__":
         checkpoint = torch.load(load_model_path)
         Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
         print("load model complete")
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = args.lr
+            print("change lr to ", args.lr)
     else:
         print("do not load, keep training")
 
