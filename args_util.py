@@ -97,6 +97,15 @@ def my_args_parse():
     arg = parser.parse_args()
     return arg
 
+
+def sanity_check_dataloader_parse():
+    parser = argparse.ArgumentParser(description='Dataloader')
+    parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
+    arg = parser.parse_args()
+    return arg
+
+
 def real_args_parse():
     """
     this is not dummy
