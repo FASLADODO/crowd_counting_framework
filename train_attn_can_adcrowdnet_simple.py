@@ -1,5 +1,5 @@
 from args_util import my_args_parse
-from data_flow import get_train_val_list, get_dataloader, create_training_image_list
+from data_flow import get_train_val_list, get_dataloader, create_training_image_list, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
 from ignite.engine import Engine
@@ -31,11 +31,11 @@ if __name__ == "__main__":
         print("current dataset_name is ", dataset_name)
 
     # create list
-    train_list, val_list = get_train_val_list(TRAIN_PATH)
-    test_list = None
+    train_list = create_image_list(TRAIN_PATH)
+    test_list = create_image_list(TEST_PATH)
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name)
+    train_loader, val_loader, test_loader = get_dataloader(train_list, None, test_list, dataset_name=dataset_name)
 
     print("len train_loader ", len(train_loader))
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
-        evaluator.run(val_loader)
+        evaluator.run(test_loader)
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"

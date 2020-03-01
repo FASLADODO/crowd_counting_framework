@@ -33,6 +33,12 @@ def create_training_image_list(data_path):
     return image_path_list
 
 
+def create_image_list(data_path):
+    DATA_PATH = data_path
+    image_path_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
+    return image_path_list
+
+
 def get_train_val_list(data_path, test_size=0.1):
     DATA_PATH = data_path
     image_path_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
@@ -389,14 +395,17 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
         batch_size=1,
         num_workers=4)
 
-    val_loader = torch.utils.data.DataLoader(
-        ListDataset(val_list,
-                    shuffle=False,
-                    transform=transformer,
-                    train=False,
-                    dataset_name=dataset_name),
-        num_workers=0,
-        batch_size=1)
+    if val_list is not None:
+        val_loader = torch.utils.data.DataLoader(
+            ListDataset(val_list,
+                        shuffle=False,
+                        transform=transformer,
+                        train=False,
+                        dataset_name=dataset_name),
+            num_workers=0,
+            batch_size=1)
+    else:
+        val_loader = None
 
     if test_list is not None:
         test_loader = torch.utils.data.DataLoader(
