@@ -66,6 +66,8 @@ if __name__ == "__main__":
         checkpoint = torch.load(load_model_path)
         Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
         print("load model complete")
+    else:
+        print("do not load, keep training")
 
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
