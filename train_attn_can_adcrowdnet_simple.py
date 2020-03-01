@@ -59,6 +59,14 @@ if __name__ == "__main__":
 
     print(args)
 
+    if len(args.load_model) > 0:
+        load_model_path = args.load_model
+        print("load mode " + load_model_path)
+        to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+        checkpoint = torch.load(load_model_path)
+        Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
+        print("load model complete")
+
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
     def log_training_loss(trainer):
@@ -92,13 +100,5 @@ if __name__ == "__main__":
                               n_saved=5)
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=3), save_handler)
-
-    if len(args.load_model) > 0:
-        load_model_path = args.load_model
-        print("load mode " + load_model_path)
-        to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-        checkpoint = torch.load(load_model_path)
-        Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
-        print("load model complete")
 
     trainer.run(train_loader, max_epochs=args.epochs)

@@ -14,4 +14,4 @@ CUDA_VISIBLE_DEVICES=3 nohup python train_attn_can_adcrowdnet_simple.py  \
 --lr 1e-5 \
 --decay 5e-4 \
 --datasetname shanghaitech_keepfull \
---epochs 46 > logs/simple_v2_t3.log  &
+--epochs 60 > logs/simple_v2_t3.log  &
