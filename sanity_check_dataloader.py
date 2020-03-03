@@ -25,6 +25,8 @@ if __name__ == "__main__":
     print("============== TRAIN LOADER ====================================================")
     for img, label in train_loader:
         print("img shape:" + str(img.shape) + " == " + "label shape " +  str(label.shape))
+        # example: img shape:torch.Size([1, 3, 716, 1024]) == label shape torch.Size([1, 1, 89, 128])
+
     print("============== VAL LOADER ====================================================")
     for img, label in val_loader:
         print("img shape:" + str(img.shape) + " == " + "label shape " +  str(label.shape))
