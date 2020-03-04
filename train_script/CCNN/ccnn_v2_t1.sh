@@ -4,4 +4,4 @@ CUDA_VISIBLE_DEVICES=5 nohup python train_compact_cnn_lrscheduler.py  \
 --lr 1e-4 \
 --decay 5e-4 \
 --datasetname shanghaitech \
---epochs 500 > logs/ccnn_v2_t1.log  &
+--epochs 400 > logs/ccnn_v2_t1.log  &
