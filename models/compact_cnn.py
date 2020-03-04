@@ -15,13 +15,13 @@ class CompactCNN(nn.Module):
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
         self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
-        self.max_pooling = nn.MaxPool2d(2, stride=2)
+        self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.c1 = nn.Conv2d(40, 60, 3, padding=1)
         self.c2 = nn.Conv2d(60, 40, 3, padding=1)
         self.c3 = nn.Conv2d(40, 20, 3, padding=1)
         self.c4 = nn.Conv2d(20, 10, 3, padding=1)
-        self.output = nn.Conv2d(10, 1, 1, padding=1)
+        self.output = nn.Conv2d(10, 1, 1)
 
     def forward(self,x):
         x_red = self.max_pooling(F.relu(self.red_cnn(x), inplace=True))
