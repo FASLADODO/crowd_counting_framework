@@ -48,4 +48,8 @@ def calculate_padding(kernel_size, dilation):
 
 
 if __name__ == "__main__":
-    print(calculate_padding(3, 4))
+    print(calculate_padding(kernel_size=3, dilation=4))
+    print(calculate_padding(kernel_size=5, dilation=1))
+    print(calculate_padding(kernel_size=7, dilation=1))
+    print(calculate_padding(kernel_size=9, dilation=1))
+    print(calculate_padding(kernel_size=3, dilation=1))
