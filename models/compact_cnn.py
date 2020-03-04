@@ -12,9 +12,9 @@ class CompactCNN(nn.Module):
     """
     def __init__(self, load_weights=False):
         super(CompactCNN, self).__init__()
-        self.red_cnn = nn.Conv2d(3, 10, 9, padding=2)
+        self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
-        self.blue_cnn = nn.Conv2d(3, 16, 5, padding=4)
+        self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
         self.max_pooling = nn.MaxPool2d(2, stride=2)
 
         self.c1 = nn.Conv2d(40, 60, 3, padding=1)
