@@ -5,3 +5,4 @@ from .deform_conv_v2 import DeformConv2d
 from .attn_can_adcrowdnet import AttnCanAdcrowdNet
 from .attn_can_adcrowdnet_freeze_vgg import AttnCanAdcrowdNetFreezeVgg
 from .attn_can_adcrowdnet_simple import AttnCanAdcrowdNetSimpleV1, AttnCanAdcrowdNetSimpleV2, AttnCanAdcrowdNetSimpleV3
+from .compact_cnn import CompactCNN
