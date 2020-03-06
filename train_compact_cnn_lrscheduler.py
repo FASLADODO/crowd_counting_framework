@@ -50,7 +50,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    step_scheduler = StepLR(optimizer, step_size=100, gamma=0.1)
+    step_scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
     lr_scheduler = LRScheduler(step_scheduler)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
