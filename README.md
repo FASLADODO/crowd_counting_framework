@@ -10,6 +10,7 @@ conda install h5py
 conda install scikit-learn
 conda install -c anaconda pillow
 conda install -c anaconda numpy
+pip install torchsummary 
 ```
 
 for CUDA 9.0
