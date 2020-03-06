@@ -53,3 +53,8 @@ if __name__ == "__main__":
     print(calculate_padding(kernel_size=7, dilation=1))
     print(calculate_padding(kernel_size=9, dilation=1))
     print(calculate_padding(kernel_size=3, dilation=1))
+
+    print("-----compact dilated cnn -----------------")
+    print(calculate_padding(kernel_size=5, dilation=3))
+    print(calculate_padding(kernel_size=5, dilation=2))
+    print(calculate_padding(kernel_size=5, dilation=1))

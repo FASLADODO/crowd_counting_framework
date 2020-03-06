@@ -1,4 +1,4 @@
-from models import CompactCNN, AttnCanAdcrowdNetSimpleV3
+from models import CompactCNN, AttnCanAdcrowdNetSimpleV3, CompactDilatedCNN
 from torchsummary import summary
 
 def very_simple_param_count(model):
@@ -15,11 +15,16 @@ if __name__ == "__main__":
     print(summary(ccnn, (3, 512, 512)))
     print("simple count", very_simple_param_count(ccnn))
     print("===========================================================================")
-    print("simple_v3")
-    simplev3 = AttnCanAdcrowdNetSimpleV3()
-    print(simplev3)
-    print("-------------")
-    # print(summary(ccnn, (3, 128, 128)))  # we print twice to confirm trainable parameter independent with input size
-    print("-------------")
-    print(summary(simplev3, (3, 512, 512)))
-    print("simple count", very_simple_param_count(simplev3))
+    print("dilate ccnn")
+    dcnn = CompactDilatedCNN()
+    print(summary(dcnn, (3, 512, 512)))
+    print("=============================================================================")
+    # print("simple_v3")
+    # simplev3 = AttnCanAdcrowdNetSimpleV3()
+    # print(simplev3)
+    # print("-------------")
+    # # print(summary(ccnn, (3, 128, 128)))  # we print twice to confirm trainable parameter independent with input size
+    # print("-------------")
+    # print(summary(simplev3, (3, 512, 512)))
+    # print("simple count", very_simple_param_count(simplev3))
+    #
