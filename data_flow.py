@@ -33,6 +33,12 @@ def create_training_image_list(data_path):
     return image_path_list
 
 
+def create_image_list(data_path):
+    DATA_PATH = data_path
+    image_path_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
+    return image_path_list
+
+
 def get_train_val_list(data_path, test_size=0.1):
     DATA_PATH = data_path
     image_path_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
@@ -89,9 +95,38 @@ def load_data_shanghaitech(img_path, train=True):
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
-    target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
+
+def load_data_shanghaitech_same_size_density_map(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= -1:
+
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = target
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
 
 def load_data_shanghaitech_keepfull(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -279,7 +314,7 @@ def data_augmentation(img, target):
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
-                 num_workers=4, dataset_name="shanghaitech"):
+                 num_workers=0, dataset_name="shanghaitech"):
         """
         if you have different image size, then batch_size must be 1
         :param root:
@@ -307,18 +342,21 @@ class ListDataset(Dataset):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.dataset_name = dataset_name
+        print("in ListDataset dataset_name is |" + dataset_name + "|")
         # load data fn
-        if dataset_name is "shanghaitech":
+        if dataset_name == "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
-        if dataset_name is "shanghaitech_keepfull":
+        if dataset_name == "shanghaitech_same_size_density_map":
+            self.load_data_fn = load_data_shanghaitech_same_size_density_map
+        if dataset_name == "shanghaitech_keepfull":
             self.load_data_fn = load_data_shanghaitech_keepfull
-        elif dataset_name is "ucf_cc_50":
+        elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
-        elif dataset_name is "ucf_cc_50_pacnn":
+        elif dataset_name == "ucf_cc_50_pacnn":
             self.load_data_fn = load_data_ucf_cc50_pacnn
-        elif dataset_name is "shanghaitech_pacnn":
+        elif dataset_name == "shanghaitech_pacnn":
             self.load_data_fn = load_data_shanghaitech_pacnn
-        elif dataset_name is "shanghaitech_pacnn_with_perspective":
+        elif dataset_name == "shanghaitech_pacnn_with_perspective":
             self.load_data_fn = load_data_shanghaitech_pacnn_with_perspective
 
     def __len__(self):
@@ -352,18 +390,22 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     transform=transformer,
                     train=True,
                     batch_size=1,
-                    num_workers=4,
+                    num_workers=0,
                     dataset_name=dataset_name),
         batch_size=1,
         num_workers=4)
 
-    val_loader = torch.utils.data.DataLoader(
-        ListDataset(val_list,
-                    shuffle=False,
-                    transform=transformer,
-                    train=False,
-                    dataset_name=dataset_name),
-        batch_size=1)
+    if val_list is not None:
+        val_loader = torch.utils.data.DataLoader(
+            ListDataset(val_list,
+                        shuffle=False,
+                        transform=transformer,
+                        train=False,
+                        dataset_name=dataset_name),
+            num_workers=0,
+            batch_size=1)
+    else:
+        val_loader = None
 
     if test_list is not None:
         test_loader = torch.utils.data.DataLoader(
@@ -372,6 +414,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         transform=transformer,
                         train=False,
                         dataset_name=dataset_name),
+            num_workers=0,
             batch_size=1)
     else:
         test_loader = None

@@ -9,11 +9,15 @@ from .squeeze_and_excitation import ChannelSpatialSELayer
 # from dcn.modules.deform_conv import DeformConvPack, ModulatedDeformConvPack
 
 
-class AttnCanAdcrowdNet(nn.Module):
+class AttnCanAdcrowdNetFreezeVgg(nn.Module):
     def __init__(self, load_weights=False):
-        super(AttnCanAdcrowdNet, self).__init__()
+        super(AttnCanAdcrowdNetFreezeVgg, self).__init__()
         self.frontend_feat = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512]
         self.frontend = make_layers(self.frontend_feat)
+
+        # freeze vgg layer
+        for param in self.frontend.parameters():
+            param.requires_grad = False
 
         self.csSE = ChannelSpatialSELayer(num_channels=512, reduction_ratio=1)
 

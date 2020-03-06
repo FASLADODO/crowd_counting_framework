@@ -9,7 +9,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import AttnCanAdcrowdNet
+from models import AttnCanAdcrowdNetFreezeVgg
 import os
 
 
@@ -32,14 +32,13 @@ if __name__ == "__main__":
 
 
     # model
-    model = AttnCanAdcrowdNet()
+    model = AttnCanAdcrowdNetFreezeVgg()
     model = model.to(device)
 
     # loss function
     loss_fn = nn.MSELoss(size_average=False).to(device)
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
+    optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)

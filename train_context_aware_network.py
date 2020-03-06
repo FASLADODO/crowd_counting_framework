@@ -22,7 +22,6 @@ if __name__ == "__main__":
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
 
-
     # create list
     train_list, val_list = get_train_val_list(TRAIN_PATH)
     test_list = create_training_image_list(TEST_PATH)
@@ -30,19 +29,17 @@ if __name__ == "__main__":
     # create data loader
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_keepfull")
 
-
     # model
     model = CANNet()
     model = model.to(device)
 
     # loss function
-    loss_fn = nn.MSELoss(size_average=False).to(device)
+    loss_fn = nn.MSELoss(reduction='sum').to(device)
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
+    optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
+    model_trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator = create_supervised_evaluator(model,
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteError(),
@@ -54,13 +51,13 @@ if __name__ == "__main__":
     print(args)
 
 
-    @trainer.on(Events.ITERATION_COMPLETED(every=50))
+    @model_trainer.on(Events.ITERATION_COMPLETED(every=50))
     def log_training_loss(trainer):
         timestamp = get_readable_time()
         print(timestamp + " Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
 
 
-    @trainer.on(Events.EPOCH_COMPLETED)
+    @model_trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
         evaluator.run(train_loader)
         metrics = evaluator.state.metrics
@@ -69,7 +66,7 @@ if __name__ == "__main__":
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
 
 
-    @trainer.on(Events.EPOCH_COMPLETED)
+    @model_trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
         evaluator.run(val_loader)
         metrics = evaluator.state.metrics
@@ -78,8 +75,10 @@ if __name__ == "__main__":
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
 
     # docs on save and load
-    to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-    save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True), filename_prefix=args.task_id)
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler)
+    to_save = {'trainer': model_trainer, 'model': model, 'optimizer': optimizer}
+    save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
+                              filename_prefix=args.task_id,
+                              n_saved=5)
+    model_trainer.add_event_handler(Events.EPOCH_COMPLETED(every=3), save_handler)
 
-    trainer.run(train_loader, max_epochs=args.epochs)
+    model_trainer.run(train_loader, max_epochs=args.epochs)
