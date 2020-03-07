@@ -2,7 +2,6 @@ from args_util import my_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
-from ignite.engine import Engine
 from ignite.handlers import Checkpoint, DiskSaver
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
@@ -11,8 +10,8 @@ import torch
 from torch import nn
 from models import CompactDilatedCNN
 import os
-from ignite.contrib.handlers.param_scheduler import LRScheduler
-from torch.optim.lr_scheduler import StepLR
+from ignite.contrib.handlers import PiecewiseLinear
+
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -50,9 +49,8 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    step_scheduler = StepLR(optimizer, step_size=100, gamma=0.1)
-    lr_scheduler = LRScheduler(step_scheduler)
-
+    milestones_values = [(50, 1e-4), (50, 5e-5), (50, 1e-5), (50, 5e-6), (50, 1e-6), (100, 1e-7)]
+    lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=milestones_values)
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator = create_supervised_evaluator(model,
                                             metrics={
@@ -76,7 +74,8 @@ if __name__ == "__main__":
             print("change lr to ", args.lr)
     else:
         print("do not load, keep training")
-        trainer.add_event_handler(Events.ITERATION_COMPLETED, lr_scheduler)
+
+    trainer.add_event_handler(Events.ITERATION_COMPLETED, lr_scheduler)
 
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
