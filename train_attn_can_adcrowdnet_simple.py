@@ -9,7 +9,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import AttnCanAdcrowdNetSimpleV3
+from models import AttnCanAdcrowdNetSimpleV4
 import os
 
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = AttnCanAdcrowdNetSimpleV3()
+    model = AttnCanAdcrowdNetSimpleV4()
     model = model.to(device)
 
     # loss function
