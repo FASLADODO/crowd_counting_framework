@@ -9,7 +9,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CompactDilatedCNN
+from models import DefDilatedCCNN
 import os
 
 if __name__ == "__main__":
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CompactDilatedCNN()
+    model = DefDilatedCCNN()
     model = model.to(device)
 
     # loss function
