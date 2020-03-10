@@ -75,7 +75,7 @@ if __name__ == "__main__":
     else:
         print("do not load, keep training")
 
-    trainer.add_event_handler(Events.ITERATION_COMPLETED, lr_scheduler)
+    trainer.add_event_handler(Events.EPOCH_STARTED, lr_scheduler)
 
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))

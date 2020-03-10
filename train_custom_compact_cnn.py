@@ -6,10 +6,10 @@ from ignite.engine import Engine
 from ignite.handlers import Checkpoint, DiskSaver
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
-
+from torchsummary import summary
 import torch
 from torch import nn
-from models import DefDilatedCCNN
+from models import DilatedCCNNv2
 import os
 
 if __name__ == "__main__":
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = DefDilatedCCNN()
+    model = DilatedCCNNv2()
     model = model.to(device)
 
     # loss function
@@ -58,7 +58,10 @@ if __name__ == "__main__":
                                             }, device=device)
     print(model)
 
+    print (summary(model, (3, 512, 512)))
+
     print(args)
+
 
     if len(args.load_model) > 0:
         load_model_path = args.load_model
