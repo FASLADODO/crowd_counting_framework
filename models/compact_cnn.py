@@ -16,7 +16,7 @@ class CompactCNN(nn.Module):
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
         self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
-        
+
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.c1 = nn.Conv2d(40, 60, 3, padding=1)
