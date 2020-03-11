@@ -47,6 +47,11 @@ def calculate_padding(kernel_size, dilation):
     return p
 
 
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+
 if __name__ == "__main__":
     print(calculate_padding(kernel_size=3, dilation=4))
     print(calculate_padding(kernel_size=5, dilation=1))

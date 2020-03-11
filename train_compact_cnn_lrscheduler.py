@@ -1,3 +1,5 @@
+from comet_ml import Experiment
+
 from args_util import my_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -12,12 +14,21 @@ from torch import nn
 from models import CompactCNN
 import os
 from ignite.contrib.handlers import PiecewiseLinear
+from model_util import get_lr
+
+COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
+PROJECT_NAME = "crowd-counting-framework"
 
 if __name__ == "__main__":
+    experiment = Experiment(project_name=PROJECT_NAME)
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
     args = my_args_parse()
+    experiment.set_name(args.task_id)
     print(args)
+    experiment.set_cmd_args()
+
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
@@ -49,7 +60,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    milestones_values = [(50, 1e-4), (50, 5e-5), (50, 1e-5), (50, 5e-6), (50, 1e-6), (100, 1e-7)]
+    milestones_values = [(20, 1e-4), (30, 5e-5), (100, 1e-5), (50, 5e-6), (50, 1e-6), (100, 1e-7)]
     lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=milestones_values)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
@@ -57,7 +68,7 @@ if __name__ == "__main__":
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteError(),
                                                 'mse': CrowdCountingMeanSquaredError(),
-                                                'nll': Loss(loss_fn)
+                                                'loss': Loss(loss_fn)
                                             }, device=device)
     print(model)
 
@@ -75,7 +86,7 @@ if __name__ == "__main__":
             print("change lr to ", args.lr)
     else:
         print("do not load, keep training")
-    trainer.add_event_handler(Events.ITERATION_COMPLETED, lr_scheduler)
+    trainer.add_event_handler(Events.EPOCH_STARTED, lr_scheduler)
 
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
@@ -90,8 +101,12 @@ if __name__ == "__main__":
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
-
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
+        experiment.set_epoch(epoch=trainer.state.epoch)
+        experiment.log_metric("train_mae", metrics['mae'])
+        experiment.log_metric("train_mse", metrics['mse'])
+        experiment.log_metric("train_loss", metrics['loss'])
+        experiment.log_metric("lr", get_lr(optimizer))
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
@@ -99,8 +114,11 @@ if __name__ == "__main__":
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
-
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
+        experiment.set_epoch(epoch=trainer.state.epoch)
+        experiment.log_metric("valid_mae", metrics['mae'])
+        experiment.log_metric("valid_mse", metrics['mse'])
+        experiment.log_metric("valid_loss", metrics['loss'])
 
 
     # docs on save and load
