@@ -20,7 +20,7 @@ COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-framework"
 
 if __name__ == "__main__":
-    experiment = Experiment(project_name=PROJECT_NAME)
+    experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)

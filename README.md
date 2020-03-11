@@ -27,4 +27,7 @@ sudo mkdir data
 sudo chown -R tt /data/
 ```
 
-meow
+When you use comet.ml
+```shell script
+conda install -c comet_ml comet_ml 
+```
