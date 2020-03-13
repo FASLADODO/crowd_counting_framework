@@ -60,7 +60,8 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    milestones_values = [(20, 1e-4), (50, 5e-5), (100, 1e-5), (200, 9e-6), (250, 5e-6), (300, 1e-6)]
+    milestones_values = [(50, 1e-4), (100, 5e-5), (200, 1e-5), (400, 9e-6), (500, 5e-6), (600, 1e-6)]
+    experiment.log_parameter("milestones_values", "[(50, 1e-4), (100, 5e-5), (200, 1e-5), (400, 9e-6), (500, 5e-6), (600, 1e-6)]")
     lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=milestones_values)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
