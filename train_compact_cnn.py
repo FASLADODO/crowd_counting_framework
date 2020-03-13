@@ -1,3 +1,5 @@
+from comet_ml import Experiment
+
 from args_util import my_args_parse
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -11,13 +13,21 @@ import torch
 from torch import nn
 from models import CompactCNN
 import os
+from model_util import get_lr
 
+COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
+PROJECT_NAME = "crowd-counting-framework"
 
 if __name__ == "__main__":
+    experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
     args = my_args_parse()
     print(args)
+
+    experiment.set_name(args.task_id)
+    experiment.set_cmd_args()
+
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
@@ -87,7 +97,11 @@ if __name__ == "__main__":
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
-
+        experiment.log_metric("epoch", trainer.state.epoch)
+        experiment.log_metric("train_mae", metrics['mae'])
+        experiment.log_metric("train_mse", metrics['mse'])
+        experiment.log_metric("train_loss", metrics['loss'])
+        experiment.log_metric("lr", get_lr(optimizer))
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
@@ -96,7 +110,9 @@ if __name__ == "__main__":
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
-
+        experiment.log_metric("valid_mae", metrics['mae'])
+        experiment.log_metric("valid_mse", metrics['mse'])
+        experiment.log_metric("valid_loss", metrics['loss'])
 
 
     # docs on save and load

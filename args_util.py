@@ -82,6 +82,7 @@ def context_aware_network_args_parse():
 def my_args_parse():
     parser = argparse.ArgumentParser(description='CrowdCounting Context Aware Network')
     parser.add_argument("--task_id", action="store", default="dev")
+    parser.add_argument('--note', action="store", default="write anything")
 
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
     parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
