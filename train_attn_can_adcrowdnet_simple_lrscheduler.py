@@ -72,10 +72,14 @@ if __name__ == "__main__":
 
     print(args)
 
+    milestones_values = [(10, 1e-4), (20, 1e-5), (60, 1e-5), (100, 1e-6)]
+    experiment.log_parameter("milestones_values", str(milestones_values))
+    lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=milestones_values)
+
     if len(args.load_model) > 0:
         load_model_path = args.load_model
         print("load mode " + load_model_path)
-        to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+        to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer, 'lr_scheduler': lr_scheduler}
         checkpoint = torch.load(load_model_path)
         Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
         print("load model complete")
@@ -84,6 +88,8 @@ if __name__ == "__main__":
             print("change lr to ", args.lr)
     else:
         print("do not load, keep training")
+
+    trainer.add_event_handler(Events.EPOCH_STARTED, lr_scheduler)
 
 
     @trainer.on(Events.ITERATION_COMPLETED(every=50))
@@ -119,7 +125,7 @@ if __name__ == "__main__":
 
 
     # docs on save and load
-    to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+    to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer, 'lr_scheduler': lr_scheduler}
     save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
                               filename_prefix=args.task_id,
                               n_saved=5)
