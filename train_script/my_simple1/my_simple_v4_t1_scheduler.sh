@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=4 nohup python train_attn_can_adcrowdnet_simple.py  \
+CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.30.58.36:81" nohup python train_attn_can_adcrowdnet_simple.py  \
 --task_id simple_v4_t1_scheduler  \
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_A  \
 --lr 1e-4 \
