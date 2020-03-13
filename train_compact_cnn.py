@@ -64,7 +64,7 @@ if __name__ == "__main__":
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteError(),
                                                 'mse': CrowdCountingMeanSquaredError(),
-                                                'nll': Loss(loss_fn)
+                                                'loss': Loss(loss_fn)
                                             }, device=device)
     print(model)
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
         experiment.log_metric("epoch", trainer.state.epoch)
         experiment.log_metric("train_mae", metrics['mae'])
         experiment.log_metric("train_mse", metrics['mse'])
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['nll']))
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
         experiment.log_metric("valid_mae", metrics['mae'])
         experiment.log_metric("valid_mse", metrics['mse'])
         experiment.log_metric("valid_loss", metrics['loss'])
