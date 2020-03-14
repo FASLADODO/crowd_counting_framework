@@ -93,6 +93,8 @@ def my_args_parse():
     # parser.add_argument('--momentum', action="store", default=0.9, type=float)
     parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
     parser.add_argument('--epochs', action="store", default=1, type=int)
+    parser.add_argument('--batch_size', action="store", default=1, type=int,
+                        help="only set batch_size > 0 for dataset with image size equal")
     parser.add_argument('--test', action="store_true", default=False)
     arg = parser.parse_args()
     return arg

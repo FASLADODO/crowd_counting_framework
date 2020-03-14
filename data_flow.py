@@ -415,7 +415,7 @@ class ListDataset(Dataset):
         return img, target
 
 
-def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False):
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1):
     if visualize_mode:
         transformer = transforms.Compose([
             transforms.ToTensor()
@@ -431,10 +431,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     shuffle=True,
                     transform=transformer,
                     train=True,
-                    batch_size=1,
+                    batch_size=batch_size,
                     num_workers=0,
                     dataset_name=dataset_name),
-        batch_size=1,
+        batch_size=batch_size,
         num_workers=4)
 
     if val_list is not None:
