@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CompactCNN
+from models import CompactCNNV2
 import os
 from ignite.contrib.handlers import PiecewiseLinear
 from model_util import get_lr
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CompactCNN()
+    model = CompactCNNV2()
     model = model.to(device)
 
     # loss function
@@ -60,8 +60,8 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
 
-    milestones_values = [(50, 1e-4), (100, 5e-5), (200, 1e-5), (400, 9e-6), (500, 5e-6), (600, 1e-6)]
-    experiment.log_parameter("milestones_values", "[(50, 1e-4), (100, 5e-5), (200, 1e-5), (400, 9e-6), (500, 5e-6), (600, 1e-6)]")
+    milestones_values = [(50, 1e-4), (100, 1e-5), (200, 1e-5), (210, 1e-6), (300, 1e-6)]
+    experiment.log_parameter("milestones_values", str(milestones_values))
     lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=milestones_values)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
