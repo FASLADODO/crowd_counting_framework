@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CompactCNN
+from models import CompactCNNV2
 import os
 from model_util import get_lr
 
@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
     experiment.set_name(args.task_id)
     experiment.set_cmd_args()
+    experiment.log_text(args.note)
 
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CompactCNN()
+    model = CompactCNNV2()
     model = model.to(device)
 
     # loss function
