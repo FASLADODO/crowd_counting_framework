@@ -22,16 +22,16 @@ class CustomCNNv1(nn.Module):
 
         # ideal from crowd counting using DMCNN
         self.red_cnn_1 = nn.Conv2d(3, 10, 3, padding=1)
-        self.red_cnn_2 = nn.Conv2d(3, 10, 3, padding=1)
-        self.red_cnn_3 = nn.Conv2d(3, 10, 3, padding=1)
-        self.red_cnn_4 = nn.Conv2d(3, 10, 3, padding=1)
+        self.red_cnn_2 = nn.Conv2d(10, 10, 3, padding=1)
+        self.red_cnn_3 = nn.Conv2d(10, 10, 3, padding=1)
+        self.red_cnn_4 = nn.Conv2d(10, 10, 3, padding=1)
 
         self.green_cnn_1 = nn.Conv2d(3, 14, 3, padding=1)
-        self.green_cnn_2 = nn.Conv2d(3, 14, 3, padding=1)
-        self.green_cnn_3 = nn.Conv2d(3, 14, 3, padding=1)
+        self.green_cnn_2 = nn.Conv2d(14, 14, 3, padding=1)
+        self.green_cnn_3 = nn.Conv2d(14, 14, 3, padding=1)
 
         self.blue_cnn_1 = nn.Conv2d(3, 16, 3, padding=1)
-        self.blue_cnn_2 = nn.Conv2d(3, 16, 3, padding=1)
+        self.blue_cnn_2 = nn.Conv2d(16, 16, 3, padding=1)
 
         self.c0 = nn.Conv2d(40, 40, 3, padding=1)
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
@@ -97,9 +97,9 @@ class CustomCNNv2(nn.Module):
 
         # ideal from crowd counting using DMCNN
         self.front_cnn_1 = nn.Conv2d(3, 10, 3, padding=1)
-        self.front_cnn_2 = nn.Conv2d(3, 10, 3, padding=1)
-        self.front_cnn_3 = nn.Conv2d(3, 10, 3, padding=1)
-        self.front_cnn_4 = nn.Conv2d(3, 10, 3, padding=1)
+        self.front_cnn_2 = nn.Conv2d(10, 10, 3, padding=1)
+        self.front_cnn_3 = nn.Conv2d(10, 10, 3, padding=1)
+        self.front_cnn_4 = nn.Conv2d(10, 10, 3, padding=1)
 
         self.c0 = nn.Conv2d(40, 40, 3, padding=1)
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
