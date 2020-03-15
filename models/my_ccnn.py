@@ -96,10 +96,10 @@ class CustomCNNv2(nn.Module):
         # self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
 
         # ideal from crowd counting using DMCNN
-        self.front_cnn_1 = nn.Conv2d(3, 10, 3, padding=1)
-        self.front_cnn_2 = nn.Conv2d(10, 10, 3, padding=1)
-        self.front_cnn_3 = nn.Conv2d(10, 10, 3, padding=1)
-        self.front_cnn_4 = nn.Conv2d(10, 10, 3, padding=1)
+        self.front_cnn_1 = nn.Conv2d(3, 20, 3, padding=1)
+        self.front_cnn_2 = nn.Conv2d(20, 16, 3, padding=1)
+        self.front_cnn_3 = nn.Conv2d(16, 14, 3, padding=1)
+        self.front_cnn_4 = nn.Conv2d(14, 10, 3, padding=1)
 
         self.c0 = nn.Conv2d(40, 40, 3, padding=1)
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
