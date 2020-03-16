@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CustomCNNv2
+from models import CustomCNNv3
 import os
 from model_util import get_lr
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CustomCNNv2()
+    model = CustomCNNv3()
     model = model.to(device)
 
     # loss function
@@ -122,6 +122,6 @@ if __name__ == "__main__":
                               filename_prefix=args.task_id,
                               n_saved=5)
 
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=3), save_handler)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
 
     trainer.run(train_loader, max_epochs=args.epochs)

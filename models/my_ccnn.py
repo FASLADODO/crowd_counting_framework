@@ -169,15 +169,20 @@ class CustomCNNv3(nn.Module):
 
         # ideal from crowd counting using DMCNN
         self.front_cnn_1 = nn.Conv2d(3, 20, 3, padding=1)
+        self.front_bn1 = nn.BatchNorm2d(20)
         self.front_cnn_2 = nn.Conv2d(20, 16, 3, padding=1)
+        self.front_bn2 = nn.BatchNorm2d(16)
         self.front_cnn_3 = nn.Conv2d(16, 14, 3, padding=1)
+        self.front_bn3 = nn.BatchNorm2d(14)
         self.front_cnn_4 = nn.Conv2d(14, 10, 3, padding=1)
+        self.front_bn4 = nn.BatchNorm2d(10)
 
         self.c0 = nn.Conv2d(40, 40, 3, padding=1)
+        self.bn0 = nn.BatchNorm2d(40)
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
 
         self.c1 = nn.Conv2d(40, 60, 3, padding=1)
-
+        self.bn1 = nn.BatchNorm2d(60)
         # ideal from CSRNet
         self.c2 = nn.Conv2d(60, 40, 3, padding=2, dilation=2, bias=False)
         self.bn2 = nn.BatchNorm2d(40)
@@ -192,19 +197,19 @@ class CustomCNNv3(nn.Module):
         #x_green = self.max_pooling(F.relu(self.green_cnn(x), inplace=True))
         #x_blue = self.max_pooling(F.relu(self.blue_cnn(x), inplace=True))
 
-        x_red = F.relu(self.front_cnn_1(x), inplace=True)
-        x_red = F.relu(self.front_cnn_2(x_red), inplace=True)
-        x_red = F.relu(self.front_cnn_3(x_red), inplace=True)
-        x_red = F.relu(self.front_cnn_4(x_red), inplace=True)
+        x_red = F.relu(self.front_bn1(self.front_cnn_1(x)), inplace=True)
+        x_red = F.relu(self.front_bn2(self.front_cnn_2(x_red)), inplace=True)
+        x_red = F.relu(self.front_bn3(self.front_cnn_3(x_red)), inplace=True)
+        x_red = F.relu(self.front_bn4(self.front_cnn_4(x_red)), inplace=True)
         x_red = self.max_pooling(x_red)
 
-        x_green = F.relu(self.front_cnn_1(x), inplace=True)
-        x_green = F.relu(self.front_cnn_2(x_green), inplace=True)
-        x_green = F.relu(self.front_cnn_3(x_green), inplace=True)
+        x_green = F.relu(self.front_bn1(self.front_cnn_1(x)), inplace=True)
+        x_green = F.relu(self.front_bn2(self.front_cnn_2(x_green)), inplace=True)
+        x_green = F.relu(self.front_bn3(self.front_cnn_3(x_green)), inplace=True)
         x_green = self.max_pooling(x_green)
 
-        x_blue = F.relu(self.front_cnn_1(x), inplace=True)
-        x_blue = F.relu(self.front_cnn_2(x_blue), inplace=True)
+        x_blue = F.relu(self.front_bn1(self.front_cnn_1(x)), inplace=True)
+        x_blue = F.relu(self.front_bn2(self.front_cnn_2(x_blue)), inplace=True)
         x_blue = self.max_pooling(x_blue)
 
         x = torch.cat((x_red, x_green, x_blue), 1)

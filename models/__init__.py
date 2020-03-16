@@ -7,4 +7,4 @@ from .attn_can_adcrowdnet import AttnCanAdcrowdNet
 from .attn_can_adcrowdnet_freeze_vgg import AttnCanAdcrowdNetFreezeVgg
 from .attn_can_adcrowdnet_simple import AttnCanAdcrowdNetSimpleV1, AttnCanAdcrowdNetSimpleV2, AttnCanAdcrowdNetSimpleV3, AttnCanAdcrowdNetSimpleV4
 from .compact_cnn import CompactCNN, CompactCNNV2, CompactDilatedCNN, DefDilatedCCNN, DilatedCCNNv2
-from .my_ccnn import CustomCNNv1, CustomCNNv2
+from .my_ccnn import CustomCNNv1, CustomCNNv2, CustomCNNv3
