@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CustomCNNv3
+from models import CustomCNNv4
 import os
 from model_util import get_lr
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CustomCNNv3()
+    model = CustomCNNv4()
     model = model.to(device)
 
     # loss function

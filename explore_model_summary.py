@@ -1,4 +1,4 @@
-from models import CompactCNN, AttnCanAdcrowdNetSimpleV3, CompactDilatedCNN, DefDilatedCCNN, CompactCNNV2
+from models import CompactCNN, AttnCanAdcrowdNetSimpleV3, CompactDilatedCNN, DefDilatedCCNN, CompactCNNV2, CustomCNNv3, CustomCNNv4
 from torchsummary import summary
 
 def very_simple_param_count(model):
@@ -22,10 +22,14 @@ if __name__ == "__main__":
     print("ccnn v2")
     dcnn2 = CompactCNNV2()
     print(summary(dcnn2, (3, 512, 512),  device="cpu"))
+    print("==============================================")
+    print("custom ccnn v3")
+    customCCNNv3 = CustomCNNv3()
+    print(summary(customCCNNv3, (3, 512, 512),  device="cpu"))
     print("=============================================================================")
-    print("DefDilatedCCNN")
-    dcnn2 = DefDilatedCCNN()
-    print(summary(dcnn2, (3, 512, 512),  device="cpu"))
+    print("custom ccnn v4")
+    customCCNNv4 = CustomCNNv4()
+    print(summary(customCCNNv4, (3, 512, 512),  device="cpu"))
     print("=============================================================================")
     # print("simple_v3")
     # simplev3 = AttnCanAdcrowdNetSimpleV3()

@@ -1,6 +1,10 @@
 import torch
 from torch import nn
+from torchvision import ops
 
+def very_simple_param_count(model):
+    result = sum([p.numel() for p in model.parameters()])
+    return result
 
 class DeformConv2d(nn.Module):
     def __init__(self, inc, outc, kernel_size=3, padding=1, stride=1, bias=None, modulation=False):
@@ -141,3 +145,43 @@ class DeformConv2d(nn.Module):
         x_offset = x_offset.contiguous().view(b, c, h*ks, w*ks)
 
         return x_offset
+
+
+class TorchVisionBasicDeformConv2d(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size=1, stride=1,
+                 dilation=1, groups=1, offset_groups=1, padding=0):
+        super().__init__()
+        offset_channels = 2 * kernel_size * kernel_size
+        self.conv2d_offset = nn.Conv2d(
+            in_channels,
+            offset_channels * offset_groups,
+            kernel_size=3,
+            stride=stride,
+            padding=dilation,
+            dilation=dilation,
+        )
+        self.conv2d = ops.DeformConv2d(
+            in_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
+            groups=groups,
+            bias=False
+        )
+
+    def forward(self, x):
+        offset = self.conv2d_offset(x)
+        return self.conv2d(x, offset)
+
+if __name__ == "__main__":
+    img = torch.rand((1, 3, 256, 256))
+    cnn33 = nn.Conv2d(3, 10, 3, padding=1)
+    cnn = TorchVisionBasicDeformConv2d(3, 10, 9, padding=4)
+    cnn99 = nn.Conv2d(3, 10, 9, padding=4)
+    print(very_simple_param_count(cnn))
+    print(very_simple_param_count(cnn99))
+    result = cnn(img)
+    # result = cnn33(img)
+    print(result.shape)
