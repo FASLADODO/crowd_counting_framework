@@ -5,5 +5,5 @@ CUDA_VISIBLE_DEVICES=1 HTTPS_PROXY="http://10.30.58.36:81" nohup python train_cu
 --lr 1e-5 \
 --decay 1e-5 \
 --datasetname shanghaitech_keepfull \
---batch_size 6 \
+--batch_size 5 \
 --epochs 200 > logs/custom_ccnn_v4_t1_shb.log  &
