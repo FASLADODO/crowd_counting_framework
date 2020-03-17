@@ -265,22 +265,22 @@ class CustomCNNv4(nn.Module):
         self.output = nn.Conv2d(10, 1, 1)
 
     def forward(self, x):
-        x_red = self.max_pooling(F.relu(self.bn_red(self.red_cnn(x)), inplace=True))
-        x_green = self.max_pooling(F.relu(self.bn_green(self.green_cnn(x)), inplace=True))
-        x_blue = self.max_pooling(F.relu(self.bn_blue(self.blue_cnn(x)), inplace=True))
+        x_red = self.max_pooling(F.relu(self.bn_red(self.red_cnn(x))))
+        x_green = self.max_pooling(F.relu(self.bn_green(self.green_cnn(x))))
+        x_blue = self.max_pooling(F.relu(self.bn_blue(self.blue_cnn(x))))
 
         x = torch.cat((x_red, x_green, x_blue), 1)
-        x = F.relu(self.c0(x), inplace=True)
+        x = F.relu(self.c0(x))
 
-        x = F.relu(self.bn1(self.c1(x)), inplace=True)
+        x = F.relu(self.bn1(self.c1(x)))
 
-        x = F.relu(self.bn2(self.c2(x)), inplace=True)
+        x = F.relu(self.bn2(self.c2(x)))
         x = self.max_pooling(x)
 
-        x = F.relu(self.bn3(self.c3(x)), inplace=True)
+        x = F.relu(self.bn3(self.c3(x)))
         x = self.max_pooling(x)
 
-        x = F.relu(self.bn4(self.c4(x)), inplace=True)
+        x = F.relu(self.bn4(self.c4(x)))
 
         x = self.output(x)
         return x
