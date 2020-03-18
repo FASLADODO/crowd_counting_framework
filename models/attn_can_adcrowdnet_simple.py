@@ -759,7 +759,7 @@ class AttnCanAdcrowdNetSimpleV5(nn.Module):
         x1 = self.dilated_conv_1_1(x)
         x2 = self.dilated_conv_1_2(x)
         x3 = self.dilated_conv_1_3(x)
-        x = F.relu(self.bn_c1(torch.cat((x1, x2, x3), 1), inplace=True))
+        x = F.relu(self.bn_c_1(torch.cat((x1, x2, x3), 1), inplace=True))
         x = F.relu(self.bn1(self.concat_filter_layer_1(x), inplace=True))
 
         x1 = self.dilated_conv_2_1(x)
