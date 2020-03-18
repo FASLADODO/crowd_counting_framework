@@ -16,6 +16,7 @@ import os
 
 from ignite.contrib.handlers import PiecewiseLinear
 from model_util import get_lr
+from torchsummary import summary
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-framework"
@@ -53,6 +54,7 @@ if __name__ == "__main__":
 
     # model
     model = AttnCanAdcrowdNetSimpleV4()
+    experiment.log_other("model_summary", summary(model, (3, 128, 128), device="cpu"))
     model = model.to(device)
 
     # loss function
