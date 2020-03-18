@@ -63,3 +63,7 @@ if __name__ == "__main__":
     print(calculate_padding(kernel_size=5, dilation=3))
     print(calculate_padding(kernel_size=5, dilation=2))
     print(calculate_padding(kernel_size=5, dilation=1))
+    print("---dilated 3x3 with dilated 2 4 6")
+    print(calculate_padding(kernel_size=3, dilation=2)) # 2
+    print(calculate_padding(kernel_size=3, dilation=4)) # 4
+    print(calculate_padding(kernel_size=3, dilation=6)) # 6
