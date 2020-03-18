@@ -14,6 +14,7 @@ from torch import nn
 from models import CompactCNNV2
 import os
 from model_util import get_lr
+from torchsummary import summary
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-framework"
@@ -27,7 +28,7 @@ if __name__ == "__main__":
 
     experiment.set_name(args.task_id)
     experiment.set_cmd_args()
-    experiment.log_text(args.note)
+    experiment.log_other("note", args.note)
 
     DATA_PATH = args.input
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
@@ -52,7 +53,9 @@ if __name__ == "__main__":
 
     # model
     model = CompactCNNV2()
+    experiment.log_other("model_summary", summary(model, (3, 128, 128), device="cpu"))
     model = model.to(device)
+
 
     # loss function
     loss_fn = nn.MSELoss(reduction='sum').to(device)
