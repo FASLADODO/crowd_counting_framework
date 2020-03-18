@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CompactCNNV2
+from models import CompactCNNV6
 import os
 from model_util import get_lr
 from torchsummary import summary
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CompactCNNV2()
+    model = CompactCNNV6()
     experiment.log_other("model_summary", summary(model, (3, 128, 128), device="cpu"))
     model = model.to(device)
 

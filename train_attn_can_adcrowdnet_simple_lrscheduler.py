@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import AttnCanAdcrowdNetSimpleV4
+from models import AttnCanAdcrowdNetSimpleV5
 import os
 
 from ignite.contrib.handlers import PiecewiseLinear
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = AttnCanAdcrowdNetSimpleV4()
+    model = AttnCanAdcrowdNetSimpleV5()
     experiment.log_other("model_summary", summary(model, (3, 128, 128), device="cpu"))
     model = model.to(device)
 
