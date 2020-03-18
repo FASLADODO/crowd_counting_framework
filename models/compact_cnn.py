@@ -100,8 +100,9 @@ class CompactCNNV6(nn.Module):
         self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
 
         self.red_bn = nn.BatchNorm2d(10)
-        self.blue_bn = nn.BatchNorm2d(14)
-        self.green_bn = nn.BatchNorm2d(16)
+        self.green_bn = nn.BatchNorm2d(14)
+        self.blue_bn = nn.BatchNorm2d(16)
+
 
         self.c0 = nn.Conv2d(40, 40, 3, padding=1)
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
