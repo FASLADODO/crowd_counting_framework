@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CustomCNNv5
+from models import CustomCNNv2
 import os
 from model_util import get_lr
 
@@ -55,9 +55,11 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CustomCNNv5()
+    model = CustomCNNv2()
     n_param = very_simple_param_count(model)
     experiment.log_other("n_param", n_param)
+    if hasattr(model, 'model_note'):
+        experiment.log_other("model_note", model.model_note)
     model = model.to(device)
 
     # loss function

@@ -91,6 +91,7 @@ class CustomCNNv2(nn.Module):
     """
     def __init__(self, load_weights=False):
         super(CustomCNNv2, self).__init__()
+        self.model_note = "We replace 5x5 7x7 9x9 with 3x3, no batchnorm yet"
         # self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         # self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
         # self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
