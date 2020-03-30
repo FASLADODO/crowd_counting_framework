@@ -11,13 +11,19 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models import CompactCNNV6
+from models import CompactCNNV2
 import os
 from model_util import get_lr
 from torchsummary import summary
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-framework"
+
+
+def very_simple_param_count(model):
+    result = sum([p.numel() for p in model.parameters()])
+    return result
+
 
 if __name__ == "__main__":
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
@@ -52,9 +58,13 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model = CompactCNNV6()
-    experiment.log_other("model_summary", summary(model, (3, 128, 128), device="cpu"))
+    model = CompactCNNV2()
+    summary(model, (3, 128, 128), device="cpu")
+    experiment.log_other("n_param", very_simple_param_count(model))
+    if hasattr(model, 'model_note'):
+        experiment.log_other("model_note", model.model_note)
     model = model.to(device)
+
 
 
     # loss function

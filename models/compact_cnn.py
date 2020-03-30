@@ -53,6 +53,7 @@ class CompactCNNV2(nn.Module):
     """
     def __init__(self, load_weights=False):
         super(CompactCNNV2, self).__init__()
+        self.model_note = "CCNN without batchnorm"
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
         self.blue_cnn = nn.Conv2d(3, 16, 5, padding=2)
@@ -86,6 +87,7 @@ class CompactCNNV2(nn.Module):
 
         x = self.output(x)
         return x
+
 
 class CompactCNNV6(nn.Module):
     """
