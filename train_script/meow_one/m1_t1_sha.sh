@@ -9,3 +9,5 @@ CUDA_VISIBLE_DEVICES=1 HTTPS_PROXY="http://10.30.58.36:81" nohup python experime
 --decay 1e-4 \
 --datasetname shanghaitech_keepfull \
 --epochs 502 > logs/$task.log  &
+
+echo logs/$task.log  # for convenience
