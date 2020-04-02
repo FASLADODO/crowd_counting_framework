@@ -100,6 +100,27 @@ def my_args_parse():
     return arg
 
 
+def meow_parse():
+    parser = argparse.ArgumentParser(description='CrowdCounting Context Aware Network')
+    parser.add_argument("--task_id", action="store", default="dev")
+    parser.add_argument("--model", action="store", default="dev")
+    parser.add_argument('--note', action="store", default="write anything")
+
+    parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
+
+    # args with default value
+    parser.add_argument('--load_model', action="store", default="", type=str)
+    parser.add_argument('--lr', action="store", default=1e-8, type=float)
+    parser.add_argument('--momentum', action="store", default=0.9, type=float)
+    parser.add_argument('--decay', action="store", default=5*1e-3, type=float)
+    parser.add_argument('--epochs', action="store", default=1, type=int)
+    parser.add_argument('--batch_size', action="store", default=1, type=int,
+                        help="only set batch_size > 0 for dataset with image size equal")
+    parser.add_argument('--test', action="store_true", default=False)
+    arg = parser.parse_args()
+    return arg
+
 def sanity_check_dataloader_parse():
     parser = argparse.ArgumentParser(description='Dataloader')
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
