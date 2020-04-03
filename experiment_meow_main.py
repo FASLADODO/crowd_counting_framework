@@ -11,16 +11,18 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models.meow_experiment.kitten_meow_1 import M1, M2
+from models.meow_experiment.kitten_meow_1 import M1, M2, M3
 import os
 from model_util import get_lr
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "meow-one-experiment-insita"
 
+
 def very_simple_param_count(model):
     result = sum([p.numel() for p in model.parameters()])
     return result
+
 
 if __name__ == "__main__":
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
@@ -61,6 +63,8 @@ if __name__ == "__main__":
         model = M1()
     elif model_name == "M2":
         model = M2()
+    elif model_name == "M3":
+        model = M3()
     else:
         print("error: you didn't pick a model")
         exit(-1)
