@@ -1,4 +1,4 @@
-task="m3_t4_sha"
+task="m3_t5_sha"
 
 CUDA_VISIBLE_DEVICES=3 HTTPS_PROXY="http://10.30.58.36:81" nohup python experiment_meow_main.py  \
 --task_id $task  \
