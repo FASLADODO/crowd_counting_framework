@@ -1,10 +1,9 @@
 from comet_ml import Experiment
 
 from args_util import meow_parse
-from data_flow import get_train_val_list, get_dataloader, create_training_image_list, create_image_list
+from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
-from ignite.metrics import Loss, MeanAbsoluteError, MeanSquaredError
-from ignite.engine import Engine
+from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
@@ -12,6 +11,7 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3
+from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2
 from models import CustomCNNv2
 import os
 from model_util import get_lr
@@ -68,6 +68,10 @@ if __name__ == "__main__":
         model = M3()
     elif model_name == "CustomCNNv2":
         model = CustomCNNv2()
+    elif model_name == "BigTailM1":
+        model = BigTailM1()
+    elif model_name == "BigTailM2":
+        model = BigTailM2()
     else:
         print("error: you didn't pick a model")
         exit(-1)
