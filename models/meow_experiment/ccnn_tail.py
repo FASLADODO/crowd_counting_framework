@@ -51,8 +51,11 @@ class BigTailM1(nn.Module):
 
         x = F.relu(self.c4(x), inplace=True)
 
+        x = F.relu(self.c5(x), inplace=True)
+
         x = self.output(x)
         return x
+
 
 class BigTailM2(nn.Module):
     """
@@ -92,6 +95,8 @@ class BigTailM2(nn.Module):
         x = self.max_pooling(x)
 
         x = F.relu(self.c4(x), inplace=True)
+
+        x = F.relu(self.c5(x), inplace=True)
 
         x = self.output(x)
         return x
