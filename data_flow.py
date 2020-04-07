@@ -183,6 +183,78 @@ def load_data_shanghaitech_20p(img_path, train=True):
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
+
+def load_data_shanghaitech_20p_rnd(img_path, train=True):
+    """
+    20 percent crop
+    now it is also random crop, not just crop 4
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        if random.random() > 0.8:
+            crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+            if random.randint(0, 9) <= 3:
+                dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+                dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+            else:
+                dx = int(random.random() * img.size[0] * 1. / 2)
+                dy = int(random.random() * img.size[1] * 1. / 2)
+
+            img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+            target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+            # # enlarge image patch to original size
+            # img = img.resize((crop_size[0]*2, crop_size[1]*2), Image.ANTIALIAS)
+            # target_factor = 4 # thus, target is not enlarge, so output target only / 4
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
+
+def load_data_shanghaitech_180(img_path, train=True):
+    """
+    crop fixed 180, allow batch in non-uniform dataset
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        crop_size = (180, 180)
+        dx = int(random.random() * (img.size[0] - 180))
+        dy = int(random.random() * (img.size[1] - 180))
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
+
 def load_data_shanghaitech_same_size_density_map(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img = Image.open(img_path).convert('RGB')
@@ -479,6 +551,11 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_20p_enlarge
         elif dataset_name == "shanghaitech_20p":
             self.load_data_fn = load_data_shanghaitech_20p
+        elif dataset_name == "shanghaitech_20p_rnd":
+            self.load_data_fn = load_data_shanghaitech_20p_rnd
+        elif dataset_name == "shanghaitech_180":
+            self.load_data_fn = load_data_shanghaitech_180
+
         elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name == "ucf_cc_50_pacnn":

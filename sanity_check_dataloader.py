@@ -23,10 +23,20 @@ if __name__ == "__main__":
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name)
 
     print("============== TRAIN LOADER ====================================================")
+    min_1 = 500
+    min_2 = 500
     for img, label in train_loader:
         print("img shape:" + str(img.shape) + " == " + "label shape " +  str(label.shape))
+        size_1 = img.shape[2]
+        size_2 = img.shape[3]
+        if min_1 > size_1:
+            min_1 = size_1
+        if min_2 > size_2:
+            min_2 = size_2
         # example: img shape:torch.Size([1, 3, 716, 1024]) == label shape torch.Size([1, 1, 89, 128])
 
     print("============== VAL LOADER ====================================================")
     for img, label in val_loader:
         print("img shape:" + str(img.shape) + " == " + "label shape " +  str(label.shape))
+    print(min_1)
+    print(min_2)
