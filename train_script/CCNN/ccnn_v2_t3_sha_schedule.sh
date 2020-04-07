@@ -4,5 +4,5 @@ CUDA_VISIBLE_DEVICES=5 HTTPS_PROXY="http://10.30.58.36:81" nohup python train_co
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_A  \
 --lr 1e-4 \
 --decay 1e-4 \
---datasetname shanghaitech_20p_rnd\
+--datasetname shanghaitech_20p_rnd \
 --epochs 602 > logs/ccnn_v2_t3_sha_schedule.log  &
