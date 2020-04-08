@@ -255,6 +255,39 @@ def load_data_shanghaitech_180(img_path, train=True):
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
+
+def load_data_shanghaitech_256(img_path, train=True):
+    """
+    crop fixed 256, allow batch in non-uniform dataset
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+    crop_sq_size = 256
+    if train:
+        crop_size = (crop_sq_size, crop_sq_size)
+        dx = int(random.random() * (img.size[0] - crop_sq_size))
+        dy = int(random.random() * (img.size[1] - crop_sq_size))
+        if dx < 0 or dy < 0:  # we crop more than we can chew, so...
+            return None, None
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
+
 def load_data_shanghaitech_same_size_density_map(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img = Image.open(img_path).convert('RGB')
@@ -555,7 +588,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_20p_rnd
         elif dataset_name == "shanghaitech_180":
             self.load_data_fn = load_data_shanghaitech_180
-
+        elif dataset_name == "shanghaitech_256":
+            self.load_data_fn = load_data_shanghaitech_256
         elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name == "ucf_cc_50_pacnn":
@@ -574,10 +608,25 @@ class ListDataset(Dataset):
         if self.debug:
             print(img_path)
         img, target = self.load_data_fn(img_path, self.train)
+        if img is None or target is None:
+            return None
         if self.transform is not None:
             img = self.transform(img)
         return img, target
 
+
+def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
+    """
+    collate that ignore None
+    However, if all sample is None, we have problem, so, set batch size bigger
+    https://stackoverflow.com/questions/57815001/pytorch-collate-fn-reject-sample-and-yield-another
+    :param batch:
+    :return:
+    """
+    batch = list(filter (lambda x:x is not None, batch)) # this gets rid of nones in batch. For example above it would result to G = [{},{},{}]
+    # I want len(G) = 4
+    # so how to sample another dataset entry?
+    return torch.utils.data.dataloader.default_collate(batch)
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1):
     if visualize_mode:
@@ -599,7 +648,8 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     num_workers=0,
                     dataset_name=dataset_name),
         batch_size=batch_size,
-        num_workers=4)
+        num_workers=4,
+        collate_fn=my_collate)
 
     if val_list is not None:
         val_loader = torch.utils.data.DataLoader(
