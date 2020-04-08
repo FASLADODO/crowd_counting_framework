@@ -273,7 +273,7 @@ def load_data_shanghaitech_256(img_path, train=True):
         crop_size = (crop_sq_size, crop_sq_size)
         dx = int(random.random() * (img.size[0] - crop_sq_size))
         dy = int(random.random() * (img.size[1] - crop_sq_size))
-        if dx < 0 or dy < 0:  # we crop more than we can chew, so...
+        if img.size[0] - crop_sq_size < 0 or img.size[1] - crop_sq_size < 0:  # we crop more than we can chew, so...
             return None, None
         img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
         target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
