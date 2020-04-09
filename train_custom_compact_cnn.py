@@ -88,7 +88,9 @@ if __name__ == "__main__":
         print("load model complete")
         for param_group in optimizer.param_groups:
             param_group['lr'] = args.lr
-            print("change lr to ", args.lr)
+            param_group['weight_decay'] = args.decay
+            print("change lr to ", param_group['lr'])
+            print("change weight_decay to ", param_group['weight_decay'])
     else:
         print("do not load, keep training")
 
