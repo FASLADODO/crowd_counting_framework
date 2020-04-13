@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3
-from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2
+from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3
 from models import CustomCNNv2
 import os
 from model_util import get_lr
@@ -72,6 +72,8 @@ if __name__ == "__main__":
         model = BigTailM1()
     elif model_name == "BigTailM2":
         model = BigTailM2()
+    elif model_name == "BigTail3":
+        model = BigTail3()
     else:
         print("error: you didn't pick a model")
         exit(-1)
