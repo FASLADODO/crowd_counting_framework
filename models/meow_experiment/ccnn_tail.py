@@ -107,7 +107,7 @@ class BigTail3(nn.Module):
     we set max tail at 60 only
     """
     def __init__(self, load_weights=False):
-        super(BigTailM2, self).__init__()
+        super(BigTail3, self).__init__()
         self.model_note = "small taill 100"
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
