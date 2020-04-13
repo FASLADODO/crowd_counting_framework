@@ -7,7 +7,7 @@ CUDA_VISIBLE_DEVICES=3 HTTPS_PROXY="http://10.60.28.99:86" nohup python experime
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_B  \
 --lr 1e-5 \
 --decay 1e-5 \
---batchsize 8 \
+--batch_size 8 \
 --datasetname shanghaitech_rnd \
 --epochs 301 > logs/$task.log  &
 
