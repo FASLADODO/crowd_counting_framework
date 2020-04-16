@@ -10,6 +10,6 @@ CUDA_VISIBLE_DEVICES=2 HTTPS_PROXY="http://10.60.28.99:86" nohup python experime
 --batch_size 8 \
 --load_model saved_model/bigtail3_t1_sha/bigtail3_t1_sha_checkpoint_720000.pth \
 --datasetname shanghaitech_rnd \
---epochs 302 > logs/$task.log  &
+--epochs 1002 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
