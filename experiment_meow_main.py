@@ -10,7 +10,7 @@ from visualize_util import get_readable_time
 
 import torch
 from torch import nn
-from models.meow_experiment.kitten_meow_1 import M1, M2, M3
+from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3
 from models import CustomCNNv2
 import os
@@ -66,6 +66,8 @@ if __name__ == "__main__":
         model = M2()
     elif model_name == "M3":
         model = M3()
+    elif model_name == "M4":
+        model = M4()
     elif model_name == "CustomCNNv2":
         model = CustomCNNv2()
     elif model_name == "BigTailM1":
