@@ -1,9 +1,9 @@
-task="M4_t1_shb"
+task="M4_t2_shb"
 
 CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
 --task_id $task  \
 --note "M4 shanghaitech_rnd"  \
---model "BigTail3" \
+--model "M4" \
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_B  \
 --lr 1e-4 \
 --decay 1e-4 \
