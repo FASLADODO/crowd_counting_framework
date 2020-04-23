@@ -4,7 +4,7 @@ from args_util import meow_parse
 from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
-from ignite.handlers import Checkpoint, DiskSaver
+from ignite.handlers import Checkpoint, DiskSaver, Timer
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
 
@@ -102,6 +102,24 @@ if __name__ == "__main__":
 
     print(args)
 
+
+    # timer
+    train_timer = Timer()  # time to train whole epoch
+    batch_timer = Timer(average=True)  # every batch
+    evaluate_timer = Timer()
+
+    batch_timer.attach(trainer,
+                        start =Events.EPOCH_STARTED,
+                        resume =Events.ITERATION_STARTED,
+                        pause =Events.ITERATION_COMPLETED,
+                        step =Events.ITERATION_COMPLETED)
+
+    train_timer.attach(trainer,
+                        start =Events.EPOCH_STARTED,
+                        resume =Events.EPOCH_STARTED,
+                        pause =Events.EPOCH_COMPLETED,
+                        step =Events.EPOCH_COMPLETED)
+
     if len(args.load_model) > 0:
         load_model_path = args.load_model
         print("load mode " + load_model_path)
@@ -116,7 +134,7 @@ if __name__ == "__main__":
         print("do not load, keep training")
 
 
-    @trainer.on(Events.ITERATION_COMPLETED(every=50))
+    @trainer.on(Events.ITERATION_COMPLETED(every=100))
     def log_training_loss(trainer):
         timestamp = get_readable_time()
         print(timestamp + " Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
@@ -135,9 +153,16 @@ if __name__ == "__main__":
         experiment.log_metric("train_loss", metrics['loss'])
         experiment.log_metric("lr", get_lr(optimizer))
 
+        experiment.log_metric("batch_timer", batch_timer.value())
+        experiment.log_metric("train_timer", train_timer.value())
+
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
+        evaluate_timer.resume()
         evaluator.run(test_loader)
+        evaluate_timer.pause()
+        evaluate_timer.step()
+
         metrics = evaluator.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
@@ -146,6 +171,13 @@ if __name__ == "__main__":
         experiment.log_metric("valid_mse", metrics['mse'])
         experiment.log_metric("valid_loss", metrics['loss'])
 
+        # timer
+        experiment.log_metric("evaluate_timer", evaluate_timer.value())
+
+    def checkpoint_valid_mae_score_function(engine):
+        score = engine.state.metrics['valid_mae']
+        return score
+
 
     # docs on save and load
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
@@ -153,6 +185,12 @@ if __name__ == "__main__":
                               filename_prefix=args.task_id,
                               n_saved=5)
 
+    save_handler_best = Checkpoint(to_save, DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
+                              filename_prefix=args.task_id, score_name="valid_mae", score_function=checkpoint_valid_mae_score_function,
+                              n_saved=5)
+
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
+
 
     trainer.run(train_loader, max_epochs=args.epochs)
