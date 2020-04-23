@@ -93,7 +93,14 @@ if __name__ == "__main__":
                                 weight_decay=args.decay)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
-    evaluator = create_supervised_evaluator(model,
+    evaluator_train = create_supervised_evaluator(model,
+                                            metrics={
+                                                'mae': CrowdCountingMeanAbsoluteError(),
+                                                'mse': CrowdCountingMeanSquaredError(),
+                                                'loss': Loss(loss_fn)
+                                            }, device=device)
+
+    evaluator_validate = create_supervised_evaluator(model,
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteError(),
                                                 'mse': CrowdCountingMeanSquaredError(),
@@ -105,9 +112,9 @@ if __name__ == "__main__":
 
 
     # timer
-    train_timer = Timer()  # time to train whole epoch
+    train_timer = Timer(average=True)  # time to train whole epoch
     batch_timer = Timer(average=True)  # every batch
-    evaluate_timer = Timer()
+    evaluate_timer = Timer(average=True)
 
     batch_timer.attach(trainer,
                         start =Events.EPOCH_STARTED,
@@ -143,8 +150,8 @@ if __name__ == "__main__":
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
-        evaluator.run(train_loader)
-        metrics = evaluator.state.metrics
+        evaluator_train.run(train_loader)
+        metrics = evaluator_train.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
@@ -163,11 +170,11 @@ if __name__ == "__main__":
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
         evaluate_timer.resume()
-        evaluator.run(test_loader)
+        evaluator_validate.run(test_loader)
         evaluate_timer.pause()
         evaluate_timer.step()
 
-        metrics = evaluator.state.metrics
+        metrics = evaluator_validate.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
@@ -180,7 +187,7 @@ if __name__ == "__main__":
         print("evaluate_timer ", evaluate_timer.value())
 
     def checkpoint_valid_mae_score_function(engine):
-        score = engine.state.metrics['valid_mae']
+        score = engine.state.metrics['mae']
         return score
 
 
@@ -195,7 +202,7 @@ if __name__ == "__main__":
                               n_saved=5)
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
+    evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
 
 
     trainer.run(train_loader, max_epochs=args.epochs)

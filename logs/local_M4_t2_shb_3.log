@@ -1,0 +1,233 @@
+COMET INFO: old comet version (3.1.2) detected. current: 3.1.6 please update your comet lib with command: `pip install --no-cache-dir --upgrade comet_ml`
+COMET INFO: Experiment is live on comet.ml https://www.comet.ml/ttpro1995/crowd-counting-debug/52632ec152104228b2343616446d410b
+
+cuda
+Namespace(batch_size=6, datasetname='shanghaitech_rnd', decay=0.0001, epochs=301, input='/data/ShanghaiTech/part_B', load_model='', lr=0.0001, model='M4', momentum=0.9, note='M4 shanghaitech_rnd', task_id='local_M4_t2_shb_3', test=False)
+cannot detect dataset_name
+current dataset_name is  shanghaitech_rnd
+in ListDataset dataset_name is |shanghaitech_rnd|
+in ListDataset dataset_name is |shanghaitech_rnd|
+len train_loader  267
+M4(
+  (front_cnn_1): Conv2d(3, 20, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (front_cnn_2): Conv2d(20, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (front_cnn_3): Conv2d(16, 14, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (front_cnn_4): Conv2d(14, 10, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (max_pooling): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (c0): Conv2d(40, 60, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c1): Conv2d(60, 60, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c2): Conv2d(60, 60, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c3): Conv2d(60, 30, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c4): Conv2d(30, 15, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c5): Conv2d(15, 10, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (output): Conv2d(10, 1, kernel_size=(1, 1), stride=(1, 1))
+)
+Namespace(batch_size=6, datasetname='shanghaitech_rnd', decay=0.0001, epochs=301, input='/data/ShanghaiTech/part_B', load_model='', lr=0.0001, model='M4', momentum=0.9, note='M4 shanghaitech_rnd', task_id='local_M4_t2_shb_3', test=False)
+do not load, keep training
+2020-04-23 19:25 Epoch[1] Loss: 157.76
+2020-04-23 19:28 Epoch[1] Loss: 40.31
+2020-04-23 19:31 Training set Results - Epoch: 1  Avg mae: 25.26 Avg mse: 68.05 Avg loss: 63.05
+batch_timer  1.6027500071872778
+train_timer  428.5975191990001
+2020-04-23 19:32 Validation set Results - Epoch: 1  Avg mae: 139.45 Avg mse: 156.09 Avg loss: 46.80
+evaluate_timer  532.3665182590003
+2020-04-23 19:32 Epoch[2] Loss: 21.56
+2020-04-23 19:35 Epoch[2] Loss: 8.69
+2020-04-23 19:38 Epoch[2] Loss: 5.47
+2020-04-23 19:40 Training set Results - Epoch: 2  Avg mae: 9.33 Avg mse: 29.47 Avg loss: 54.34
+batch_timer  1.6025197360037389
+train_timer  428.50685849599995
+2020-04-23 19:40 Validation set Results - Epoch: 2  Avg mae: 62.14 Avg mse: 91.67 Avg loss: 42.43
+evaluate_timer  288.88640787399936
+2020-04-23 19:42 Epoch[3] Loss: 27.98
+2020-04-23 19:45 Epoch[3] Loss: 45.41
+2020-04-23 19:47 Epoch[3] Loss: 59.12
+2020-04-23 19:48 Training set Results - Epoch: 3  Avg mae: 23.31 Avg mse: 64.04 Avg loss: 54.42
+batch_timer  1.5609535033856465
+train_timer  417.40394999399905
+2020-04-23 19:49 Validation set Results - Epoch: 3  Avg mae: 115.29 Avg mse: 145.45 Avg loss: 42.98
+evaluate_timer  206.72797289633277
+2020-04-23 19:52 Epoch[4] Loss: 38.42
+2020-04-23 19:54 Epoch[4] Loss: 105.40
+2020-04-23 19:57 Training set Results - Epoch: 4  Avg mae: 41.71 Avg mse: 106.21 Avg loss: 56.26
+batch_timer  1.516032846382014
+train_timer  405.41096944499986
+2020-04-23 19:57 Validation set Results - Epoch: 4  Avg mae: 191.42 Avg mse: 210.89 Avg loss: 44.67
+evaluate_timer  165.64150846399957
+2020-04-23 19:58 Epoch[5] Loss: 2.71
+2020-04-23 20:01 Epoch[5] Loss: 197.20
+2020-04-23 20:03 Epoch[5] Loss: 5.83
+2020-04-23 20:05 Training set Results - Epoch: 5  Avg mae: 35.60 Avg mse: 91.66 Avg loss: 54.85
+batch_timer  1.514120053531807
+train_timer  404.8973960450003
+2020-04-23 20:06 Validation set Results - Epoch: 5  Avg mae: 169.66 Avg mse: 189.90 Avg loss: 43.60
+evaluate_timer  140.9829996239996
+2020-04-23 20:07 Epoch[6] Loss: 10.17
+2020-04-23 20:10 Epoch[6] Loss: 35.72
+2020-04-23 20:12 Epoch[6] Loss: 10.66
+2020-04-23 20:13 Training set Results - Epoch: 6  Avg mae: 8.65 Avg mse: 27.33 Avg loss: 51.90
+batch_timer  1.5127704124007095
+train_timer  404.5389165050001
+2020-04-23 20:14 Validation set Results - Epoch: 6  Avg mae: 58.83 Avg mse: 89.87 Avg loss: 40.90
+evaluate_timer  124.53610803233293
+2020-04-23 20:17 Epoch[7] Loss: 3.90
+2020-04-23 20:19 Epoch[7] Loss: 22.24
+2020-04-23 20:22 Training set Results - Epoch: 7  Avg mae: 10.08 Avg mse: 29.83 Avg loss: 51.61
+batch_timer  1.510363992580539
+train_timer  403.89823696299936
+2020-04-23 20:22 Validation set Results - Epoch: 7  Avg mae: 57.48 Avg mse: 81.85 Avg loss: 40.66
+evaluate_timer  112.79780120142836
+2020-04-23 20:23 Epoch[8] Loss: 5.81
+2020-04-23 20:26 Epoch[8] Loss: 16.46
+2020-04-23 20:28 Epoch[8] Loss: 23.18
+2020-04-23 20:30 Training set Results - Epoch: 8  Avg mae: 12.32 Avg mse: 38.93 Avg loss: 51.69
+batch_timer  1.5113861737753065
+train_timer  404.16859211799965
+2020-04-23 20:31 Validation set Results - Epoch: 8  Avg mae: 76.20 Avg mse: 108.27 Avg loss: 40.73
+evaluate_timer  103.99689667949986
+2020-04-23 20:32 Epoch[9] Loss: 17.89
+2020-04-23 20:35 Epoch[9] Loss: 59.44
+2020-04-23 20:38 Epoch[9] Loss: 124.24
+2020-04-23 20:38 Training set Results - Epoch: 9  Avg mae: 12.22 Avg mse: 38.42 Avg loss: 51.38
+batch_timer  1.5097762611049539
+train_timer  403.74319395400016
+2020-04-23 20:39 Validation set Results - Epoch: 9  Avg mae: 77.93 Avg mse: 108.94 Avg loss: 40.39
+evaluate_timer  97.13890678133319
+2020-04-23 20:42 Epoch[10] Loss: 78.78
+2020-04-23 20:44 Epoch[10] Loss: 5.98
+2020-04-23 20:47 Training set Results - Epoch: 10  Avg mae: 11.58 Avg mse: 32.89 Avg loss: 50.37
+batch_timer  1.509434576812702
+train_timer  403.6505684540007
+2020-04-23 20:48 Validation set Results - Epoch: 10  Avg mae: 58.96 Avg mse: 79.14 Avg loss: 39.58
+evaluate_timer  91.6523462709999
+2020-04-23 20:48 Epoch[11] Loss: 2.38
+2020-04-23 20:51 Epoch[11] Loss: 42.88
+2020-04-23 20:53 Epoch[11] Loss: 62.60
+2020-04-23 20:55 Training set Results - Epoch: 11  Avg mae: 19.52 Avg mse: 51.88 Avg loss: 50.17
+batch_timer  1.5108423394756736
+train_timer  404.0260751580008
+2020-04-23 20:56 Validation set Results - Epoch: 11  Avg mae: 80.62 Avg mse: 94.73 Avg loss: 39.34
+evaluate_timer  87.16732233890906
+2020-04-23 20:57 Epoch[12] Loss: 2.89
+2020-04-23 21:00 Epoch[12] Loss: 21.69
+2020-04-23 21:03 Epoch[12] Loss: 19.22
+2020-04-23 21:04 Training set Results - Epoch: 12  Avg mae: 26.26 Avg mse: 69.29 Avg loss: 50.30
+batch_timer  1.5111950944120076
+train_timer  404.1229257729992
+2020-04-23 21:04 Validation set Results - Epoch: 12  Avg mae: 120.18 Avg mse: 142.85 Avg loss: 39.93
+evaluate_timer  83.41845450158333
+2020-04-23 21:07 Epoch[13] Loss: 43.01
+2020-04-23 21:09 Epoch[13] Loss: 89.63
+2020-04-23 21:12 Training set Results - Epoch: 13  Avg mae: 11.75 Avg mse: 32.99 Avg loss: 48.79
+batch_timer  1.507054667876416
+train_timer  403.01198405300056
+2020-04-23 21:13 Validation set Results - Epoch: 13  Avg mae: 56.59 Avg mse: 73.64 Avg loss: 37.76
+evaluate_timer  80.24973219507683
+2020-04-23 21:13 Epoch[14] Loss: 4.90
+2020-04-23 21:16 Epoch[14] Loss: 1.77
+2020-04-23 21:18 Epoch[14] Loss: 2.80
+2020-04-23 21:20 Training set Results - Epoch: 14  Avg mae: 16.21 Avg mse: 44.64 Avg loss: 49.65
+batch_timer  1.5054719848314344
+train_timer  402.59181541700127
+2020-04-23 21:21 Validation set Results - Epoch: 14  Avg mae: 66.64 Avg mse: 80.88 Avg loss: 37.96
+evaluate_timer  77.53475438057136
+2020-04-23 21:22 Epoch[15] Loss: 5.92
+2020-04-23 21:25 Epoch[15] Loss: 123.88
+2020-04-23 21:28 Epoch[15] Loss: 39.55
+2020-04-23 21:29 Training set Results - Epoch: 15  Avg mae: 14.73 Avg mse: 40.01 Avg loss: 47.69
+batch_timer  1.5052845093596534
+train_timer  402.54458960900047
+2020-04-23 21:29 Validation set Results - Epoch: 15  Avg mae: 67.93 Avg mse: 82.52 Avg loss: 37.44
+evaluate_timer  75.17388044700002
+2020-04-23 21:32 Epoch[16] Loss: 357.07
+2020-04-23 21:34 Epoch[16] Loss: 3.89
+2020-04-23 21:37 Training set Results - Epoch: 16  Avg mae: 17.02 Avg mse: 45.19 Avg loss: 46.72
+batch_timer  1.5042562783519622
+train_timer  402.26867924
+2020-04-23 21:38 Validation set Results - Epoch: 16  Avg mae: 71.12 Avg mse: 83.18 Avg loss: 36.37
+evaluate_timer  73.10339040662501
+2020-04-23 21:38 Epoch[17] Loss: 18.66
+2020-04-23 21:41 Epoch[17] Loss: 10.53
+2020-04-23 21:43 Epoch[17] Loss: 8.12
+2020-04-23 21:45 Training set Results - Epoch: 17  Avg mae: 14.81 Avg mse: 43.63 Avg loss: 47.25
+batch_timer  1.5014096361497882
+train_timer  401.5089577210001
+2020-04-23 21:46 Validation set Results - Epoch: 17  Avg mae: 72.58 Avg mse: 100.21 Avg loss: 37.29
+evaluate_timer  71.27870769105876
+2020-04-23 21:47 Epoch[18] Loss: 60.89
+2020-04-23 21:50 Epoch[18] Loss: 15.95
+2020-04-23 21:52 Epoch[18] Loss: 11.37
+2020-04-23 21:53 Training set Results - Epoch: 18  Avg mae: 11.68 Avg mse: 32.95 Avg loss: 50.38
+batch_timer  1.5010375493521484
+train_timer  401.40834010800063
+2020-04-23 21:54 Validation set Results - Epoch: 18  Avg mae: 61.62 Avg mse: 79.94 Avg loss: 40.23
+evaluate_timer  69.64817162199977
+2020-04-23 21:57 Epoch[19] Loss: 11.10
+2020-04-23 21:59 Epoch[19] Loss: 5.64
+2020-04-23 22:02 Training set Results - Epoch: 19  Avg mae: 9.71 Avg mse: 27.28 Avg loss: 44.59
+batch_timer  1.5014901278951542
+train_timer  401.5331730129983
+2020-04-23 22:02 Validation set Results - Epoch: 19  Avg mae: 47.83 Avg mse: 62.23 Avg loss: 34.58
+evaluate_timer  68.19908461989445
+2020-04-23 22:03 Epoch[20] Loss: 4.24
+2020-04-23 22:06 Epoch[20] Loss: 4.98
+2020-04-23 22:08 Epoch[20] Loss: 12.58
+2020-04-23 22:10 Training set Results - Epoch: 20  Avg mae: 7.17 Avg mse: 23.41 Avg loss: 45.63
+batch_timer  1.5019663932621727
+train_timer  401.66113662299904
+2020-04-23 22:11 Validation set Results - Epoch: 20  Avg mae: 44.14 Avg mse: 66.38 Avg loss: 36.00
+evaluate_timer  66.89079298074962
+2020-04-23 22:12 Epoch[21] Loss: 46.10
+2020-04-23 22:15 Epoch[21] Loss: 1.63
+2020-04-23 22:17 Epoch[21] Loss: 69.28
+2020-04-23 22:18 Training set Results - Epoch: 21  Avg mae: 20.70 Avg mse: 53.60 Avg loss: 44.60
+batch_timer  1.5005766239251415
+train_timer  401.2885265520017
+2020-04-23 22:19 Validation set Results - Epoch: 21  Avg mae: 87.68 Avg mse: 95.28 Avg loss: 34.93
+evaluate_timer  65.704032795571
+2020-04-23 22:21 Epoch[22] Loss: 14.10
+2020-04-23 22:24 Epoch[22] Loss: 1.55
+2020-04-23 22:27 Training set Results - Epoch: 22  Avg mae: 8.69 Avg mse: 24.62 Avg loss: 43.32
+batch_timer  1.4999934545505196
+train_timer  401.1275074130026
+2020-04-23 22:27 Validation set Results - Epoch: 22  Avg mae: 42.49 Avg mse: 54.77 Avg loss: 33.46
+evaluate_timer  64.63013197804507
+2020-04-23 22:28 Epoch[23] Loss: 151.10
+2020-04-23 22:31 Epoch[23] Loss: 232.67
+2020-04-23 22:33 Epoch[23] Loss: 60.74
+2020-04-23 22:35 Training set Results - Epoch: 23  Avg mae: 10.74 Avg mse: 30.91 Avg loss: 43.83
+batch_timer  1.4999699035091607
+train_timer  401.1245063899987
+2020-04-23 22:36 Validation set Results - Epoch: 23  Avg mae: 54.61 Avg mse: 70.14 Avg loss: 34.02
+evaluate_timer  63.654571201608356
+2020-04-23 22:37 Epoch[24] Loss: 235.90
+2020-04-23 22:40 Epoch[24] Loss: 5.35
+2020-04-23 22:42 Epoch[24] Loss: 21.96
+2020-04-23 22:44 Training set Results - Epoch: 24  Avg mae: 51.36 Avg mse: 126.97 Avg loss: 47.62
+batch_timer  1.5584932232882425
+train_timer  416.762719467999
+2020-04-23 22:44 Validation set Results - Epoch: 24  Avg mae: 200.83 Avg mse: 206.89 Avg loss: 36.55
+evaluate_timer  62.85229290791634
+2020-04-23 22:47 Epoch[25] Loss: 2.61
+2020-04-23 22:49 Epoch[25] Loss: 12.53
+2020-04-23 22:52 Training set Results - Epoch: 25  Avg mae: 7.23 Avg mse: 23.68 Avg loss: 42.18
+batch_timer  1.59536279685012
+train_timer  426.6178994440015
+2020-04-23 22:53 Validation set Results - Epoch: 25  Avg mae: 41.98 Avg mse: 61.75 Avg loss: 32.98
+evaluate_timer  62.14902110495972
+2020-04-23 22:54 Epoch[26] Loss: 8.89
+2020-04-23 22:56 Epoch[26] Loss: 26.58
+2020-04-23 22:59 Epoch[26] Loss: 233.90
+2020-04-23 23:01 Training set Results - Epoch: 26  Avg mae: 33.57 Avg mse: 84.02 Avg loss: 43.95
+batch_timer  1.5795833819401868
+train_timer  422.40113607900275
+2020-04-23 23:02 Validation set Results - Epoch: 26  Avg mae: 132.53 Avg mse: 138.88 Avg loss: 33.93
+evaluate_timer  61.47791835126894
+2020-04-23 23:03 Epoch[27] Loss: 4.53
+2020-04-23 23:06 Epoch[27] Loss: 12.28
+2020-04-23 23:09 Epoch[27] Loss: 1.33
+2020-04-23 23:10 Training set Results - Epoch: 27  Avg mae: 11.91 Avg mse: 33.52 Avg loss: 42.49
+batch_timer  1.5722735658576206
+train_timer  420.44970723000006
+2020-04-23 23:11 Validation set Results - Epoch: 27  Avg mae: 59.38 Avg mse: 73.66 Avg loss: 33.14
+evaluate_timer  60.897926688888624
