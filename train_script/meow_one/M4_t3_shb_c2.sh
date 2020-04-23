@@ -1,6 +1,6 @@
 task="M4_t3_shb_c2"
 
-CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
+CUDA_VISIBLE_DEVICES=2 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
 --task_id $task  \
 --note "M4 continue"  \
 --model "M4" \
@@ -8,7 +8,7 @@ CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.60.28.99:86" nohup python experime
 --lr 1e-5 \
 --decay 1e-5 \
 --batch_size 8 \
---load_model \
+--load_model saved_model/M4_t3_shb/M4_t3_shb_checkpoint_60000.pth  \
 --datasetname shanghaitech_rnd \
 --epochs 701 > logs/$task.log  &
 

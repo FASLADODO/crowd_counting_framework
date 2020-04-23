@@ -1,8 +1,8 @@
 task="M4_t3_sha"
 
-CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
+CUDA_VISIBLE_DEVICES=1 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
 --task_id $task  \
---note ""  \
+--note "a"  \
 --model "M4" \
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_A  \
 --lr 1e-4 \
