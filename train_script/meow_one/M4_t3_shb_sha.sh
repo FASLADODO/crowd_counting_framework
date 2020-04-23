@@ -9,6 +9,6 @@ CUDA_VISIBLE_DEVICES=3 HTTPS_PROXY="http://10.60.28.99:86" nohup python experime
 --decay 1e-4 \
 --load_model saved_model/M4_t3_shb/M4_t3_shb_checkpoint_60000.pth  \
 --datasetname shanghaitech_20p \
---epochs 701 > logs/$task.log  &
+--epochs 1500 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
