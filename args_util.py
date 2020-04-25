@@ -96,6 +96,8 @@ def my_args_parse():
     parser.add_argument('--batch_size', action="store", default=1, type=int,
                         help="only set batch_size > 0 for dataset with image size equal")
     parser.add_argument('--test', action="store_true", default=False)
+    parser.add_argument('--no_norm', action="store_true", default=False,
+                        help="if true, does not use transforms.Normalize in dataloader")
     arg = parser.parse_args()
     return arg
 

@@ -53,7 +53,12 @@ if __name__ == "__main__":
     test_list = create_image_list(TEST_PATH)
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, None, test_list, dataset_name=dataset_name, batch_size=args.batch_size)
+    train_loader, val_loader, test_loader = get_dataloader(train_list,
+                                                           None,
+                                                           test_list,
+                                                           dataset_name=dataset_name,
+                                                           batch_size=args.batch_size,
+                                                           visualize_mode=args.no_norm)
 
     print("len train_loader ", len(train_loader))
 
