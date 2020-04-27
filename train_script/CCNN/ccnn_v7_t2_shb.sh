@@ -1,4 +1,4 @@
-task="ccnn_v7_t2_sha"
+task="ccnn_v7_t2_shb"
 
 CUDA_VISIBLE_DEVICES=4 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_compact_cnn.py  \
 --task_id $task  \
