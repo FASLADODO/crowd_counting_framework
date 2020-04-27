@@ -12,6 +12,7 @@ import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3
+from models.meow_experiment.ccnn_head import H1
 from models import CustomCNNv2
 import os
 from model_util import get_lr
@@ -77,6 +78,8 @@ if __name__ == "__main__":
         model = BigTailM2()
     elif model_name == "BigTail3":
         model = BigTail3()
+    elif model_name == "H1":
+        model = H1()
     else:
         print("error: you didn't pick a model")
         exit(-1)
