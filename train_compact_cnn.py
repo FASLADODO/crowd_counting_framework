@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 
-from models import CompactCNNV2, CompactCNNV3
+from models import CompactCNNV2, CompactCNNV7
 
 import os
 from model_util import get_lr
@@ -67,8 +67,8 @@ if __name__ == "__main__":
     experiment.log_other("model", model_name)
     if model_name == "CompactCNNV2":
         model = CompactCNNV2()
-    elif model_name == "CompactCNNV3":
-        model = CompactCNNV3()
+    elif model_name == "CompactCNNV7":
+        model = CompactCNNV7()
     else:
         print("error: you didn't pick a model")
         exit(-1)

@@ -89,13 +89,13 @@ class CompactCNNV2(nn.Module):
         return x
 
 
-class CompactCNNV3(nn.Module):
+class CompactCNNV7(nn.Module):
     """
     A REAL-TIME DEEP NETWORK FOR CROWD COUNTING
     https://arxiv.org/pdf/2002.06515.pdf
     """
     def __init__(self, load_weights=False):
-        super(CompactCNNV3, self).__init__()
+        super(CompactCNNV7, self).__init__()
         self.model_note = "CCNN without batchnorm, max pooling after cat, does it do any good ?"
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
