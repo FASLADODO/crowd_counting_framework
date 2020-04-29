@@ -55,7 +55,7 @@ if __name__ == "__main__":
     test_list = create_image_list(TEST_PATH)
 
     # create data loader
-    train_loader, val_loader, test_loader = get_dataloader(train_list, None, test_list, dataset_name=dataset_name, batch_size=args.batch_size)
+    train_loader, train_loader_for_eval, test_loader = get_dataloader(train_list, train_list, test_list, dataset_name=dataset_name, batch_size=args.batch_size)
 
     print("len train_loader ", len(train_loader))
 
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
-        evaluator_train.run(train_loader)
+        evaluator_train.run(train_loader_for_eval)
         metrics = evaluator_train.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
