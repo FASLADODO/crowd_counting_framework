@@ -122,6 +122,8 @@ def meow_parse():
     parser.add_argument('--test', action="store_true", default=False)
     parser.add_argument('--no_norm', action="store_true", default=False,
                         help="if true, does not use transforms.Normalize in dataloader")
+    parser.add_argument('--use_ssim', action="store_true", default=False,
+                        help="if true, use mse and negative ssim as loss function")
     arg = parser.parse_args()
     return arg
 
