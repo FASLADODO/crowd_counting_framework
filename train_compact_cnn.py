@@ -7,9 +7,10 @@ from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
-
+from mse_ssim_loss import MseSsimLoss
 import torch
 from torch import nn
+from pytorch_ssim import SSIM
 
 from models import CompactCNNV2, CompactCNNV7
 
@@ -17,8 +18,8 @@ import os
 from model_util import get_lr
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
-PROJECT_NAME = "crowd-counting-framework"
-# PROJECT_NAME = "crowd-counting-debug"
+# PROJECT_NAME = "crowd-counting-framework"
+PROJECT_NAME = "crowd-counting-debug"
 
 
 def very_simple_param_count(model):
@@ -80,7 +81,11 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # loss function
-    loss_fn = nn.MSELoss(reduction='sum').to(device)
+    if args.use_ssim:
+        loss_fn = MseSsimLoss().to(device)
+        print("use ssim")
+    else:
+        loss_fn = nn.MSELoss(reduction='sum').to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
