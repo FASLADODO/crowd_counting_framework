@@ -11,6 +11,6 @@ CUDA_VISIBLE_DEVICES=3 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_co
 --batch_size 20 \
 --load_model saved_model/ccnn_v7_t5_shb/ccnn_v7_t5_shb_checkpoint_80000.pth \
 --datasetname shanghaitech_rnd \
---epochs 601 > logs/$task.log  &
+--epochs 1200 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
