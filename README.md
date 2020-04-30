@@ -13,15 +13,15 @@ conda create -n env python=3.7 anaconda
 conda install pytorch torchvision cpuonly -c pytorch 
 conda install -c conda-forge opencv
 <!--  pip install comet_ml -->
-conda install -c comet_ml -c conda-forge comet_ml
+# conda install -c comet_ml -c conda-forge comet_ml  # maybe bug
 conda install ignite -c pytorch
-conda install h5py
+conda install -c conda-forge h5py
 conda install scikit-learn
 conda install -c anaconda pillow
 conda install -c anaconda numpy
 conda install -c anaconda matplotlib
-pip install torchsummary 
- pip install kornia 
+# pip install torchsummary 
+# pip install kornia 
 ```
 
 for CUDA 9.0

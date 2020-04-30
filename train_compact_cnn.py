@@ -7,10 +7,10 @@ from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
-from mse_ssim_loss import MseSsimLoss
+
 import torch
 from torch import nn
-from pytorch_ssim import SSIM
+
 
 from models import CompactCNNV2, CompactCNNV7
 
@@ -82,6 +82,7 @@ if __name__ == "__main__":
 
     # loss function
     if args.use_ssim:
+        from mse_ssim_loss import MseSsimLoss  # only import when needed
         loss_fn = MseSsimLoss(device).to(device)
         print("use ssim")
     else:
