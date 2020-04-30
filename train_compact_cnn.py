@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # loss function
     if args.use_ssim:
-        loss_fn = MseSsimLoss()
+        loss_fn = MseSsimLoss(device)
         print("use ssim")
     else:
         loss_fn = nn.MSELoss(reduction='sum').to(device)

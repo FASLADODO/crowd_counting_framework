@@ -19,13 +19,16 @@ conda install h5py
 conda install scikit-learn
 conda install -c anaconda pillow
 conda install -c anaconda numpy
+conda install -c anaconda matplotlib
 pip install torchsummary 
+ pip install kornia 
 ```
 
 for CUDA 9.0
 
 ```shell script
 conda install pytorch==1.1.0 torchvision==0.3.0 cudatoolkit=9.0 -c pytorch
+conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
 ```
 
 ### make data folder
