@@ -1,6 +1,6 @@
 task="ccnn_v7_ssim_t3_shb"
 
-CUDA_VISIBLE_DEVICES=6 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_compact_cnn.py  \
+CUDA_VISIBLE_DEVICES=1 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_compact_cnn.py  \
 --task_id $task  \
 --note "1e-5 keepfull"  \
 --model "CompactCNNV7" \
