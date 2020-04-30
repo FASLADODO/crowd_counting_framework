@@ -770,7 +770,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     num_workers=0,
                     dataset_name=dataset_name),
         batch_size=batch_size,
-        num_workers=4,
+        num_workers=0,
         collate_fn=my_collate)
 
     if val_list is not None:
