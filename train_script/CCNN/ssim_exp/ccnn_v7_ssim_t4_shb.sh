@@ -8,7 +8,7 @@ CUDA_VISIBLE_DEVICES=7 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_co
 --lr 1e-4 \
 --decay 1e-4 \
 --use_ssim  \
---batch_size 20 \
+--batch_size 10 \
 --datasetname shanghaitech_keepfull \
 --epochs 601 > logs/$task.log  &
 
