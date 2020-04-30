@@ -2,7 +2,7 @@
 
 The dataset, which is publicly available on the internet, belong to their original author. I only re-upload and process the dataset to use for my own project. I make it publicly available so I might save some of your time.
 
-Shanghaitech dataset [Single-Image Crowd Counting via Multi-Column Convolutional Neural Network](https://pdfs.semanticscholar.org/7ca4/bcfb186958bafb1bb9512c40a9c54721c9fc.pdf)
+Shanghaitech dataset [Single-Image Crowd Counting via Multi-Column Convolutional Neural Network](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Zhang_Single-Image_Crowd_Counting_CVPR_2016_paper.pdf)
 
 UCF-CC-50 dataset [Multi-Source Multi-Scale Counting in Extremely Dense Crowd Images](http://openaccess.thecvf.com/content_cvpr_2013/papers/Idrees_Multi-source_Multi-scale_Counting_2013_CVPR_paper.pdf)
 
