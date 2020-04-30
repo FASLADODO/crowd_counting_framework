@@ -28,6 +28,7 @@ def very_simple_param_count(model):
 
 
 if __name__ == "__main__":
+    torch.set_num_threads(4) # 4 thread
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -191,7 +192,7 @@ if __name__ == "__main__":
 
     def checkpoint_valid_mae_score_function(engine):
         score = engine.state.metrics['mae']
-        return score
+        return -score
 
 
     # docs on save and load
