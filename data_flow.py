@@ -771,7 +771,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     dataset_name=dataset_name),
         batch_size=batch_size,
         num_workers=0,
-        collate_fn=my_collate)
+        collate_fn=my_collate, pin_memory=False)
 
     if val_list is not None:
         val_loader = torch.utils.data.DataLoader(
@@ -781,7 +781,8 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         dataset_name=dataset_name),
             num_workers=0,
-            batch_size=1)
+            batch_size=1,
+            pin_memory=False)
     else:
         val_loader = None
 
@@ -793,7 +794,8 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         dataset_name=dataset_name),
             num_workers=0,
-            batch_size=1)
+            batch_size=1,
+            pin_memory=False)
     else:
         test_loader = None
 
