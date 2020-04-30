@@ -111,14 +111,14 @@ if __name__ == "__main__":
 
     # timer
     train_timer = Timer(average=True)  # time to train whole epoch
-    batch_timer = Timer(average=True)  # every batch
+    # batch_timer = Timer(average=True)  # every batch
     evaluate_timer = Timer(average=True)
 
-    batch_timer.attach(trainer,
-                        start =Events.EPOCH_STARTED,
-                        resume =Events.ITERATION_STARTED,
-                        pause =Events.ITERATION_COMPLETED,
-                        step =Events.ITERATION_COMPLETED)
+    # batch_timer.attach(trainer,
+    #                     start =Events.EPOCH_STARTED,
+    #                     resume =Events.ITERATION_STARTED,
+    #                     pause =Events.ITERATION_COMPLETED,
+    #                     step =Events.ITERATION_COMPLETED)
 
     train_timer.attach(trainer,
                         start =Events.EPOCH_STARTED,
@@ -159,10 +159,10 @@ if __name__ == "__main__":
         experiment.log_metric("train_loss", metrics['loss'])
         experiment.log_metric("lr", get_lr(optimizer))
 
-        experiment.log_metric("batch_timer", batch_timer.value())
+        #experiment.log_metric("batch_timer", batch_timer.value())
         experiment.log_metric("train_timer", train_timer.value())
 
-        print("batch_timer ", batch_timer.value())
+        #print("batch_timer ", batch_timer.value())
         print("train_timer ", train_timer.value())
 
     @trainer.on(Events.EPOCH_COMPLETED)
