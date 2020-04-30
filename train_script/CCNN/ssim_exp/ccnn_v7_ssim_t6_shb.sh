@@ -2,7 +2,7 @@ task="ccnn_v7_ssim_t6_shb"
 
 CUDA_VISIBLE_DEVICES=3 HTTPS_PROXY="http://10.60.28.99:86" nohup python train_compact_cnn.py  \
 --task_id $task  \
---note "1e-5 keepfull"  \
+--note "1e-5 shanghaitech_rnd"  \
 --model "CompactCNNV7" \
 --input /data/rnd/thient/thient_data/ShanghaiTech/part_B  \
 --lr 1e-5 \
