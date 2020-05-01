@@ -13,7 +13,7 @@ if __name__ == "__main__":
     TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
     TEST_PATH = os.path.join(DATA_PATH, "test_data")
     dataset_name = args.datasetname
-    dataset_name = "shanghaitech_256"
+    dataset_name = "shanghaitech_keepfull"
 
     count_below_256 = 0
     # create list
