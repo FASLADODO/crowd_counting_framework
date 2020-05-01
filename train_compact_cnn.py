@@ -11,15 +11,14 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 
-
 from models import CompactCNNV2, CompactCNNV7
 
 import os
 from model_util import get_lr
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
-# PROJECT_NAME = "crowd-counting-framework"
-PROJECT_NAME = "crowd-counting-debug"
+PROJECT_NAME = "crowd-counting-framework"
+# PROJECT_NAME = "crowd-counting-debug"
 
 
 def very_simple_param_count(model):
