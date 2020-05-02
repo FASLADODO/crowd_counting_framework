@@ -8,7 +8,7 @@ CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" noh
 --lr 2e-5 \
 --decay 1e-4 \
 --batch_size 20 \
---datasetname shanghaitech_keepfull \
+--datasetname shanghaitech_rnd \
 --epochs 901 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
