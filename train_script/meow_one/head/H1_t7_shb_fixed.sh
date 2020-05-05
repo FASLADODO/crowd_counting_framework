@@ -1,6 +1,6 @@
 task="H1_t7_shb_fixed"
 
-CUDA_VISIBLE_DEVICES=1 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
+CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_meow_main.py  \
 --task_id $task  \
 --note "shb sigma 15"  \
 --model "H1" \
