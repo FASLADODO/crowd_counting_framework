@@ -10,6 +10,6 @@ CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" noh
 --batch_size 20 \
 --load_model saved_model/H1_t2_sha/ H1_t2_sha_checkpoint_840000.pth  \
 --datasetname shanghaitech_rnd \
---epochs 1001 > logs/$task.log  &
+--epochs 2001 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
