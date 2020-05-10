@@ -93,7 +93,13 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # loss function
-    loss_fn = nn.MSELoss(reduction='sum').to(device)
+    # loss_fn = nn.MSELoss(reduction='sum').to(device)
+    if args.loss_fn == "MSE":
+        loss_fn = nn.MSELoss(reduction='sum').to(device)
+        print("use MSELoss")
+    elif args.loss_fn == "L1":
+        loss_fn = nn.L1Loss(reduction='sum').to(device)
+        print("use L1Loss")
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
