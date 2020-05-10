@@ -89,9 +89,15 @@ if __name__ == "__main__":
     if args.loss_fn == "MSE":
         loss_fn = nn.MSELoss(reduction='sum').to(device)
         print("use MSELoss")
+    elif args.loss_fn == "MSEmean":
+        loss_fn = nn.MSELoss(reduction='mean').to(device)
+        print("use MSELoss with reduction mean")
     elif args.loss_fn == "L1":
         loss_fn = nn.L1Loss(reduction='sum').to(device)
         print("use L1Loss")
+    elif args.loss_fn == "L1mean":
+        loss_fn = nn.L1Loss(reduction='mean').to(device)
+        print("use L1Loss with reduction mean")
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
