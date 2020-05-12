@@ -280,7 +280,7 @@ class H1_Bigtail3(nn.Module):
 
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        self.c0 = nn.Conv2d(40, 60, 3, padding=2, dilation=2)
+        self.c0 = nn.Conv2d(60, 60, 3, padding=2, dilation=2)
         self.c1 = nn.Conv2d(60, 60, 3, padding=2, dilation=2)
         self.c2 = nn.Conv2d(60, 60, 3, padding=2, dilation=2)
         self.c3 = nn.Conv2d(60, 30, 3, padding=2, dilation=2)
