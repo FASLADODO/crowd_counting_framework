@@ -31,7 +31,6 @@ class H1(nn.Module):
 
         self.c1 = nn.Conv2d(40, 60, 3, padding=1)
 
-        # ideal from CSRNet
         self.c2 = nn.Conv2d(60, 40, 3, padding=1)
         self.c3 = nn.Conv2d(40, 20, 3, padding=1)
         self.c4 = nn.Conv2d(20, 10, 3, padding=1)
