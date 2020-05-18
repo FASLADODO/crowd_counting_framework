@@ -40,9 +40,9 @@ __DATASET_ROOT = "../input/shanghaitech_h5_empty/ShanghaiTech/"
 __OUTPUT_NAME = "ShanghaiTech_PartA_Train/"
 
 
-__DATASET_ROOT =
-__OUTPUT_NAME =
-__PART =
+__DATASET_ROOT = "ROOT_HERE"
+__OUTPUT_NAME = "OUTPUT_HERE"
+__PART = "PART_HERE"
 
 def gaussian_filter_density_fixed(gt, sigma):
     print(gt.shape)
