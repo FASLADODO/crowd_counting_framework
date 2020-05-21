@@ -750,7 +750,7 @@ def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] co
     # so how to sample another dataset entry?
     return torch.utils.data.dataloader.default_collate(batch)
 
-def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1):
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
     if visualize_mode:
         transformer = transforms.Compose([
             transforms.ToTensor()
@@ -770,6 +770,18 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     num_workers=0,
                     dataset_name=dataset_name),
         batch_size=batch_size,
+        num_workers=0,
+        collate_fn=my_collate, pin_memory=False)
+
+    train_loader_for_eval = torch.utils.data.DataLoader(
+        ListDataset(train_list,
+                    shuffle=False,
+                    transform=transformer,
+                    train=False,
+                    batch_size=batch_size,
+                    num_workers=0,
+                    dataset_name=dataset_name),
+        batch_size=1,
         num_workers=0,
         collate_fn=my_collate, pin_memory=False)
 
@@ -798,5 +810,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
             pin_memory=False)
     else:
         test_loader = None
-
-    return train_loader, val_loader, test_loader
+    if train_loader_for_eval_check:
+        return train_loader, train_loader_for_eval, val_loader, test_loader
+    else:
+        return train_loader, val_loader, test_loader
