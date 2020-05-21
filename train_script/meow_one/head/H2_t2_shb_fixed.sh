@@ -1,4 +1,4 @@
-task="H2_t1_shb_fixed"
+task="H2_t2_shb_fixed"
 
 CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \

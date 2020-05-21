@@ -1,4 +1,4 @@
-task="H1_t9_sha"
+task="H1_t10_sha"
 
 CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
