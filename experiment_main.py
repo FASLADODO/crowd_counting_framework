@@ -223,6 +223,10 @@ if __name__ == "__main__":
         flag_mse = best_mse.checkAndRecord(metrics['mse'])
 
         if flag_mae or flag_mse:
+            experiment.log_metric("valid_best_mae", metrics['mae'])
+            experiment.log_metric("valid_best_mse", metrics['mse'])
+            experiment.log_metric("valid_best_epoch", trainer.state.epoch)
+            print("BEST VAL, evaluating on test set")
             evaluate_test_timer.resume()
             evaluator_test.run(test_loader)
             evaluate_test_timer.pause()
@@ -234,7 +238,8 @@ if __name__ == "__main__":
             experiment.log_metric("test_mae", test_metrics['mae'])
             experiment.log_metric("test_mse", test_metrics['mse'])
             experiment.log_metric("test_loss", test_metrics['loss'])
-            experiment.log_metric("valid_best_epoch", trainer.state.epoch)
+
+
 
 
     def checkpoint_valid_mae_score_function(engine):
