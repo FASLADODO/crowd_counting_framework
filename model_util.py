@@ -52,6 +52,33 @@ def get_lr(optimizer):
         return param_group['lr']
 
 
+class BestMetrics:
+    def __init__(self, best_metric="mae"):
+        """
+        :param best_metric: whether mae or mse will be use to determine best metric
+        """
+        self.best = 9999
+        self.cur_mae = 9999
+        self.cur_mse = 9999
+        self.best_metric = "mae"
+
+    def checkAndRecord(self, mae, mse):
+        # check best
+        flag_best = False
+        if self.best_metric == "mae":
+            if mae < self.best:
+                flag_best = True
+                self.best = mae
+        elif self.best_metric == "mse":
+            if mse < self.best:
+                flag_best = True
+                self.best = mse
+        if flag_best:
+            self.cur_mae = mae
+            self.cur_mse = mse
+        return flag_best
+
+
 if __name__ == "__main__":
     print(calculate_padding(kernel_size=3, dilation=4))
     print(calculate_padding(kernel_size=5, dilation=1))
