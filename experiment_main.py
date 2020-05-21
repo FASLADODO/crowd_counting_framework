@@ -19,7 +19,7 @@ import os
 from model_util import get_lr, BestMetrics
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
-PROJECT_NAME = "meow-one-experiment-insita"
+PROJECT_NAME = "crowd-counting-train-val"
 # PROJECT_NAME = "crowd-counting-debug"
 
 
