@@ -219,8 +219,8 @@ if __name__ == "__main__":
         print("evaluate_valid_timer ", evaluate_validate_timer.value())
 
         # check if that validate is best
-        flag_mae = best_mae.checkAndRecord(metrics['mae'])
-        flag_mse = best_mse.checkAndRecord(metrics['mse'])
+        flag_mae = best_mae.checkAndRecord(metrics['mae'], metrics['mse'])
+        flag_mse = best_mse.checkAndRecord(metrics['mae'], metrics['mse'])
 
         if flag_mae or flag_mse:
             experiment.log_metric("valid_best_mae", metrics['mae'])

@@ -17,10 +17,22 @@ from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
+import scipy
+
 
 """
 create a list of file (full directory)
 """
+
+def count_gt_annotation_sha(mat_path):
+    """
+    read the annotation and count number of head from annotation
+    :param mat_path:
+    :return: count
+    """
+    mat = scipy.io.loadmat(mat_path)
+    gt = mat["image_info"][0, 0][0, 0][0]
+    return len(gt)
 
 def create_training_image_list(data_path):
     """
@@ -134,6 +146,13 @@ def load_data_shanghaitech_rnd(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.map').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, target1, gt_count
+
     return img, target1
 
 
@@ -256,6 +275,13 @@ def load_data_shanghaitech_20p(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.map').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, target1, gt_count
+
     return img, target1
 
 
@@ -749,6 +775,7 @@ def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] co
     # I want len(G) = 4
     # so how to sample another dataset entry?
     return torch.utils.data.dataloader.default_collate(batch)
+
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
     if visualize_mode:
