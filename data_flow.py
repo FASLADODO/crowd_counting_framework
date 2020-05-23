@@ -278,7 +278,7 @@ def load_data_shanghaitech_20p(img_path, train=True):
 
     if not train:
         # get correct people head count from head annotation
-        mat_path = img_path.replace('.jpg', '.map').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
         return img, target1, gt_count
 
