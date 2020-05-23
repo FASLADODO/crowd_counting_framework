@@ -72,7 +72,7 @@ class CrowdCountingMeanAbsoluteErrorWithCount(Metric):
         # true_count = torch.sum(y)
         absolute_errors = torch.abs(pred_count - true_count)
         self._sum_of_absolute_errors += torch.sum(absolute_errors).item()
-        self._num_examples += y.shape[0]
+        self._num_examples += y_pred.shape[0]
 
     def compute(self):
         if self._num_examples == 0:
@@ -97,7 +97,7 @@ class CrowdCountingMeanSquaredErrorWithCount(Metric):
         # true_count = torch.sum(y)
         squared_errors = torch.pow(pred_count - true_count, 2)
         self._sum_of_squared_errors += torch.sum(squared_errors).item()
-        self._num_examples += y.shape[0]
+        self._num_examples += y_pred.shape[0]
 
     def compute(self):
         if self._num_examples == 0:
