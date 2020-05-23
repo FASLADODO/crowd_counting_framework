@@ -17,7 +17,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
-import scipy
+import scipy.io   # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
 
 
 """
