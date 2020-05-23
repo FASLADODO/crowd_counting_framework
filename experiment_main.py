@@ -5,7 +5,7 @@ from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
-from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount
 from visualize_util import get_readable_time
 
 import torch
@@ -114,22 +114,22 @@ if __name__ == "__main__":
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator_train = create_supervised_evaluator(model,
                                             metrics={
-                                                'mae': CrowdCountingMeanAbsoluteError(),
-                                                'mse': CrowdCountingMeanSquaredError(),
+                                                'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
+                                                'mse': CrowdCountingMeanSquaredErrorWithCount(),
                                                 'loss': Loss(loss_fn)
                                             }, device=device)
 
     evaluator_validate = create_supervised_evaluator(model,
                                             metrics={
-                                                'mae': CrowdCountingMeanAbsoluteError(),
-                                                'mse': CrowdCountingMeanSquaredError(),
+                                                'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
+                                                'mse': CrowdCountingMeanSquaredErrorWithCount(),
                                                 'loss': Loss(loss_fn)
                                             }, device=device)
 
     evaluator_test = create_supervised_evaluator(model,
                                             metrics={
-                                                'mae': CrowdCountingMeanAbsoluteError(),
-                                                'mse': CrowdCountingMeanSquaredError(),
+                                                'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
+                                                'mse': CrowdCountingMeanSquaredErrorWithCount(),
                                                 'loss': Loss(loss_fn)
                                             }, device=device)
 
