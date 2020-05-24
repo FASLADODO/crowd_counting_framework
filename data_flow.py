@@ -326,10 +326,11 @@ def load_data_shanghaitech_40p(img_path, train=True):
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
-def load_data_shanghaitech_20p_rnd(img_path, train=True):
+
+def load_data_shanghaitech_20p_random(img_path, train=True):
     """
     20 percent crop
-    now it is also random crop, not just crop 4
+    now it is also random crop, not just crop 4 corner
     :param img_path:
     :param train:
     :return:
@@ -343,10 +344,10 @@ def load_data_shanghaitech_20p_rnd(img_path, train=True):
     if train:
         if random.random() > 0.8:
             crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
-            if random.randint(0, 9) <= 3:
+            if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
                 dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
                 dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
-            else:
+            else:   # crop random, 60% chance
                 dx = int(random.random() * img.size[0] * 1. / 2)
                 dy = int(random.random() * img.size[1] * 1. / 2)
 
@@ -365,6 +366,13 @@ def load_data_shanghaitech_20p_rnd(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
     return img, target1
 
 def load_data_shanghaitech_180(img_path, train=True):
@@ -732,8 +740,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_20p
         elif dataset_name == "shanghaitech_40p":
             self.load_data_fn = load_data_shanghaitech_40p
-        elif dataset_name == "shanghaitech_20p_rnd":
-            self.load_data_fn = load_data_shanghaitech_20p_rnd
+        elif dataset_name == "shanghaitech_20p_random":
+            self.load_data_fn = load_data_shanghaitech_20p_random
         elif dataset_name == "shanghaitech_180":
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
