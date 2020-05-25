@@ -375,6 +375,56 @@ def load_data_shanghaitech_20p_random(img_path, train=True):
 
     return img, target1
 
+
+def load_data_shanghaitech_60p_random(img_path, train=True):
+    """
+    40 percent crop
+    now it is also random crop, not just crop 4 corner
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        if random.random() > 0.4:
+            crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+            if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
+                dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+                dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+            else:   # crop random, 60% chance
+                dx = int(random.random() * img.size[0] * 1. / 2)
+                dy = int(random.random() * img.size[1] * 1. / 2)
+
+            img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+            target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+            # # enlarge image patch to original size
+            # img = img.resize((crop_size[0]*2, crop_size[1]*2), Image.ANTIALIAS)
+            # target_factor = 4 # thus, target is not enlarge, so output target only / 4
+
+        if random.random() > 0.5:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
+    return img, target1
+
+
 def load_data_shanghaitech_180(img_path, train=True):
     """
     crop fixed 180, allow batch in non-uniform dataset
@@ -742,6 +792,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_40p
         elif dataset_name == "shanghaitech_20p_random":
             self.load_data_fn = load_data_shanghaitech_20p_random
+        elif dataset_name == "shanghaitech_60p_random":
+            self.load_data_fn = load_data_shanghaitech_60p_random
         elif dataset_name == "shanghaitech_180":
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
@@ -771,7 +823,7 @@ class ListDataset(Dataset):
         return img, target
 
 
-def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
+def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
     """
     collate that ignore None
     However, if all sample is None, we have problem, so, set batch size bigger
