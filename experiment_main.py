@@ -118,21 +118,21 @@ if __name__ == "__main__":
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
                                                 'mse': CrowdCountingMeanSquaredErrorWithCount(),
-                                                'loss': Loss(loss_fn)
+                                               #  'loss': Loss(loss_fn)
                                             }, device=device)
 
     evaluator_validate = create_supervised_evaluator(model,
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
                                                 'mse': CrowdCountingMeanSquaredErrorWithCount(),
-                                                'loss': Loss(loss_fn)
+                                               # 'loss': Loss(loss_fn)
                                             }, device=device)
 
     evaluator_test = create_supervised_evaluator(model,
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
                                                 'mse': CrowdCountingMeanSquaredErrorWithCount(),
-                                                'loss': Loss(loss_fn)
+                                               # 'loss': Loss(loss_fn)
                                             }, device=device)
 
     best_mae = BestMetrics(best_metric="mae")
