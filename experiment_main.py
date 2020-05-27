@@ -188,11 +188,11 @@ if __name__ == "__main__":
         metrics = evaluator_train.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
         experiment.log_metric("epoch", trainer.state.epoch)
         experiment.log_metric("train_mae", metrics['mae'])
         experiment.log_metric("train_mse", metrics['mse'])
-        experiment.log_metric("train_loss", metrics['loss'])
+        # experiment.log_metric("train_loss", metrics['loss'])
         experiment.log_metric("lr", get_lr(optimizer))
 
         experiment.log_metric("batch_timer", batch_timer.value())
@@ -211,10 +211,10 @@ if __name__ == "__main__":
         metrics = evaluator_validate.state.metrics
         timestamp = get_readable_time()
         print(timestamp + " Validation set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], metrics['loss']))
+              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
         experiment.log_metric("valid_mae", metrics['mae'])
         experiment.log_metric("valid_mse", metrics['mse'])
-        experiment.log_metric("valid_loss", metrics['loss'])
+        # experiment.log_metric("valid_loss", metrics['loss'])
 
         # timer
         experiment.log_metric("evaluate_valid_timer", evaluate_validate_timer.value())
@@ -236,10 +236,10 @@ if __name__ == "__main__":
             test_metrics = evaluator_test.state.metrics
             timestamp = get_readable_time()
             print(timestamp + " Test set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-                  .format(trainer.state.epoch, test_metrics['mae'], test_metrics['mse'], test_metrics['loss']))
+                  .format(trainer.state.epoch, test_metrics['mae'], test_metrics['mse'], 0))
             experiment.log_metric("test_mae", test_metrics['mae'])
             experiment.log_metric("test_mse", test_metrics['mse'])
-            experiment.log_metric("test_loss", test_metrics['loss'])
+            # experiment.log_metric("test_loss", test_metrics['loss'])
 
 
 
