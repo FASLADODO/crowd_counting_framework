@@ -1,4 +1,4 @@
-task="bigtail3_t5_sha"
+task="bigtail3_t6_sha"
 
 CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=5 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
