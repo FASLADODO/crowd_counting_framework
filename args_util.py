@@ -122,6 +122,8 @@ def meow_parse():
     parser.add_argument('--test', action="store_true", default=False)
     parser.add_argument('--no_norm', action="store_true", default=False,
                         help="if true, does not use transforms.Normalize in dataloader")
+    parser.add_argument('--skip_train_eval', action="store_true", default=False,
+                        help="if true, do not run eval on training set to save time")
     # parser.add_argument('--use_ssim', action="store_true", default=False,
     #                     help="if true, use mse and negative ssim as loss function")
     parser.add_argument('--loss_fn', action="store", default="MSE", type=str)
