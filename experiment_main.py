@@ -184,22 +184,23 @@ if __name__ == "__main__":
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
-        evaluator_train.run(train_loader_eval)
-        metrics = evaluator_train.state.metrics
-        timestamp = get_readable_time()
-        print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
-        experiment.log_metric("epoch", trainer.state.epoch)
-        experiment.log_metric("train_mae", metrics['mae'])
-        experiment.log_metric("train_mse", metrics['mse'])
-        # experiment.log_metric("train_loss", metrics['loss'])
-        experiment.log_metric("lr", get_lr(optimizer))
+        if not args.skip_train_eval:
+            evaluator_train.run(train_loader_eval)
+            metrics = evaluator_train.state.metrics
+            timestamp = get_readable_time()
+            print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+                  .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
+            experiment.log_metric("epoch", trainer.state.epoch)
+            experiment.log_metric("train_mae", metrics['mae'])
+            experiment.log_metric("train_mse", metrics['mse'])
+            # experiment.log_metric("train_loss", metrics['loss'])
+            experiment.log_metric("lr", get_lr(optimizer))
 
-        experiment.log_metric("batch_timer", batch_timer.value())
-        experiment.log_metric("train_timer", train_timer.value())
+            experiment.log_metric("batch_timer", batch_timer.value())
+            experiment.log_metric("train_timer", train_timer.value())
 
-        print("batch_timer ", batch_timer.value())
-        print("train_timer ", train_timer.value())
+            print("batch_timer ", batch_timer.value())
+            print("train_timer ", train_timer.value())
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
