@@ -181,19 +181,18 @@ if __name__ == "__main__":
         timestamp = get_readable_time()
         print(timestamp + " Epoch[{}] Loss: {:.2f}".format(trainer.state.epoch, trainer.state.output))
 
-
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(trainer):
+        experiment.log_metric("epoch", trainer.state.epoch)
         if not args.skip_train_eval:
             evaluator_train.run(train_loader_eval)
             metrics = evaluator_train.state.metrics
             timestamp = get_readable_time()
             print(timestamp + " Training set Results - Epoch: {}  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
                   .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
-            experiment.log_metric("epoch", trainer.state.epoch)
+            # experiment.log_metric("epoch", trainer.state.epoch)
             experiment.log_metric("train_mae", metrics['mae'])
             experiment.log_metric("train_mse", metrics['mse'])
-            # experiment.log_metric("train_loss", metrics['loss'])
             experiment.log_metric("lr", get_lr(optimizer))
 
             experiment.log_metric("batch_timer", batch_timer.value())
@@ -215,7 +214,6 @@ if __name__ == "__main__":
               .format(trainer.state.epoch, metrics['mae'], metrics['mse'], 0))
         experiment.log_metric("valid_mae", metrics['mae'])
         experiment.log_metric("valid_mse", metrics['mse'])
-        # experiment.log_metric("valid_loss", metrics['loss'])
 
         # timer
         experiment.log_metric("evaluate_valid_timer", evaluate_validate_timer.value())
@@ -242,13 +240,9 @@ if __name__ == "__main__":
             experiment.log_metric("test_mse", test_metrics['mse'])
             # experiment.log_metric("test_loss", test_metrics['loss'])
 
-
-
-
     def checkpoint_valid_mae_score_function(engine):
         score = engine.state.metrics['mae']
         return -score
-
 
     # docs on save and load
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
@@ -262,6 +256,5 @@ if __name__ == "__main__":
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
     evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
-
 
     trainer.run(train_loader, max_epochs=args.epochs)
