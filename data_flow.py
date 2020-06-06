@@ -172,7 +172,7 @@ def load_data_shanghaitech_more_rnd(img_path, train=True):
 
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
-        if random.randint(0, 9) <= 1:
+        if random.randint(0, 9) <= 3:
             # crop 4 corner
             dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
             dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
@@ -820,9 +820,9 @@ class ListDataset(Dataset):
         # load data fn
         if dataset_name == "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
-        elif dataset_name == "shanghaitech_rnd":
+        elif dataset_name == "shanghaitech_random":
             self.load_data_fn = load_data_shanghaitech_rnd
-        if dataset_name == "shanghaitech_more_rnd":
+        if dataset_name == "shanghaitech_more_random":
             self.load_data_fn = load_data_shanghaitech_more_rnd
         elif dataset_name == "shanghaitech_same_size_density_map":
             self.load_data_fn = load_data_shanghaitech_same_size_density_map
