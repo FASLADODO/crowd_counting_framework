@@ -5,7 +5,7 @@ CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --note "bigtail4"  \
 --model "BigTail4" \
 --input /data/rnd/thient/thient_data/shanghaitech_with_people_density_map/ShanghaiTech_fixed_sigma/part_B    \
---lr 1e-1 \
+--lr 1e-4 \
 --decay 1e-4  \
 --loss_fn "MSE" \
 --skip_train_eval \
