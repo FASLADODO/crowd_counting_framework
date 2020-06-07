@@ -188,6 +188,12 @@ def load_data_shanghaitech_more_rnd(img_path, train=True):
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
