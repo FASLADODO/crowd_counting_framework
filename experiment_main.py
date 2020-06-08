@@ -93,7 +93,6 @@ if __name__ == "__main__":
         model = H1_Bigtail3()
     elif model_name == "CompactCNNV7":
         model = CompactCNNV7()
-
     else:
         print("error: you didn't pick a model")
         exit(-1)
@@ -111,9 +110,19 @@ if __name__ == "__main__":
     elif args.loss_fn == "L1":
         loss_fn = nn.L1Loss(reduction='sum').to(device)
         print("use L1Loss")
+    elif args.loss_fn == "MSEMean":
+        loss_fn = nn.MSELoss(reduction='mean').to(device)
+        print("use MSEMean")
 
-    optimizer = torch.optim.Adam(model.parameters(), args.lr,
+    if args.optim == "adam":
+        optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
+        print("use adam")
+    elif args.optim == "sgd":
+        optimizer = torch.optim.SGD(model.parameters(), args.lr,
+                                    weight_decay=args.decay,
+                                    momentum=args.momentum)
+        print("use sgd")
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator_train = create_supervised_evaluator(model,
