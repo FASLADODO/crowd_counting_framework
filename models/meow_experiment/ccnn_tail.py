@@ -230,6 +230,6 @@ class BigTail5(nn.Module):
         x = self.max_pooling(x)
 
         x = F.relu(self.c4(x), inplace=True)
-
         x = self.output(x)
+        return x
 
