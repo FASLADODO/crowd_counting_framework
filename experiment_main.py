@@ -11,7 +11,7 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
-from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4
+from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5
 from models.meow_experiment.ccnn_head import H1, H2
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
@@ -85,6 +85,8 @@ if __name__ == "__main__":
         model = BigTail3()
     elif model_name == "BigTail4":
         model = BigTail4()
+    elif model_name == "BigTail5":
+        model = BigTail5()
     elif model_name == "H1":
         model = H1()
     elif model_name == "H2":
@@ -259,11 +261,11 @@ if __name__ == "__main__":
     to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
     save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
                               filename_prefix=args.task_id,
-                              n_saved=5)
+                              n_saved=3)
 
     save_handler_best = Checkpoint(to_save, DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
                               filename_prefix=args.task_id, score_name="valid_mae", score_function=checkpoint_valid_mae_score_function,
-                              n_saved=5)
+                              n_saved=3)
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
     evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
