@@ -11,10 +11,11 @@ from visualize_util import get_readable_time
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
-from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5
-from models.meow_experiment.ccnn_head import H1, H2
+from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7
+from models.meow_experiment.ccnn_head import H1, H2, H3
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
+from models.compact_cnn import CompactCNNV8
 import os
 from model_util import get_lr, BestMetrics
 
@@ -87,14 +88,22 @@ if __name__ == "__main__":
         model = BigTail4()
     elif model_name == "BigTail5":
         model = BigTail5()
+    elif model_name == "BigTail6":
+        model = BigTail6()
+    elif model_name == "BigTail7":
+        model = BigTail7()
     elif model_name == "H1":
         model = H1()
     elif model_name == "H2":
         model = H2()
+    elif model_name == "H3":
+        model = H3()
     elif model_name == "H1_Bigtail3":
         model = H1_Bigtail3()
     elif model_name == "CompactCNNV7":
         model = CompactCNNV7()
+    elif model_name == "CompactCNNV8":
+        model = CompactCNNV8()
     else:
         print("error: you didn't pick a model")
         exit(-1)
@@ -267,7 +276,7 @@ if __name__ == "__main__":
                               filename_prefix=args.task_id, score_name="valid_mae", score_function=checkpoint_valid_mae_score_function,
                               n_saved=3)
 
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=5), save_handler)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
     evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
 
     trainer.run(train_loader, max_epochs=args.epochs)
