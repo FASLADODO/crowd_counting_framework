@@ -68,6 +68,7 @@ if __name__ == "__main__":
     # model
     model_name = args.model
     experiment.log_other("model", model_name)
+    experiment.add_tag(model_name)
     if model_name == "M1":
         model = M1()
     elif model_name == "M2":
@@ -121,12 +122,21 @@ if __name__ == "__main__":
     elif args.loss_fn == "L1":
         loss_fn = nn.L1Loss(reduction='sum').to(device)
         print("use L1Loss")
+    elif args.loss_fn == "L1Mean":
+        loss_fn = nn.L1Loss(reduction='mean').to(device)
+        print("use L1Mean")
     elif args.loss_fn == "MSEMean":
         loss_fn = nn.MSELoss(reduction='mean').to(device)
         print("use MSEMean")
     elif args.loss_fn == "MSENone":
+        """
+        Doesnt work
+        because 
+        RuntimeError: grad can be implicitly created only for scalar outputs
+        """
         loss_fn = nn.MSELoss(reduction='none').to(device)
         print("use MSE without any reduction")
+    experiment.add_tag(args.loss_fn)
 
     if args.optim == "adam":
         optimizer = torch.optim.Adam(model.parameters(), args.lr,
@@ -137,6 +147,7 @@ if __name__ == "__main__":
                                     weight_decay=args.decay,
                                     momentum=args.momentum)
         print("use sgd")
+    experiment.add_tag(args.optim)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator_train = create_supervised_evaluator(model,
