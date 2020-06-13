@@ -140,7 +140,7 @@ class CompactCNNV9(nn.Module):
     https://arxiv.org/pdf/2002.06515.pdf
     """
     def __init__(self, load_weights=False):
-        super(CompactCNNV8, self).__init__()
+        super(CompactCNNV9, self).__init__()
         self.model_note = "CCNNv7 but use leaky relu"
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
