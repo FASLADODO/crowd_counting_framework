@@ -15,7 +15,7 @@ from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, Big
 from models.meow_experiment.ccnn_head import H1, H2, H3
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
-from models.compact_cnn import CompactCNNV8
+from models.compact_cnn import CompactCNNV8, CompactCNNV9
 import os
 from model_util import get_lr, BestMetrics
 
@@ -105,6 +105,8 @@ if __name__ == "__main__":
         model = CompactCNNV7()
     elif model_name == "CompactCNNV8":
         model = CompactCNNV8()
+    elif model_name == "CompactCNNV9":
+        model = CompactCNNV9()
     else:
         print("error: you didn't pick a model")
         exit(-1)
