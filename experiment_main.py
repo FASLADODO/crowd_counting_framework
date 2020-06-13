@@ -124,6 +124,9 @@ if __name__ == "__main__":
     elif args.loss_fn == "MSEMean":
         loss_fn = nn.MSELoss(reduction='mean').to(device)
         print("use MSEMean")
+    elif args.loss_fn == "MSENone":
+        loss_fn = nn.MSELoss(reduction='none').to(device)
+        print("use MSE without any reduction")
 
     if args.optim == "adam":
         optimizer = torch.optim.Adam(model.parameters(), args.lr,
