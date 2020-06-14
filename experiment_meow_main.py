@@ -12,7 +12,8 @@ import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3
-from models.meow_experiment.ccnn_head import H1
+from models.meow_experiment.ccnn_head import H1, H2
+from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2
 import os
 from model_util import get_lr
@@ -28,6 +29,7 @@ def very_simple_param_count(model):
 
 
 if __name__ == "__main__":
+    torch.set_num_threads(4) # 4 thread
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -80,6 +82,11 @@ if __name__ == "__main__":
         model = BigTail3()
     elif model_name == "H1":
         model = H1()
+    elif model_name == "H2":
+        model = H2()
+    elif model_name == "H1_Bigtail3":
+        model = H1_Bigtail3()
+
     else:
         print("error: you didn't pick a model")
         exit(-1)
@@ -90,7 +97,13 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # loss function
-    loss_fn = nn.MSELoss(reduction='sum').to(device)
+    # loss_fn = nn.MSELoss(reduction='sum').to(device)
+    if args.loss_fn == "MSE":
+        loss_fn = nn.MSELoss(reduction='sum').to(device)
+        print("use MSELoss")
+    elif args.loss_fn == "L1":
+        loss_fn = nn.L1Loss(reduction='sum').to(device)
+        print("use L1Loss")
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
@@ -191,7 +204,7 @@ if __name__ == "__main__":
 
     def checkpoint_valid_mae_score_function(engine):
         score = engine.state.metrics['mae']
-        return score
+        return -score
 
 
     # docs on save and load

@@ -7,10 +7,9 @@ from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError
 from visualize_util import get_readable_time
-from mse_ssim_loss import MseSsimLoss
+
 import torch
 from torch import nn
-from pytorch_ssim import SSIM
 
 from models import CompactCNNV2, CompactCNNV7
 
@@ -18,8 +17,8 @@ import os
 from model_util import get_lr
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
-# PROJECT_NAME = "crowd-counting-framework"
-PROJECT_NAME = "crowd-counting-debug"
+PROJECT_NAME = "crowd-counting-framework"
+# PROJECT_NAME = "crowd-counting-debug"
 
 
 def very_simple_param_count(model):
@@ -28,6 +27,7 @@ def very_simple_param_count(model):
 
 
 if __name__ == "__main__":
+    torch.set_num_threads(4)  # 4 thread
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -81,11 +81,23 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # loss function
-    if args.use_ssim:
-        loss_fn = MseSsimLoss().to(device)
-        print("use ssim")
-    else:
+    # if args.use_ssim:
+    #     from mse_ssim_loss import MseSsimLoss  # only import when needed
+    #     loss_fn = MseSsimLoss(device).to(device)
+    #     print("use ssim")
+    # :
+    if args.loss_fn == "MSE":
         loss_fn = nn.MSELoss(reduction='sum').to(device)
+        print("use MSELoss")
+    elif args.loss_fn == "MSEmean":
+        loss_fn = nn.MSELoss(reduction='mean').to(device)
+        print("use MSELoss with reduction mean")
+    elif args.loss_fn == "L1":
+        loss_fn = nn.L1Loss(reduction='sum').to(device)
+        print("use L1Loss")
+    elif args.loss_fn == "L1mean":
+        loss_fn = nn.L1Loss(reduction='mean').to(device)
+        print("use L1Loss with reduction mean")
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 weight_decay=args.decay)
@@ -111,14 +123,14 @@ if __name__ == "__main__":
 
     # timer
     train_timer = Timer(average=True)  # time to train whole epoch
-    batch_timer = Timer(average=True)  # every batch
+    # batch_timer = Timer(average=True)  # every batch
     evaluate_timer = Timer(average=True)
 
-    batch_timer.attach(trainer,
-                        start =Events.EPOCH_STARTED,
-                        resume =Events.ITERATION_STARTED,
-                        pause =Events.ITERATION_COMPLETED,
-                        step =Events.ITERATION_COMPLETED)
+    # batch_timer.attach(trainer,
+    #                     start =Events.EPOCH_STARTED,
+    #                     resume =Events.ITERATION_STARTED,
+    #                     pause =Events.ITERATION_COMPLETED,
+    #                     step =Events.ITERATION_COMPLETED)
 
     train_timer.attach(trainer,
                         start =Events.EPOCH_STARTED,
@@ -159,10 +171,10 @@ if __name__ == "__main__":
         experiment.log_metric("train_loss", metrics['loss'])
         experiment.log_metric("lr", get_lr(optimizer))
 
-        experiment.log_metric("batch_timer", batch_timer.value())
+        #experiment.log_metric("batch_timer", batch_timer.value())
         experiment.log_metric("train_timer", train_timer.value())
 
-        print("batch_timer ", batch_timer.value())
+        #print("batch_timer ", batch_timer.value())
         print("train_timer ", train_timer.value())
 
     @trainer.on(Events.EPOCH_COMPLETED)

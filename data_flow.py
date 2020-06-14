@@ -17,10 +17,22 @@ from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
+import scipy.io   # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
+
 
 """
 create a list of file (full directory)
 """
+
+def count_gt_annotation_sha(mat_path):
+    """
+    read the annotation and count number of head from annotation
+    :param mat_path:
+    :return: count
+    """
+    mat = scipy.io.loadmat(mat_path, appendmat=False)
+    gt = mat["image_info"][0, 0][0, 0][0]
+    return len(gt)
 
 def create_training_image_list(data_path):
     """
@@ -134,6 +146,13 @@ def load_data_shanghaitech_rnd(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
     return img, target1
 
 
@@ -153,7 +172,7 @@ def load_data_shanghaitech_more_rnd(img_path, train=True):
 
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
-        if random.randint(0, 9) <= 1:
+        if random.randint(0, 9) <= 3:
             # crop 4 corner
             dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
             dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
@@ -168,6 +187,12 @@ def load_data_shanghaitech_more_rnd(img_path, train=True):
         if random.random() > 0.5:
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
@@ -256,6 +281,13 @@ def load_data_shanghaitech_20p(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
     return img, target1
 
 
@@ -300,10 +332,11 @@ def load_data_shanghaitech_40p(img_path, train=True):
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
-def load_data_shanghaitech_20p_rnd(img_path, train=True):
+
+def load_data_shanghaitech_20p_random(img_path, train=True):
     """
     20 percent crop
-    now it is also random crop, not just crop 4
+    now it is also random crop, not just crop 4 corner
     :param img_path:
     :param train:
     :return:
@@ -317,10 +350,10 @@ def load_data_shanghaitech_20p_rnd(img_path, train=True):
     if train:
         if random.random() > 0.8:
             crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
-            if random.randint(0, 9) <= 3:
+            if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
                 dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
                 dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
-            else:
+            else:   # crop random, 60% chance
                 dx = int(random.random() * img.size[0] * 1. / 2)
                 dy = int(random.random() * img.size[1] * 1. / 2)
 
@@ -339,6 +372,109 @@ def load_data_shanghaitech_20p_rnd(img_path, train=True):
                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
+    return img, target1
+
+
+def load_data_shanghaitech_60p_random(img_path, train=True):
+    """
+    40 percent crop
+    now it is also random crop, not just crop 4 corner
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        if random.random() > 0.4:
+            crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+            if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
+                dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+                dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+            else:   # crop random, 60% chance
+                dx = int(random.random() * img.size[0] * 1. / 2)
+                dy = int(random.random() * img.size[1] * 1. / 2)
+
+            img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+            target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+            # # enlarge image patch to original size
+            # img = img.resize((crop_size[0]*2, crop_size[1]*2), Image.ANTIALIAS)
+            # target_factor = 4 # thus, target is not enlarge, so output target only / 4
+
+        if random.random() > 0.5:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
+    return img, target1
+
+def load_data_shanghaitech_crop_random(img_path, train=True):
+    """
+    40 percent crop
+    now it is also random crop, not just crop 4 corner
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+        if random.randint(0, 9) <= 1:  # crop 4 corner, 20% chance
+            dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
+            dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
+        else:   # crop random, 80% chance
+            dx = int(random.random() * img.size[0] * 1. / 2)
+            dy = int(random.random() * img.size[1] * 1. / 2)
+
+        img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        # # enlarge image patch to original size
+        # img = img.resize((crop_size[0]*2, crop_size[1]*2), Image.ANTIALIAS)
+        # target_factor = 4 # thus, target is not enlarge, so output target only / 4
+
+        if random.random() > 0.5:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
     return img, target1
 
 def load_data_shanghaitech_180(img_path, train=True):
@@ -445,6 +581,11 @@ def load_data_shanghaitech_keepfull(img_path, train=True):
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
 
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     # np.expand_dims(target1, axis=0)  # again
@@ -690,9 +831,9 @@ class ListDataset(Dataset):
         # load data fn
         if dataset_name == "shanghaitech":
             self.load_data_fn = load_data_shanghaitech
-        elif dataset_name == "shanghaitech_rnd":
+        elif dataset_name == "shanghaitech_random":
             self.load_data_fn = load_data_shanghaitech_rnd
-        if dataset_name == "shanghaitech_more_rnd":
+        if dataset_name == "shanghaitech_more_random":
             self.load_data_fn = load_data_shanghaitech_more_rnd
         elif dataset_name == "shanghaitech_same_size_density_map":
             self.load_data_fn = load_data_shanghaitech_same_size_density_map
@@ -706,8 +847,12 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_20p
         elif dataset_name == "shanghaitech_40p":
             self.load_data_fn = load_data_shanghaitech_40p
-        elif dataset_name == "shanghaitech_20p_rnd":
-            self.load_data_fn = load_data_shanghaitech_20p_rnd
+        elif dataset_name == "shanghaitech_20p_random":
+            self.load_data_fn = load_data_shanghaitech_20p_random
+        elif dataset_name == "shanghaitech_60p_random":
+            self.load_data_fn = load_data_shanghaitech_60p_random
+        elif dataset_name == "shanghaitech_crop_random":
+            self.load_data_fn = load_data_shanghaitech_crop_random
         elif dataset_name == "shanghaitech_180":
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
@@ -737,7 +882,7 @@ class ListDataset(Dataset):
         return img, target
 
 
-def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
+def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
     """
     collate that ignore None
     However, if all sample is None, we have problem, so, set batch size bigger
@@ -750,7 +895,8 @@ def my_collate(batch): # batch size 4 [{tensor image, tensor label},{},{},{}] co
     # so how to sample another dataset entry?
     return torch.utils.data.dataloader.default_collate(batch)
 
-def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1):
+
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
     if visualize_mode:
         transformer = transforms.Compose([
             transforms.ToTensor()
@@ -770,8 +916,20 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     num_workers=0,
                     dataset_name=dataset_name),
         batch_size=batch_size,
-        num_workers=4,
-        collate_fn=my_collate)
+        num_workers=0,
+        collate_fn=my_collate, pin_memory=False)
+
+    train_loader_for_eval = torch.utils.data.DataLoader(
+        ListDataset(train_list,
+                    shuffle=False,
+                    transform=transformer,
+                    train=False,
+                    batch_size=batch_size,
+                    num_workers=0,
+                    dataset_name=dataset_name),
+        batch_size=1,
+        num_workers=0,
+        collate_fn=my_collate, pin_memory=False)
 
     if val_list is not None:
         val_loader = torch.utils.data.DataLoader(
@@ -781,7 +939,8 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         dataset_name=dataset_name),
             num_workers=0,
-            batch_size=1)
+            batch_size=1,
+            pin_memory=False)
     else:
         val_loader = None
 
@@ -793,8 +952,11 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         dataset_name=dataset_name),
             num_workers=0,
-            batch_size=1)
+            batch_size=1,
+            pin_memory=False)
     else:
         test_loader = None
-
-    return train_loader, val_loader, test_loader
+    if train_loader_for_eval_check:
+        return train_loader, train_loader_for_eval, val_loader, test_loader
+    else:
+        return train_loader, val_loader, test_loader
