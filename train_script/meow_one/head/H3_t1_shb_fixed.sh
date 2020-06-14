@@ -10,7 +10,8 @@ CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=5 HTTPS_PROXY="http://10.60.28.99:86" noh
 --loss_fn "MSEMean" \
 --optim "adam"  \
 --batch_size 8 \
---datasetname shanghaitech_rnd \
+--skip_train_eval \
+--datasetname --datasetname shanghaitech_more_random \
 --epochs 1200 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
