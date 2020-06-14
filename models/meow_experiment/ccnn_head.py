@@ -141,6 +141,7 @@ class H2(nn.Module):
         x = self.output(x)
         return x
 
+
 class H3(nn.Module):
     """
     A REAL-TIME DEEP NETWORK FOR CROWD COUNTING
@@ -167,8 +168,9 @@ class H3(nn.Module):
         x_red = F.relu(self.red_cnn(x), inplace=True)
         x_green = F.relu(self.green_cnn(x), inplace=True)
         x_blue = F.relu(self.blue_cnn(x), inplace=True)
+        x_black = F.relu(self.black_cnn(x), inplace=True)
 
-        x = torch.cat((x_red, x_green, x_blue), 1)
+        x = torch.cat((x_red, x_green, x_blue, x_black), 1)
 
         x = self.max_pooling(x)
         x = F.relu(self.c0(x), inplace=True)
