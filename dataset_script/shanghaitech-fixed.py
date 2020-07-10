@@ -39,7 +39,7 @@ def preprocess_args_parse():
     parser.add_argument("--root", action="store", default="dev")
     parser.add_argument("--part", action="store", default="dev")
     parser.add_argument("--output", action="store", default="dev")
-    parser.add_argument("--trunc", action="store", default=4.0)
+    parser.add_argument("--trunc", action="store", default=4.0, type=float)
     arg = parser.parse_args()
     return arg
 
