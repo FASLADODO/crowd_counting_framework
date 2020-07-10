@@ -131,12 +131,12 @@ if __name__ == "__main__":
     a_train, a_test, b_train, b_test = generate_shanghaitech_path(__DATASET_ROOT)
 
     if __PART == "a_train":
-        Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in a_train)
+        Parallel(n_jobs=10)(delayed(generate_density_map)(p) for p in a_train)
     elif __PART == "b_train":
-        Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in b_train)
+        Parallel(n_jobs=10)(delayed(generate_density_map)(p) for p in b_train)
     elif __PART == "a_test":
-        Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in a_test)
+        Parallel(n_jobs=10)(delayed(generate_density_map)(p) for p in a_test)
     elif __PART == "b_test":
-        Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in b_test)
+        Parallel(n_jobs=10)(delayed(generate_density_map)(p) for p in b_test)
 
     print("--- %s seconds ---" % (time.time() - start_time))
