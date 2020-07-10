@@ -39,6 +39,7 @@ def preprocess_args_parse():
     parser.add_argument("--root", action="store", default="dev")
     parser.add_argument("--part", action="store", default="dev")
     parser.add_argument("--output", action="store", default="dev")
+    parser.add_argument("--trunc", action="store", default=4.0)
     arg = parser.parse_args()
     return arg
 
@@ -48,7 +49,9 @@ __OUTPUT_NAME = "ShanghaiTech_PartA_Train/"
 args = preprocess_args_parse()
 __DATASET_ROOT = args.root
 __OUTPUT_NAME = args.output
+__TRUNC = args.trunc
 __PART = args.part
+
 
 def gaussian_filter_density_fixed(gt, sigma):
     print(gt.shape)
@@ -63,7 +66,7 @@ def gaussian_filter_density_fixed(gt, sigma):
     for i, pt in enumerate(pts):
         pt2d = np.zeros(gt.shape, dtype=np.float32)
         pt2d[pt[1], pt[0]] = 1.
-        density += gaussian_filter(pt2d, sigma, mode='constant')
+        density += gaussian_filter(pt2d, sigma, mode='constant', truncate=__TRUNC)
     print('done.')
     return density
 
@@ -121,7 +124,7 @@ def generate_shanghaitech_path(root):
 
 if __name__ == "__main__":
     """
-    TODO: this file will preprocess crowd counting dataset
+    generate density map from label, fixed sigma, with truncate 3
     """
 
     start_time = time.time()
