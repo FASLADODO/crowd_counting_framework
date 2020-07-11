@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # get list of sample
     image_list = glob.glob(os.path.join(DATA_PATH, "images", "*.jpg"))
 
-    train_image_list, validate_image_list  =  train_test_split(image_list, test_size=0.2, random_state=19051890)
+    train_image_list, validate_image_list=train_test_split(image_list, test_size=0.1, random_state=19051890)
 
     print("train count ", len(train_image_list))
     print("validate count ", len(validate_image_list))
