@@ -866,7 +866,11 @@ class ListDataset(Dataset):
         :param num_workers:
         """
         if train:
-            root = root * 4
+            if "non_overlap" in dataset_name:
+                # each sample we generate 8 image, so, no need to x4
+                pass
+            else:
+                root = root * 4
         if shuffle:
             random.shuffle(root)
 
