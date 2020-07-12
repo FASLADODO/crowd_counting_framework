@@ -478,7 +478,7 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         # get correct people head count from head annotation
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
-        return img, gt_count
+        return img_origin, gt_count
 
 
 def load_data_shanghaitech_crop_random(img_path, train=True):
