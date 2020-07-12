@@ -18,7 +18,7 @@ from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
 import scipy.io   # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
-
+from data_util.dataset_utils import my_collate
 
 """
 create a list of file (full directory)
@@ -882,18 +882,6 @@ class ListDataset(Dataset):
         return img, target
 
 
-def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
-    """
-    collate that ignore None
-    However, if all sample is None, we have problem, so, set batch size bigger
-    https://stackoverflow.com/questions/57815001/pytorch-collate-fn-reject-sample-and-yield-another
-    :param batch:
-    :return:
-    """
-    batch = list(filter (lambda x:x is not None, batch)) # this gets rid of nones in batch. For example above it would result to G = [{},{},{}]
-    # I want len(G) = 4
-    # so how to sample another dataset entry?
-    return torch.utils.data.dataloader.default_collate(batch)
 
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
