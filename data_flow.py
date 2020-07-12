@@ -473,7 +473,7 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
                     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
                     crop_img.append(img)
                     crop_label.append(target1)
-                    return crop_img, crop_label
+        return crop_img, crop_label
 
     if not train:
         # get correct people head count from head annotation
@@ -937,11 +937,13 @@ class ListDataset(Dataset):
         if img is None or target is None:
             return None
         if self.transform is not None:
-            img = self.transform(img)
+            if isinstance(img, list):
+                # for case of generate  multiple augmentation per sample
+                img_r = [self.transform(img_item) for img_item in img]
+                img = img_r
+            else:
+                img = self.transform(img)
         return img, target
-
-
-
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
     if visualize_mode:

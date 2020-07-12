@@ -14,10 +14,10 @@ def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] c
     # so how to sample another dataset entry?
     return torch.utils.data.dataloader.default_collate(batch)
 
-def flatten_collate(batch):
+def flatten_collate_broken(batch):
     """
 
-    :param batch:
+    :param batch: tuple of (data, label)
     :return:
     """
     # remove null batch
@@ -30,3 +30,24 @@ def flatten_collate(batch):
     return out_batch
 
 
+def flatten_collate(batch):
+    """
+
+    :param batch: tuple of (data, label)
+    :return:
+    """
+    # remove null batch
+    batch = list(filter(lambda x: x is not None, batch))
+
+    # flattening array
+
+    # more clarify version
+    # out_batch = []
+    # for data_pair in batch:
+    #     for img, label in zip(*data_pair):
+    #         out_batch.append((img, label))
+
+    # python List Comprehensions
+    out_batch = [(img, label) for data_pair in batch for img, label in zip(*data_pair)]
+
+    return out_batch

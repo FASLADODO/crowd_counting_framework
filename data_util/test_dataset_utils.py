@@ -10,7 +10,7 @@ def test_flatten_collate_should_remove_null():
 
 
 def test_flatten_list():
-    in_batch = [["s11", "s12", "s13"], ["s21", "s22", "s23"], ["s31", "s32", "s33"]]
-    out_batch = ["s11", "s12", "s13", "s21", "s22", "s23", "s31", "s32", "s33"]
+    in_batch = [(["d11", "d12", "d13"],["l11", "l12", "l13"]),(["d21", "d22", "d23"],["l21", "l22", "l23"]), (["d31", "d32", "d33"],["l31", "l32", "l33"])]
+    out_batch = [("d11", "l11"), ("d12", "l12"), ("d13", "l13"), ("d21", "l21"), ("d22", "l22"), ("d23", "l23"), ("d31", "l31"), ("d32", "l32"), ("d33", "l33")]
     actual_output = flatten_collate(in_batch)
     assert actual_output == out_batch
