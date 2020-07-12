@@ -31,12 +31,17 @@ if __name__ == "__main__":
     val_list = create_image_list(VAL_PATH)
     test_list = create_image_list(TEST_PATH)
 
+    # train_loader, train_loader_eval, val_loader, test_loader = get_dataloader(train_list, val_list, test_list,
+    #                                                                           dataset_name="shanghaitech_more_random"
+    #                                                                           , batch_size=1,
+    #                                                                           train_loader_for_eval_check=True)
+
     train_loader, train_loader_eval, val_loader, test_loader = get_dataloader(train_list, val_list, test_list,
                                                                               dataset_name="shanghaitech_non_overlap"
-                                                                              , batch_size=20,
+                                                                              , batch_size=1,
                                                                               train_loader_for_eval_check=True)
     print(len(train_loader))
     print(len(val_loader))
 
-    for obs in train_loader:
-        print(len(obs))
+    for img, label in train_loader:
+        print(img.shape, label.shape)

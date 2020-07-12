@@ -30,11 +30,11 @@ def flatten_collate_broken(batch):
     return out_batch
 
 
-def flatten_collate(batch):
+def _flatten_collate(batch):
     """
 
-    :param batch: tuple of (data, label)
-    :return:
+    :param batch: tuple of (data, label) with type(data) == list, type(label) == list
+    :return: flatten data, label
     """
     # remove null batch
     batch = list(filter(lambda x: x is not None, batch))
@@ -50,4 +50,16 @@ def flatten_collate(batch):
     # python List Comprehensions
     out_batch = [(img, label) for data_pair in batch for img, label in zip(*data_pair)]
 
+    return out_batch
+
+
+def flatten_collate(batch):
+    """
+
+    :param batch: tuple of (data, label) with type(data) == list, type(label) == list
+    :return: flatten data, label
+    """
+    # remove null batch
+    batch1 = _flatten_collate(batch)
+    out_batch = torch.utils.data.dataloader.default_collate(batch1)
     return out_batch

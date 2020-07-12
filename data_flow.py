@@ -439,9 +439,10 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
     :return:
     """
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
-    img = Image.open(img_path).convert('RGB')
+    img_origin = Image.open(img_path).convert('RGB')
+    crop_size = (int(img_origin.size[0] / 2), int(img_origin.size[1] / 2))
     gt_file = h5py.File(gt_path, 'r')
-    target = np.asarray(gt_file['density'])
+    target_origin = np.asarray(gt_file['density'])
     target_factor = 8
 
     if train:
@@ -452,13 +453,11 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         crop_label = []
         for i in range(2):
             for j in range(2):
-                crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
-
                 # crop non-overlap
-                dx = int(i * img.size[0] * 1. / 2)
-                dy = int(j * img.size[1] * 1. / 2)
-                img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
-                target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+                dx = int(i * img_origin.size[0] * 1. / 2)
+                dy = int(j * img_origin.size[1] * 1. / 2)
+                img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+                target = target_origin[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
                 # flip
                 for x in range(2):
