@@ -18,7 +18,7 @@ from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
 import scipy.io   # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
-
+from data_util.dataset_utils import my_collate, flatten_collate
 
 """
 create a list of file (full directory)
@@ -430,6 +430,58 @@ def load_data_shanghaitech_60p_random(img_path, train=True):
 
     return img, target1
 
+
+def load_data_shanghaitech_non_overlap(img_path, train=True):
+    """
+    per sample, crop 4, non-overlap
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        # for each image
+        # create 8 patches, 4 non-overlap 4 corner
+        # for each of 4 patch, create another 4 flip
+        crop_img = []
+        crop_label = []
+        for i in range(2):
+            for j in range(2):
+                crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
+
+                # crop non-overlap
+                dx = int(i * img.size[0] * 1. / 2)
+                dy = int(j * img.size[1] * 1. / 2)
+                img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+                target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+                # flip
+                for x in range(2):
+                    if x==1:
+                        target = np.fliplr(target)
+                        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+
+                    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+                    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                    crop_img.append(img)
+                    crop_label.append(target1)
+                    return crop_img, crop_label
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
+
 def load_data_shanghaitech_crop_random(img_path, train=True):
     """
     40 percent crop
@@ -567,6 +619,7 @@ def load_data_shanghaitech_same_size_density_map(img_path, train=True):
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
+
 
 def load_data_shanghaitech_keepfull(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -857,6 +910,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
             self.load_data_fn = load_data_shanghaitech_256
+        elif dataset_name == "shanghaitech_non_overlap":
+            self.load_data_fn = load_data_shanghaitech_non_overlap
         elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name == "ucf_cc_50_pacnn":
@@ -882,18 +937,6 @@ class ListDataset(Dataset):
         return img, target
 
 
-def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
-    """
-    collate that ignore None
-    However, if all sample is None, we have problem, so, set batch size bigger
-    https://stackoverflow.com/questions/57815001/pytorch-collate-fn-reject-sample-and-yield-another
-    :param batch:
-    :return:
-    """
-    batch = list(filter (lambda x:x is not None, batch)) # this gets rid of nones in batch. For example above it would result to G = [{},{},{}]
-    # I want len(G) = 4
-    # so how to sample another dataset entry?
-    return torch.utils.data.dataloader.default_collate(batch)
 
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
@@ -906,7 +949,9 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                                     transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                                             std=[0.229, 0.224, 0.225]),
                             ])
-
+    train_collate_fn = my_collate
+    if dataset_name == "shanghaitech_non_overlap":
+        train_collate_fn = flatten_collate
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
                     shuffle=True,
@@ -917,7 +962,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     dataset_name=dataset_name),
         batch_size=batch_size,
         num_workers=0,
-        collate_fn=my_collate, pin_memory=False)
+        collate_fn=train_collate_fn, pin_memory=False)
 
     train_loader_for_eval = torch.utils.data.DataLoader(
         ListDataset(train_list,
