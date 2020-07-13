@@ -474,6 +474,8 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         tmp_pair = list(zip(crop_img, crop_label))
         random.shuffle(tmp_pair)
         crop_img, crop_label = zip(*tmp_pair)
+        crop_label = list(crop_label)
+        crop_img = list(crop_img)
         return crop_img, crop_label
 
     if not train:
