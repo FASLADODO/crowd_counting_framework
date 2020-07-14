@@ -1,5 +1,5 @@
 import torch
-import torch.functional as F
+from torch.nn import functional as F
 from torch.nn.modules.loss import _Loss
 
 
