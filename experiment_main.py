@@ -133,6 +133,9 @@ if __name__ == "__main__":
     elif args.loss_fn == "MSEL1Mean":
         loss_fn = MSEL1Loss(reduction='mean').to(device)
         print("use MSEL1Mean")
+    elif args.loss_fn == "MSEL1Sum":
+        loss_fn = MSEL1Loss(reduction='sum').to(device)
+        print("use MSEL1Sum")
     elif args.loss_fn == "MSENone":
         """
         Doesnt work
