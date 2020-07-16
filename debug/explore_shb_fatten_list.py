@@ -39,9 +39,13 @@ if __name__ == "__main__":
     train_loader, train_loader_eval, val_loader, test_loader = get_dataloader(train_list, val_list, test_list,
                                                                               dataset_name="shanghaitech_non_overlap"
                                                                               , batch_size=1,
-                                                                              train_loader_for_eval_check=True)
+                                                                              train_loader_for_eval_check=True,
+                                                                              cache=True)
     print(len(train_loader))
     print(len(val_loader))
+
+    for img, label in train_loader:
+        print(img.shape, label)
 
     for img, label in train_loader:
         print(img.shape, label)
