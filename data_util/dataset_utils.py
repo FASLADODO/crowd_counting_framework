@@ -49,7 +49,7 @@ def _flatten_collate(batch):
     #         out_batch.append((img, label))
 
     # python List Comprehensions
-    out_batch = [(img, label) for data_pair in batch for img, label in zip(*data_pair)]
+    out_batch = list([(img, label) for data_pair in batch for img, label in zip(*data_pair)])
 
     # shuffle data in batch
     # explain: dataset shuffle only shuffle index
