@@ -17,12 +17,13 @@ from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms.functional as F
 from torchvision import datasets, transforms
-import scipy.io   # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
+import scipy.io  # import scipy does not work https://stackoverflow.com/questions/11172623/import-problems-with-scipy-io
 from data_util.dataset_utils import my_collate, flatten_collate
 
 """
 create a list of file (full directory)
 """
+
 
 def count_gt_annotation_sha(mat_path):
     """
@@ -33,6 +34,7 @@ def count_gt_annotation_sha(mat_path):
     mat = scipy.io.loadmat(mat_path, appendmat=False)
     gt = mat["image_info"][0, 0][0, 0][0]
     return len(gt)
+
 
 def create_training_image_list(data_path):
     """
@@ -106,7 +108,7 @@ def load_data_shanghaitech(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
@@ -143,7 +145,7 @@ def load_data_shanghaitech_rnd(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
 
@@ -195,10 +197,11 @@ def load_data_shanghaitech_more_rnd(img_path, train=True):
         return img, gt_count
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
+
 
 def load_data_shanghaitech_20p_enlarge(img_path, train=True):
     """
@@ -228,15 +231,15 @@ def load_data_shanghaitech_20p_enlarge(img_path, train=True):
             target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
             # enlarge image patch to original size
-            img = img.resize((crop_size[0]*2, crop_size[1]*2), Image.ANTIALIAS)
-            target_factor = 4 # thus, target is not enlarge, so output target only / 4
+            img = img.resize((crop_size[0] * 2, crop_size[1] * 2), Image.ANTIALIAS)
+            target_factor = 4  # thus, target is not enlarge, so output target only / 4
 
         if random.random() > 0.8:
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
@@ -278,7 +281,7 @@ def load_data_shanghaitech_20p(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
 
@@ -327,7 +330,7 @@ def load_data_shanghaitech_40p(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
@@ -353,7 +356,7 @@ def load_data_shanghaitech_20p_random(img_path, train=True):
             if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
                 dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
                 dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
-            else:   # crop random, 60% chance
+            else:  # crop random, 60% chance
                 dx = int(random.random() * img.size[0] * 1. / 2)
                 dy = int(random.random() * img.size[1] * 1. / 2)
 
@@ -369,7 +372,7 @@ def load_data_shanghaitech_20p_random(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
 
@@ -402,7 +405,7 @@ def load_data_shanghaitech_60p_random(img_path, train=True):
             if random.randint(0, 9) <= 3:  # crop 4 corner, 40% chance
                 dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
                 dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
-            else:   # crop random, 60% chance
+            else:  # crop random, 60% chance
                 dx = int(random.random() * img.size[0] * 1. / 2)
                 dy = int(random.random() * img.size[1] * 1. / 2)
 
@@ -418,7 +421,7 @@ def load_data_shanghaitech_60p_random(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
 
@@ -461,13 +464,15 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
 
                 # flip
                 for x in range(2):
-                    if x==1:
+                    if x == 1:
                         target = np.fliplr(target)
                         img = img.transpose(Image.FLIP_LEFT_RIGHT)
-                    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                    target1 = cv2.resize(target,
+                                         (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
                     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
-                    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                    target1 = np.expand_dims(target1,
+                                             axis=0)  # make dim (batch size, channel size, x, y) to make model output
                     crop_img.append(img)
                     crop_label.append(target1)
         # shuffle in pair
@@ -513,10 +518,11 @@ def load_data_shanghaitech_non_overlap_noflip(img_path, train=True):
                 img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
                 target = target_origin[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
-
-                target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                                    interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
-                target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                target1 = cv2.resize(target,
+                                     (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                     interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                target1 = np.expand_dims(target1,
+                                         axis=0)  # make dim (batch size, channel size, x, y) to make model output
                 crop_img.append(img)
                 crop_label.append(target1)
         return crop_img, crop_label
@@ -526,6 +532,7 @@ def load_data_shanghaitech_non_overlap_noflip(img_path, train=True):
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
         return img_origin, gt_count
+
 
 def load_data_shanghaitech_crop_random(img_path, train=True):
     """
@@ -546,7 +553,7 @@ def load_data_shanghaitech_crop_random(img_path, train=True):
         if random.randint(0, 9) <= 1:  # crop 4 corner, 20% chance
             dx = int(random.randint(0, 1) * img.size[0] * 1. / 2)
             dy = int(random.randint(0, 1) * img.size[1] * 1. / 2)
-        else:   # crop random, 80% chance
+        else:  # crop random, 80% chance
             dx = int(random.random() * img.size[0] * 1. / 2)
             dy = int(random.random() * img.size[1] * 1. / 2)
 
@@ -562,7 +569,7 @@ def load_data_shanghaitech_crop_random(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
 
@@ -573,6 +580,7 @@ def load_data_shanghaitech_crop_random(img_path, train=True):
         return img, gt_count
 
     return img, target1
+
 
 def load_data_shanghaitech_180(img_path, train=True):
     """
@@ -599,7 +607,7 @@ def load_data_shanghaitech_180(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
@@ -632,10 +640,11 @@ def load_data_shanghaitech_256(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
-                        interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
+
 
 def load_data_shanghaitech_same_size_density_map(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -678,7 +687,7 @@ def load_data_shanghaitech_keepfull(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     if not train:
         # get correct people head count from head annotation
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
@@ -704,7 +713,7 @@ def load_data_shanghaitech_keepfull_and_crop(img_path, train=True):
 
     if train:
 
-        if random.random() > 0.5: # 50% chance crop
+        if random.random() > 0.5:  # 50% chance crop
             crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
             if random.randint(0, 9) <= -1:
 
@@ -717,17 +726,16 @@ def load_data_shanghaitech_keepfull_and_crop(img_path, train=True):
             img = img.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
             target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
-        if random.random() > 0.8: # 20 % chance flip
+        if random.random() > 0.8:  # 20 % chance flip
             target = np.fliplr(target)
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
 
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     # np.expand_dims(target1, axis=0)  # again
     return img, target1
-
 
 
 def load_data_ucf_cc50(img_path, train=True):
@@ -769,16 +777,16 @@ def load_data_shanghaitech_pacnn(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 256
+                         interpolation=cv2.INTER_CUBIC) * 256
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 1024
+                         interpolation=cv2.INTER_CUBIC) * 1024
 
     return img, (target1, target2, target3)
 
 
-def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
+def load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
     """
     # TODO: TEST this
     :param img_path: should contain sub folder images (contain IMG_num.jpg), ground-truth-h5
@@ -814,17 +822,17 @@ def  load_data_shanghaitech_pacnn_with_perspective(img_path, train=True):
     perspective /= np.max(perspective)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 256
+                         interpolation=cv2.INTER_CUBIC) * 256
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 1024
+                         interpolation=cv2.INTER_CUBIC) * 1024
 
     perspective_s = cv2.resize(perspective, (int(perspective.shape[1] / 16), int(perspective.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC)
+                               interpolation=cv2.INTER_CUBIC)
 
     perspective_p = cv2.resize(perspective, (int(perspective.shape[1] / 8), int(perspective.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC)
+                               interpolation=cv2.INTER_CUBIC)
 
     return img, (target1, target2, target3, perspective_s, perspective_p)
 
@@ -860,11 +868,11 @@ def load_data_ucf_cc50_pacnn(img_path, train=True):
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
 
     target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
-                        interpolation=cv2.INTER_CUBIC) * 64
+                         interpolation=cv2.INTER_CUBIC) * 64
     target2 = cv2.resize(target, (int(target.shape[1] / 16), int(target.shape[0] / 16)),
-                        interpolation=cv2.INTER_CUBIC) * 256
+                         interpolation=cv2.INTER_CUBIC) * 256
     target3 = cv2.resize(target, (int(target.shape[1] / 32), int(target.shape[0] / 32)),
-                        interpolation=cv2.INTER_CUBIC) * 1024
+                         interpolation=cv2.INTER_CUBIC) * 1024
 
     return img, (target1, target2, target3)
 
@@ -897,7 +905,7 @@ def data_augmentation(img, target):
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
-                 num_workers=0, dataset_name="shanghaitech"):
+                 num_workers=0, dataset_name="shanghaitech", cache=False):
         """
         if you have different image size, then batch_size must be 1
         :param root:
@@ -923,6 +931,9 @@ class ListDataset(Dataset):
         self.lines = root
         self.transform = transform
         self.train = train
+        self.cache = cache
+        self.cache_train = {}
+        self.cache_eval = {}
         self.debug = debug
         self.shape = shape
         self.seen = seen
@@ -978,28 +989,44 @@ class ListDataset(Dataset):
         img_path = self.lines[index]
         if self.debug:
             print(img_path)
-        img, target = self.load_data_fn(img_path, self.train)
-        if img is None or target is None:
-            return None
-        if self.transform is not None:
-            if isinstance(img, list):
-                # for case of generate  multiple augmentation per sample
-                img_r = [self.transform(img_item) for img_item in img]
-                img = img_r
-            else:
-                img = self.transform(img)
+        # try to check cache item if exist
+        if self.cache and self.train and index in self.cache_train.keys():
+            img, target = self.cache_train[index]
+        elif self.cache and not self.train and index in self.cache_eval.keys():
+            img, target = self.cache_eval[index]
+        # no cache, load data as usual
+        else:
+            img, target = self.load_data_fn(img_path, self.train)
+            if img is None or target is None:
+                return None
+            if self.transform is not None:
+                if isinstance(img, list):
+                    # for case of generate  multiple augmentation per sample
+                    img_r = [self.transform(img_item) for img_item in img]
+                    img = img_r
+                else:
+                    img = self.transform(img)
+            # if use cache, then save data to cache
+            if self.cache:
+                if self.train:
+                    self.cache_train[index] = (img, target)
+                else:
+                    self.cache_eval[index] = (img, target)
+
         return img, target
 
-def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1, train_loader_for_eval_check = False):
+
+def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1,
+                   train_loader_for_eval_check=False, cache=False, pin_memory=False):
     if visualize_mode:
         transformer = transforms.Compose([
             transforms.ToTensor()
         ])
     else:
         transformer = transforms.Compose([
-                                    transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                                            std=[0.229, 0.224, 0.225]),
-                            ])
+            transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                        std=[0.229, 0.224, 0.225]),
+        ])
     train_collate_fn = my_collate
     if dataset_name == "shanghaitech_non_overlap":
         train_collate_fn = flatten_collate
@@ -1010,10 +1037,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     train=True,
                     batch_size=batch_size,
                     num_workers=0,
-                    dataset_name=dataset_name),
+                    dataset_name=dataset_name, cache=cache),
         batch_size=batch_size,
         num_workers=0,
-        collate_fn=train_collate_fn, pin_memory=False)
+        collate_fn=train_collate_fn, pin_memory=pin_memory)
 
     train_loader_for_eval = torch.utils.data.DataLoader(
         ListDataset(train_list,
@@ -1022,10 +1049,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     train=False,
                     batch_size=batch_size,
                     num_workers=0,
-                    dataset_name=dataset_name),
+                    dataset_name=dataset_name, cache=cache),
         batch_size=1,
         num_workers=0,
-        collate_fn=my_collate, pin_memory=False)
+        collate_fn=my_collate, pin_memory=pin_memory)
 
     if val_list is not None:
         val_loader = torch.utils.data.DataLoader(
@@ -1033,10 +1060,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         shuffle=False,
                         transform=transformer,
                         train=False,
-                        dataset_name=dataset_name),
+                        dataset_name=dataset_name, cache=cache),
             num_workers=0,
             batch_size=1,
-            pin_memory=False)
+            pin_memory=pin_memory)
     else:
         val_loader = None
 
@@ -1049,7 +1076,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         dataset_name=dataset_name),
             num_workers=0,
             batch_size=1,
-            pin_memory=False)
+            pin_memory=pin_memory)
     else:
         test_loader = None
     if train_loader_for_eval_check:
