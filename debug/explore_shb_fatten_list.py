@@ -43,5 +43,5 @@ if __name__ == "__main__":
     print(len(train_loader))
     print(len(val_loader))
 
-    for img, label in val_loader:
+    for img, label in train_loader:
         print(img.shape, label)

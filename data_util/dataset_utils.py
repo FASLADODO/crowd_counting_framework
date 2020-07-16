@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data.dataloader import default_collate
-from random import random
+import random
 
 def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
     """
