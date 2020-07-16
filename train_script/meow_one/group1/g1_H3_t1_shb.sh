@@ -11,6 +11,8 @@ CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --loss_fn "MSEL1Sum" \
 --datasetname shanghaitech_non_overlap \
 --skip_train_eval \
+--cache \
+--pin_memory  \
 --epochs 1201 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
