@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data.dataloader import default_collate
+from random import random
 
 def my_collate(batch):  # batch size 4 [{tensor image, tensor label},{},{},{}] could return something like G = [None, {},{},{}]
     """
@@ -49,6 +50,12 @@ def _flatten_collate(batch):
 
     # python List Comprehensions
     out_batch = [(img, label) for data_pair in batch for img, label in zip(*data_pair)]
+
+    # shuffle data in batch
+    # explain: dataset shuffle only shuffle index
+    # each index (sample) generate multiple image which is not shuffle
+    # so we have to shuffle them all
+    random.shuffle(out_batch)
 
     return out_batch
 

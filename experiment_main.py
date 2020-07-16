@@ -61,7 +61,9 @@ if __name__ == "__main__":
 
     # create data loader
     train_loader, train_loader_eval, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name, batch_size=args.batch_size,
-                                                                              train_loader_for_eval_check=True)
+                                                                              train_loader_for_eval_check=True,
+                                                                              cache=args.cache,
+                                                                              pin_memory=args.pin_memory)
 
     print("len train_loader ", len(train_loader))
 
