@@ -1,6 +1,6 @@
 task="g1_ccnn_v7_t7_shb"
 
-CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "valid mae fluctuation, try increase batch size more, reduce lr"  \
 --model "CompactCNNV7" \
