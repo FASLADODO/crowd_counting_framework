@@ -1,6 +1,6 @@
 task="g1_BigTail8_t3_shb"
 
-CUDA_VISIBLE_DEVICES=5 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=7 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "mse l1 sum, with -5 lr and decay (reduce a bit), try downsample input for faster training, more batch"  \
 --model "BigTail8" \
