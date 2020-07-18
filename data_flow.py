@@ -500,7 +500,7 @@ def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
     crop_size = (int(img_origin.size[0] / 2), int(img_origin.size[1] / 2))
     gt_file = h5py.File(gt_path, 'r')
     target_origin = np.asarray(gt_file['density'])
-    target_factor = 8
+    target_factor = 4
 
     if train:
         # for each image
