@@ -475,12 +475,7 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
                                              axis=0)  # make dim (batch size, channel size, x, y) to make model output
                     crop_img.append(img)
                     crop_label.append(target1)
-        # shuffle in pair
-        tmp_pair = list(zip(crop_img, crop_label))
-        random.shuffle(tmp_pair)
-        crop_img, crop_label = zip(*tmp_pair)
-        crop_label = list(crop_label)
-        crop_img = list(crop_img)
+
         return crop_img, crop_label
 
     if not train:
@@ -489,6 +484,59 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         gt_count = count_gt_annotation_sha(mat_path)
         return img_origin, gt_count
 
+
+def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
+    """
+    input image downsample by half
+    per sample, crop 4, non-overlap
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img_origin = Image.open(img_path).convert('RGB')
+    # downsample by half
+    img_origin = img_origin.resize((int(img_origin.size[0] / 2), int(img_origin.size[1] / 2)), resample=Image.ANTIALIAS)
+    crop_size = (int(img_origin.size[0] / 2), int(img_origin.size[1] / 2))
+    gt_file = h5py.File(gt_path, 'r')
+    target_origin = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        # for each image
+        # create 8 patches, 4 non-overlap 4 corner
+        # for each of 4 patch, create another 4 flip
+        crop_img = []
+        crop_label = []
+        for i in range(2):
+            for j in range(2):
+                # crop non-overlap
+                dx = int(i * img_origin.size[0] * 1. / 2)
+                dy = int(j * img_origin.size[1] * 1. / 2)
+                img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+                target = target_origin[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+                # flip
+                for x in range(2):
+                    if x == 1:
+                        target = np.fliplr(target)
+                        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                    target1 = cv2.resize(target,
+                                         (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+                    target1 = np.expand_dims(target1,
+                                             axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                    crop_img.append(img)
+                    crop_label.append(target1)
+
+        return crop_img, crop_label
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img_origin, gt_count
 
 def load_data_shanghaitech_non_overlap_noflip(img_path, train=True):
     """
@@ -972,6 +1020,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_256
         elif dataset_name == "shanghaitech_non_overlap":
             self.load_data_fn = load_data_shanghaitech_non_overlap
+        elif dataset_name == "shanghaitech_non_overlap_downsample":
+            self.load_data_fn = load_data_shanghaitech_non_overlap_downsample
         elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name == "ucf_cc_50_pacnn":
