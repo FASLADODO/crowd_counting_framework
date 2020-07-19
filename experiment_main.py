@@ -7,7 +7,7 @@ from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
 from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount
 from visualize_util import get_readable_time
-from mse_l1_loss import MSEL1Loss
+from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
@@ -142,6 +142,12 @@ if __name__ == "__main__":
     elif args.loss_fn == "MSEL1Sum":
         loss_fn = MSEL1Loss(reduction='sum').to(device)
         print("use MSEL1Sum")
+    elif args.loss_fn == "MSE4L1Mean":
+        loss_fn = MSE4L1Loss(reduction='mean').to(device)
+        print("use MSEL1Mean")
+    elif args.loss_fn == "MSE4L1Sum":
+        loss_fn = MSE4L1Loss(reduction='sum').to(device)
+        print("use MSE4L1Sum")
     elif args.loss_fn == "MSENone":
         """
         Doesnt work
