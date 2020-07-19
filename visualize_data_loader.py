@@ -68,7 +68,6 @@ def visualize_shanghaitech_keepfull():
         save_density_map(label.numpy()[0][0], os.path.join(saved_folder, "train_label" + str(i) +".png"))
 
 
-
 def visualize_shanghaitech_pacnn_with_perspective():
     HARD_CODE = HardCodeVariable()
     shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
@@ -113,6 +112,37 @@ def visualize_shanghaitech_pacnn_with_perspective():
     print("s4 ", label[3].shape)
     print("s5 ", label[4].shape)
 
+
+def visualize_shanghaitech_nonoverlap_downsample():
+    HARD_CODE = HardCodeVariable()
+    shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
+    shanghaitech_data_part_a_train = shanghaitech_data.get_a().get_train().get()
+    saved_folder = "visualize/test_dataloader"
+    os.makedirs(saved_folder, exist_ok=True)
+    DATA_PATH = HARD_CODE.SHANGHAITECH_PATH_PART_B
+    train_list, val_list = get_train_val_list(shanghaitech_data_part_a_train, test_size=0.2)
+    test_list = None
+
+    # create data loader
+    train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_non_overlap_downsample",
+                                                           visualize_mode=True)
+
+
+    img, label = next(iter(train_loader))
+
+    print(img.shape)
+    save_img(img, os.path.join(saved_folder, "overlap_downsample_loader_1.png"))
+    save_density_map(label[0].numpy()[0], os.path.join(saved_folder,"overlap_downsample_loader_with_p_density1.png"))
+
+    print("count1 ", label.numpy()[0].sum())
+    print("count2 ", label.numpy()[0].sum())
+    print("count3 ", label.numpy()[0].sum())
+
+    print("s1 ", label.shape)
+
+
+
+
 if __name__ == "__main__":
     # visualize_shanghaitech_pacnn_with_perspective()
-    visualize_shanghaitech_keepfull()
+    visualize_shanghaitech_nonoverlap_downsample()
