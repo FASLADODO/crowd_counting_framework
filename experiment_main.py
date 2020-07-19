@@ -15,7 +15,7 @@ from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, Big
 from models.meow_experiment.ccnn_head import H1, H2, H3
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
-from models.compact_cnn import CompactCNNV8, CompactCNNV9
+from models.compact_cnn import CompactCNNV8, CompactCNNV9, CompactCNNV7i
 import os
 from model_util import get_lr, BestMetrics
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model_name = args.model
+    model_name = args.model   
     experiment.log_other("model", model_name)
     experiment.add_tag(model_name)
     if model_name == "M1":
@@ -107,6 +107,8 @@ if __name__ == "__main__":
         model = H1_Bigtail3()
     elif model_name == "CompactCNNV7":
         model = CompactCNNV7()
+    elif model_name == "CompactCNNV7i":
+        model = CompactCNNV7i()
     elif model_name == "CompactCNNV8":
         model = CompactCNNV8()
     elif model_name == "CompactCNNV9":
