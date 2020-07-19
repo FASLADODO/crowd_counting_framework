@@ -68,7 +68,7 @@ if __name__ == "__main__":
     print("len train_loader ", len(train_loader))
 
     # model
-    model_name = args.model   
+    model_name = args.model
     experiment.log_other("model", model_name)
     experiment.add_tag(model_name)
     if model_name == "M1":
