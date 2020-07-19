@@ -248,8 +248,8 @@ if __name__ == "__main__":
             experiment.log_metric("batch_timer", batch_timer.value())
             experiment.log_metric("train_timer", train_timer.value())
 
-            print("batch_timer ", batch_timer.value())
-            print("train_timer ", train_timer.value())
+        print("batch_timer ", batch_timer.value())
+        print("train_timer ", train_timer.value())
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
