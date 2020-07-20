@@ -434,6 +434,49 @@ def load_data_shanghaitech_60p_random(img_path, train=True):
     return img, target1
 
 
+def load_data_shanghaitech_flip_only(img_path, train=True):
+    """
+    flip only
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img_origin = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target_origin = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        # for each image
+        # make 2, original and flip
+        crop_img = []
+        crop_label = []
+        # flip
+        for x in range(2):
+            if x == 1:
+                target = np.fliplr(target_origin)
+                img = img_origin.transpose(Image.FLIP_LEFT_RIGHT)
+            else:
+                target = target_origin
+                img = img_origin
+            target1 = cv2.resize(target,
+                                 (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                 interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+            # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+            target1 = np.expand_dims(target1,
+                                     axis=0)  # make dim (batch size, channel size, x, y) to make model output
+            crop_img.append(img)
+            crop_label.append(target1)
+
+        return crop_img, crop_label
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img_origin, gt_count
+
 def load_data_shanghaitech_non_overlap(img_path, train=True):
     """
     per sample, crop 4, non-overlap
@@ -483,7 +526,6 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
         return img_origin, gt_count
-
 
 def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
     """
@@ -1022,6 +1064,9 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_non_overlap
         elif dataset_name == "shanghaitech_non_overlap_downsample":
             self.load_data_fn = load_data_shanghaitech_non_overlap_downsample
+        elif dataset_name == "shanghaitech_flip_only":
+            self.load_data_fn = load_data_shanghaitech_flip_only
+
         elif dataset_name == "ucf_cc_50":
             self.load_data_fn = load_data_ucf_cc50
         elif dataset_name == "ucf_cc_50_pacnn":
@@ -1078,7 +1123,9 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                                                         std=[0.229, 0.224, 0.225]),
         ])
     train_collate_fn = my_collate
-    if dataset_name == "shanghaitech_non_overlap" or dataset_name == "shanghaitech_non_overlap_downsample":
+    if dataset_name == "shanghaitech_non_overlap" or\
+            dataset_name == "shanghaitech_non_overlap_downsample" or\
+            dataset_name == "shanghaitech_flip_only":
         train_collate_fn = flatten_collate
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
