@@ -1,8 +1,8 @@
 task="g1_H3i_t2_sha"
 
-CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=5 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
---note "mse l1 sum, with -5 lr and decay"  \
+--note "mse l1 sum, with -4 lr and decay, flip only no crop"  \
 --model "H3i" \
 --input /data/rnd/thient/thient_data/shanghaitech_with_people_density_map/ShanghaiTech_3/part_A  \
 --lr 1e-4 \
