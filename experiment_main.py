@@ -12,7 +12,7 @@ import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8
-from models.meow_experiment.ccnn_head import H1, H2, H3
+from models.meow_experiment.ccnn_head import H1, H2, H3, H3i
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
 from models.compact_cnn import CompactCNNV8, CompactCNNV9, CompactCNNV7i
@@ -103,6 +103,8 @@ if __name__ == "__main__":
         model = H2()
     elif model_name == "H3":
         model = H3()
+    elif model_name == "H3i":
+        model = H3i()
     elif model_name == "H1_Bigtail3":
         model = H1_Bigtail3()
     elif model_name == "CompactCNNV7":
