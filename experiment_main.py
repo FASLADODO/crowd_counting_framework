@@ -255,11 +255,10 @@ if __name__ == "__main__":
             experiment.log_metric("train_mse", metrics['mse'])
             experiment.log_metric("lr", get_lr(optimizer))
 
-            experiment.log_metric("batch_timer", batch_timer.value())
-            experiment.log_metric("train_timer", train_timer.value())
-
         print("batch_timer ", batch_timer.value())
         print("train_timer ", train_timer.value())
+        experiment.log_metric("batch_timer", batch_timer.value())
+        experiment.log_metric("train_timer", train_timer.value())
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_validation_results(trainer):
@@ -298,6 +297,8 @@ if __name__ == "__main__":
                   .format(trainer.state.epoch, test_metrics['mae'], test_metrics['mse'], 0))
             experiment.log_metric("test_mae", test_metrics['mae'])
             experiment.log_metric("test_mse", test_metrics['mse'])
+            experiment.log_metric("evaluate_test_timer", evaluate_test_timer.value())
+            print("evaluate_test_timer ", evaluate_test_timer.value())
             # experiment.log_metric("test_loss", test_metrics['loss'])
 
     def checkpoint_valid_mae_score_function(engine):
