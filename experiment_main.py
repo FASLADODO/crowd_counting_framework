@@ -11,7 +11,7 @@ from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
-from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8, BigTail6i
+from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8, BigTail6i, BigTail9i
 from models.meow_experiment.ccnn_head import H1, H2, H3, H3i
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
@@ -95,6 +95,8 @@ if __name__ == "__main__":
         model = BigTail6()
     elif model_name == "BigTail6i":
         model = BigTail6i()
+    elif model_name == "BigTail9i":
+        model = BigTail9i()
     elif model_name == "BigTail7":
         model = BigTail7()
     elif model_name == "BigTail8":
