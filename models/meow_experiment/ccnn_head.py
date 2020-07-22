@@ -236,3 +236,63 @@ class H3i(nn.Module):
 
         x = self.output(x)
         return x
+
+
+class H4i(nn.Module):
+    """
+    A REAL-TIME DEEP NETWORK FOR CROWD COUNTING
+    https://arxiv.org/pdf/2002.06515.pdf
+    the improve version
+
+    we change 5x5 7x7 9x9 with 3x3
+    Keep the tail
+    """
+    def __init__(self, load_weights=False):
+        super(H4i, self).__init__()
+        self.model_note = "From H2, fix bug redundancy forward and remove inplace" \
+                          " We replace 5x5 7x7 9x9 with 3x3, no batchnorm yet, keep tail, no dilated. " \
+                          "Front_cnn_1 change to 20. ALl front is 20"
+
+        # ideal from crowd counting using DMCNN
+        self.front_cnn_1 = nn.Conv2d(3, 20, 3, padding=1)
+        self.front_cnn_2 = nn.Conv2d(20, 20, 3, padding=1)
+        self.front_cnn_3 = nn.Conv2d(20, 20, 3, padding=1)
+        self.front_cnn_4 = nn.Conv2d(20, 20, 3, padding=1)
+
+        self.c0 = nn.Conv2d(60, 40, 3, padding=1)
+        self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        self.c1 = nn.Conv2d(40, 60, 3, padding=1)
+
+        # ideal from CSRNet
+        self.c2 = nn.Conv2d(60, 40, 3, padding=1)
+        self.c3 = nn.Conv2d(40, 20, 3, padding=1)
+        self.c4 = nn.Conv2d(20, 10, 3, padding=1)
+        self.output = nn.Conv2d(10, 1, 1)
+
+    def forward(self,x):
+
+        x1 = F.relu(self.front_cnn_1(x))
+        x2 = F.relu(self.front_cnn_2(x1))
+        x3 = F.relu(self.front_cnn_3(x2))
+        x4 = F.relu(self.front_cnn_4(x3))
+
+        x_red = self.max_pooling(x4)
+        x_green = self.max_pooling(x3)
+        x_blue = self.max_pooling(x2)
+
+        # x = self.max_pooling(x)
+        x = torch.cat((x_red, x_green, x_blue), 1)
+        x = F.relu(self.c0(x))
+
+        x = F.relu(self.c1(x))
+
+        x = F.relu(self.c2(x))
+        x = self.max_pooling(x)
+
+        x = F.relu(self.c3(x))
+        x = self.max_pooling(x)
+
+        x = F.relu(self.c4(x))
+        x = self.output(x)
+        return x

@@ -162,12 +162,10 @@ class CompactCNNV7i(nn.Module):
         x_blue = F.relu(self.blue_cnn(x))
 
         x = torch.cat((x_red, x_green, x_blue), 1)
-
         x = self.max_pooling(x)
+
         x = F.relu(self.c0(x))
-
         x = F.relu(self.c1(x))
-
         x = F.relu(self.c2(x))
         x = self.max_pooling(x)
 
@@ -175,7 +173,6 @@ class CompactCNNV7i(nn.Module):
         x = self.max_pooling(x)
 
         x = F.relu(self.c4(x))
-
         x = self.output(x)
         return x
 
