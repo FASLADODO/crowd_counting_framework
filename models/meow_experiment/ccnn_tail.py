@@ -499,7 +499,7 @@ class BigTail11i(nn.Module):
     https://arxiv.org/pdf/2002.06515.pdf
     """
     def __init__(self, load_weights=False):
-        super(BigTail10i, self).__init__()
+        super(BigTail11i, self).__init__()
         self.model_note = "BigTail10i, change max pooling 2 3 to avg pooling, i mean discard inplace"
         self.red_cnn = nn.Conv2d(3, 10, 9, padding=4)
         self.green_cnn = nn.Conv2d(3, 14, 7, padding=3)
