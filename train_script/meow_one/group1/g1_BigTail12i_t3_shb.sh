@@ -1,6 +1,6 @@
 task="g1_BigTail12i_t3_shb"
 
-CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=5 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "mse l1 sum, with -4 lr and -2 decay (help overfit), use batchnorm (default setting)"  \
 --model "BigTail12i" \
