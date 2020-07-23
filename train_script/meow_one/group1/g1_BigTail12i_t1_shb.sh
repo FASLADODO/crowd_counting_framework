@@ -8,7 +8,7 @@ CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --lr 1e-4 \
 --decay 1e-2 \
 --loss_fn "MSEL1Sum" \
---batch_size 5 \
+--batch_size 4 \
 --datasetname shanghaitech_non_overlap \
 --skip_train_eval \
 --cache \
