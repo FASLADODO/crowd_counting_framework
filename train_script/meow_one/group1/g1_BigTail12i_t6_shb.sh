@@ -1,11 +1,11 @@
-task="g1_BigTail12i_t5_shb"
+task="g1_BigTail12i_t6_shb"
 
 CUDA_VISIBLE_DEVICES=5 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "mse l1 sum, sgd, use batchnorm (default setting)"  \
 --model "BigTail12i" \
 --input /data/rnd/thient/thient_data/shanghaitech_with_people_density_map/ShanghaiTech_3/part_B  \
---lr 1e-4 \
+--lr 1e-5 \
 --decay 1e-2 \
 --loss_fn "MSEL1Sum" \
 --batch_size 5 \
