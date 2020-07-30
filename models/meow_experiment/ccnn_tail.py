@@ -722,11 +722,11 @@ class BigTail15i(nn.Module):
         self.max_pooling = nn.MaxPool2d(kernel_size=2, stride=2)
         self.avg_pooling = nn.AvgPool2d(kernel_size=2, stride=2)
 
-        self.c1 = nn.Conv2d(40, 60, 3, padding=2, dilation=2)
-        self.c2 = nn.Conv2d(60, 40, 3, padding=2, dilation=2)
-        self.c3 = nn.Conv2d(40, 20, 3, padding=2, dilation=2)
-        self.c4 = nn.Conv2d(20, 10, 3, padding=2, dilation=2)
-        self.output = nn.Conv2d(10, 1, 1)
+        self.c1 = nn.Conv2d(40, 40, 3, padding=2, dilation=2)
+        self.c2 = nn.Conv2d(40, 40, 3, padding=2, dilation=2)
+        self.c3 = nn.Conv2d(40, 40, 3, padding=2, dilation=2)
+        self.c4 = nn.Conv2d(40, 20, 3, padding=2, dilation=2)
+        self.output = nn.Conv2d(20, 1, 1)
 
         self.bn_red = nn.BatchNorm2d(10)
         self.bn_green = nn.BatchNorm2d(14)
@@ -734,10 +734,10 @@ class BigTail15i(nn.Module):
 
         self.bn00 = nn.BatchNorm2d(40)
         self.bn0 = nn.BatchNorm2d(40)
-        self.bn1 = nn.BatchNorm2d(60)
+        self.bn1 = nn.BatchNorm2d(40)
         self.bn2 = nn.BatchNorm2d(40)
-        self.bn3 = nn.BatchNorm2d(20)
-        self.bn4 = nn.BatchNorm2d(10)
+        self.bn3 = nn.BatchNorm2d(40)
+        self.bn4 = nn.BatchNorm2d(20)
 
     def forward(self,x):
         x_red = F.relu(self.red_cnn(x))
@@ -750,7 +750,7 @@ class BigTail15i(nn.Module):
         x = torch.cat((x_red, x_green, x_blue), 1)
         x = self.bn00(x)
         x = self.max_pooling(x)
-        r1 = x
+        r1 = x  # 40
 
         x = F.relu(self.c0(x))
         x = self.bn0(x)
@@ -762,7 +762,6 @@ class BigTail15i(nn.Module):
 
         x = F.relu(self.c2(x))
         x = self.bn2(x)
-
         x = F.relu(self.c3(x) + r2)
         x = self.bn3(x)
         x = self.avg_pooling(x)
