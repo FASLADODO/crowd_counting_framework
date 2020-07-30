@@ -12,7 +12,7 @@ import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8, BigTail6i, BigTail9i
-from models.meow_experiment.ccnn_tail import BigTail11i, BigTail10i, BigTail12i, BigTail13i, BigTail14i
+from models.meow_experiment.ccnn_tail import BigTail11i, BigTail10i, BigTail12i, BigTail13i, BigTail14i, BigTail15i
 from models.meow_experiment.ccnn_head import H1, H2, H3, H3i, H4i
 from models.meow_experiment.kitten_meow_1 import H1_Bigtail3
 from models import CustomCNNv2, CompactCNNV7
@@ -108,6 +108,8 @@ if __name__ == "__main__":
         model = BigTail13i()
     elif model_name == "BigTail14i":
         model = BigTail14i()
+    elif model_name == "BigTail15i":
+        model = BigTail15i()
     elif model_name == "BigTail7":
         model = BigTail7()
     elif model_name == "BigTail8":
