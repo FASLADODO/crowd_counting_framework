@@ -1,6 +1,6 @@
 task="g1_BigTail14i_t6_sha"
 
-CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "mse l1 sum, with -6 lr and -6 decay (help overfit) sgd"  \
 --model "BigTail14i" \
