@@ -1,6 +1,6 @@
 task="adamw1_bigtail13i_t1_sha"
 
-CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
+CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
 --note "adamW with extrem high lr and decay, msel1mean"  \
 --model "BigTail13i" \
