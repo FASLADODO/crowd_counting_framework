@@ -188,6 +188,10 @@ if __name__ == "__main__":
                                     weight_decay=args.decay,
                                     momentum=args.momentum)
         print("use sgd")
+    elif args.optim == "adamw":
+        optimizer = torch.optim.AdamW(model.parameters(), args.lr,
+                                weight_decay=args.decay)
+        print("use adamW")
     experiment.add_tag(args.optim)
 
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
