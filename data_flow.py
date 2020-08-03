@@ -1082,8 +1082,8 @@ class ListDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.lines[index]
-        if self.debug:
-            print(img_path)
+        # if self.debug:
+        #     print(img_path)
         # try to check cache item if exist
         if self.cache and self.train and index in self.cache_train.keys():
             img, target = self.cache_train[index]
@@ -1107,12 +1107,18 @@ class ListDataset(Dataset):
                     self.cache_train[index] = (img, target)
                 else:
                     self.cache_eval[index] = (img, target)
-
-        return img, target
+        if self.debug:
+            _, p_count = self.load_data_fn(img_path, train=False)
+            print(img_path + " " + str(target.sum()) + " " + str(p_count))
+            return img, target, p_count
+        else:
+            return img, target
 
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1,
-                   train_loader_for_eval_check=False, cache=False, pin_memory=False):
+                   train_loader_for_eval_check=False, cache=False, pin_memory=False,
+                   debug=False):
+
     if visualize_mode:
         transformer = transforms.Compose([
             transforms.ToTensor()
@@ -1134,6 +1140,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     train=True,
                     batch_size=batch_size,
                     num_workers=0,
+                    debug=debug,
                     dataset_name=dataset_name, cache=cache),
         batch_size=batch_size,
         num_workers=0,
@@ -1146,6 +1153,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                     train=False,
                     batch_size=batch_size,
                     num_workers=0,
+                    debug=debug,
                     dataset_name=dataset_name, cache=cache),
         batch_size=1,
         num_workers=0,
@@ -1157,6 +1165,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         shuffle=False,
                         transform=transformer,
                         train=False,
+                        debug=debug,
                         dataset_name=dataset_name, cache=cache),
             num_workers=0,
             batch_size=1,
@@ -1170,6 +1179,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         shuffle=False,
                         transform=transformer,
                         train=False,
+                        debug=debug,
                         dataset_name=dataset_name),
             num_workers=0,
             batch_size=1,
