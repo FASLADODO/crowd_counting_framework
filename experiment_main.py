@@ -339,4 +339,44 @@ if __name__ == "__main__":
     trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
     evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
 
-    trainer.run(train_loader, max_epochs=args.epochs)
+    if args.eval_only:
+        print("evaluation only, no training")
+        evaluate_validate_timer.resume()
+        evaluator_validate.run(val_loader)
+        evaluate_validate_timer.pause()
+        evaluate_validate_timer.step()
+
+        metrics = evaluator_validate.state.metrics
+        timestamp = get_readable_time()
+        print(timestamp + " Validation set Results -  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+              .format( metrics['mae'], metrics['mse'], 0))
+        experiment.log_metric("valid_mae", metrics['mae'])
+        experiment.log_metric("valid_mse", metrics['mse'])
+
+        # timer
+        experiment.log_metric("evaluate_valid_timer", evaluate_validate_timer.value())
+        print("evaluate_valid_timer ", evaluate_validate_timer.value())
+
+        # check if that validate is best
+        flag_mae = best_mae.checkAndRecord(metrics['mae'], metrics['mse'])
+        flag_mse = best_mse.checkAndRecord(metrics['mae'], metrics['mse'])
+
+        if flag_mae or flag_mse:
+            experiment.log_metric("valid_best_mae", metrics['mae'])
+            experiment.log_metric("valid_best_mse", metrics['mse'])
+            print("BEST VAL, evaluating on test set")
+            evaluate_test_timer.resume()
+            evaluator_test.run(test_loader)
+            evaluate_test_timer.pause()
+            evaluate_test_timer.step()
+            test_metrics = evaluator_test.state.metrics
+            timestamp = get_readable_time()
+            print(timestamp + " Test set Results -  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+                  .format( test_metrics['mae'], test_metrics['mse'], 0))
+            experiment.log_metric("test_mae", test_metrics['mae'])
+            experiment.log_metric("test_mse", test_metrics['mse'])
+            experiment.log_metric("evaluate_test_timer", evaluate_test_timer.value())
+            print("evaluate_test_timer ", evaluate_test_timer.value())
+            # experiment.log_metric("test_loss", test_metrics['loss'])
+    else:
+        trainer.run(train_loader, max_epochs=args.epochs)
