@@ -132,6 +132,7 @@ def meow_parse():
     #                     help="if true, use mse and negative ssim as loss function")
     parser.add_argument('--loss_fn', action="store", default="MSE", type=str)
     parser.add_argument('--optim', action="store", default="adam", type=str)
+    parser.add_argument('--eval_only', action="store_true", default=False)
     arg = parser.parse_args()
     return arg
 
