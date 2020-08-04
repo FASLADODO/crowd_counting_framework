@@ -4,7 +4,9 @@ from hard_code_variable import HardCodeVariable
 from data_util import ShanghaiTechDataPath
 from visualize_util import save_img, save_density_map
 import os
+import numpy as np
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
+import cv2
 
 def visualize_evaluation_shanghaitech_keepfull(model):
     model = model.cuda()
@@ -29,10 +31,11 @@ def visualize_evaluation_shanghaitech_keepfull(model):
         save_density_map(label.numpy()[0][0], save_path)
         pred = model(img.cuda())
         predicted_density_map = pred.detach().cpu().clone().numpy()
-        save_density_map(predicted_density_map[0][0], save_pred_path)
+        predicted_density_map_enlarge = cv2.resize(np.squeeze(predicted_density_map[0][0]), (int(predicted_density_map.shape[3] * 8), int(predicted_density_map.shape[2] * 8)), interpolation=cv2.INTER_CUBIC) / 64
+        save_density_map(predicted_density_map_enlarge, save_pred_path)
         print("pred " + save_pred_path + " value " + str(predicted_density_map.sum()))
-
-
+        print("cont compare " + str(predicted_density_map.sum()) + " " + str(predicted_density_map_enlarge.sum()))
+        print("shape compare " + str(predicted_density_map.shape) + " " + str(predicted_density_map_enlarge.shape))
 """
 Document on save load model 
 https://pytorch.org/tutorials/beginner/saving_loading_models.html
