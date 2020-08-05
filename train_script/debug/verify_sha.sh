@@ -3,4 +3,4 @@ nohup python debug/verify_sha.sh \
 --output viz/verify_sha_3_train_split_shanghaitech_keepfull_r50 \
 --dataset  shanghaitech_keepfull_r50  \
 --meta_data  log/verify_sha_3_train_split_shanghaitech_keepfull_r50.csv  \
-> log/verify_sha_3_train_split_shanghaitech_keepfull_r50.log &
+> logs/verify_sha_3_train_split_shanghaitech_keepfull_r50.log &
