@@ -14,6 +14,7 @@ def _parse():
     parser = argparse.ArgumentParser(description='verify_sha')
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
     parser.add_argument('--output', action="store", type=str, default="visualize/verify_dataloader_shanghaitech")
+    parser.add_argument('--meta_data', action="store", type=str, default="data_info.txt")
     parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull_r50")
     arg = parser.parse_args()
     return arg
@@ -24,7 +25,10 @@ def img_name_to_int(img_name):
     return int(img_name.replace("IMG_","").replace(".jpg",""))
 
 
-def visualize_evaluation_shanghaitech_keepfull(path=None, dataset="shanghaitech_keepfull_r50", output="visualize/verify_dataloader_shanghaitech"):
+def visualize_evaluation_shanghaitech_keepfull(path=None,
+                                               dataset="shanghaitech_keepfull_r50",
+                                               output="visualize/verify_dataloader_shanghaitech",
+                                               meta_data="data_info.txt"):
     HARD_CODE = HardCodeVariable()
     if path==None:
         shanghaitech_data = ShanghaiTechDataPath(root= HARD_CODE.SHANGHAITECH_PATH)
@@ -39,7 +43,7 @@ def visualize_evaluation_shanghaitech_keepfull(path=None, dataset="shanghaitech_
 
     # do with train loader
     train_loader_iter = iter(train_loader)
-    f = open("data_info.txt", "w")
+    f = open(meta_data, "w")
     total = len(train_loader)
     for i in range(len(train_loader)):
         img, label, debug_data = next(train_loader_iter)
@@ -59,4 +63,4 @@ def visualize_evaluation_shanghaitech_keepfull(path=None, dataset="shanghaitech_
 
 if __name__ == "__main__":
     args = _parse()
-    visualize_evaluation_shanghaitech_keepfull(args.path, args.dataset)
+    visualize_evaluation_shanghaitech_keepfull(args.input, args.datasetname, args.output, args.meta_data)
