@@ -789,6 +789,28 @@ def load_data_shanghaitech_keepfull(img_path, train=True):
     return img, target1
 
 
+def load_data_shanghaitech_keepfull_r50(img_path, train=True):
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img = Image.open(img_path).convert('RGB')
+
+    if train:
+        gt_file = h5py.File(gt_path, 'r')
+        target = np.asarray(gt_file['density'])
+        if random.random() > 0.5:  # flip o.5 chance
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+        target1 = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
+                             interpolation=cv2.INTER_CUBIC) * 64
+        target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+        # np.expand_dims(target1, axis=0)  # again
+        return img, target1
+    else:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img, gt_count
+
 def load_data_shanghaitech_keepfull_and_crop(img_path, train=True):
     """
     loader might give full image, or crop
@@ -1014,6 +1036,7 @@ class ListDataset(Dataset):
                 pass
             else:
                 root = root * 4
+                print("remove * 4")
         if shuffle:
             random.shuffle(root)
 
@@ -1042,6 +1065,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_same_size_density_map
         elif dataset_name == "shanghaitech_keepfull":
             self.load_data_fn = load_data_shanghaitech_keepfull
+        elif dataset_name == "shanghaitech_keepfull_r50":
+            self.load_data_fn = load_data_shanghaitech_keepfull_r50
         elif dataset_name == "shanghaitech_keepfull_and_crop":
             self.load_data_fn = load_data_shanghaitech_keepfull_and_crop
         elif dataset_name == "shanghaitech_20p_enlarge":
@@ -1110,7 +1135,10 @@ class ListDataset(Dataset):
         if self.debug:
             _, p_count = self.load_data_fn(img_path, train=False)
             print(img_path + " " + str(target.sum()) + " " + str(p_count))
-            return img, target, p_count
+            img_name = img_path.split("/")[-1]
+            debug_info = {"p_count": p_count,
+                          "name": img_name}
+            return img, target, debug_info
         else:
             return img, target
 
