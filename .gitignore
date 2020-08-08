@@ -8,3 +8,5 @@ data/
 visualize/
 *.zip
 saved_model/
+
+debug/data_info.txt
