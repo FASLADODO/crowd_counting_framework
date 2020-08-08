@@ -17,3 +17,5 @@ CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --epochs 1201 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
+
+#shanghaitech_keepfull_r50
