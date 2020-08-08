@@ -1031,12 +1031,12 @@ class ListDataset(Dataset):
         :param num_workers:
         """
         if train:
-            if "non_overlap" in dataset_name:
+            if "non_overlap" in dataset_name or "shanghaitech_keepfull" in dataset_name:
                 # each sample we generate 8 image, so, no need to x4
-                pass
+                print("root * 1 because dataset ", dataset_name)
             else:
                 root = root * 4
-                print("remove * 4")
+                print("root * 4 because dataset ", dataset_name)
         if shuffle:
             random.shuffle(root)
 

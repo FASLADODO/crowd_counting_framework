@@ -1,6 +1,6 @@
 from comet_ml import Experiment
 
-from args_util import meow_parse
+from args_util import meow_parse, lr_scheduler_milestone_builder
 from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
@@ -19,6 +19,7 @@ from models import CustomCNNv2, CompactCNNV7
 from models.compact_cnn import CompactCNNV8, CompactCNNV9, CompactCNNV7i
 import os
 from model_util import get_lr, BestMetrics
+from ignite.contrib.handlers import PiecewiseLinear
 
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-train-val"
@@ -31,7 +32,7 @@ def very_simple_param_count(model):
 
 
 if __name__ == "__main__":
-    torch.set_num_threads(2) # 4 thread
+    torch.set_num_threads(2)  # 4 thread
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -194,6 +195,11 @@ if __name__ == "__main__":
         print("use adamW")
     experiment.add_tag(args.optim)
 
+    if args.lr_scheduler:
+        mile_stone = lr_scheduler_milestone_builder(args.step_list, args.lr_list)
+        print("lr_scheduler milestone ", mile_stone)
+        lr_scheduler = PiecewiseLinear(optimizer, param_name="lr", milestones_values=mile_stone)
+
     trainer = create_supervised_trainer(model, optimizer, loss_fn, device=device)
     evaluator_train = create_supervised_evaluator(model,
                                             metrics={
@@ -246,7 +252,10 @@ if __name__ == "__main__":
     if len(args.load_model) > 0:
         load_model_path = args.load_model
         print("load mode " + load_model_path)
-        to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+        if args.lr_scheduler:
+            to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer, 'lr_scheduler': lr_scheduler}
+        else:
+            to_load = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
         checkpoint = torch.load(load_model_path)
         Checkpoint.load_objects(to_load=to_load, checkpoint=checkpoint)
         print("load model complete")
@@ -256,6 +265,8 @@ if __name__ == "__main__":
     else:
         print("do not load, keep training")
 
+    if args.lr_scheduler:
+        trainer.add_event_handler(Events.EPOCH_STARTED, lr_scheduler)
 
     @trainer.on(Events.ITERATION_COMPLETED(every=100))
     def log_training_loss(trainer):

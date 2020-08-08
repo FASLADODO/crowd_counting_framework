@@ -128,6 +128,10 @@ def meow_parse():
                         help="don't know what is it")
     parser.add_argument('--skip_train_eval', action="store_true", default=False,
                         help="if true, do not run eval on training set to save time")
+    parser.add_argument('--lr_scheduler', action="store_true", default=False,
+                        help="use lr scheduler, should config step_list and lr_list")
+    parser.add_argument('--step_list', action="store", default="10,20,30", type=str)
+    parser.add_argument('--lr_list', action="store", default="1e-1,1e-2,1e-3", type=str)
     # parser.add_argument('--use_ssim', action="store_true", default=False,
     #                     help="if true, use mse and negative ssim as loss function")
     parser.add_argument('--loss_fn', action="store", default="MSE", type=str)
@@ -195,3 +199,19 @@ def real_args_parse():
 
     arg = parser.parse_args()
     return arg
+
+def lr_scheduler_milestone_builder(step_list, lr_list):
+    """
+
+    :param step_list: str with comma (example: 50,100,150)
+    :param lr_list: str with comma (example: 1e-1,1e-2,1e-3)
+    :return:
+    """
+    step_list = step_list.split(",")
+    lr_list = lr_list.split(",")
+    result = []
+    for step_str, lr_str in zip(step_list, lr_list):
+        step = int(step_str)
+        lr = float(lr_str)
+        result.append((step, lr))
+    return result
