@@ -1,4 +1,4 @@
-task="l2_adamw2_bigtail11i_t1_c1_sha"
+task="l2_adamw2_bigtail11i_t1_c2_sha"
 
 CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
@@ -12,7 +12,7 @@ CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --load_model saved_model/l2_adamw2_bigtail11i_t1_sha/l2_adamw2_bigtail11i_t1_sha_checkpoint_283200.pth \
 --optim adamw \
 --cache \
---epochs 1201 > logs/$task.log  &
+--epochs 2101 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
 
