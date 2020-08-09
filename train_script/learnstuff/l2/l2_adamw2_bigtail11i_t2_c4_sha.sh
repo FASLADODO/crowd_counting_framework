@@ -1,4 +1,4 @@
-task="l2_adamw2_bigtail11i_t2_c3_sha"
+task="l2_adamw2_bigtail11i_t2_c4_sha"
 
 CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
