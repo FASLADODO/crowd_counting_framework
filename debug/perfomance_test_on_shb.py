@@ -52,7 +52,7 @@ if __name__ == "__main__":
                                                                               train_loader_for_eval_check=True,
                                                                               cache=args.cache,
                                                                               pin_memory=args.pin_memory,
-                                                                              test_size=20)
+                                                                              test_size=1)
 
     print("len train_loader ", len(train_loader))
 
