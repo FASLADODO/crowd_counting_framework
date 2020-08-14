@@ -127,17 +127,18 @@ if __name__ == "__main__":
     model = model.to(device)
     checkpoint = torch.load(args.load_model)
     model.load_state_dict(checkpoint["model"])
-    model.eval()
 
-    for test_time in range(10):
-        print("test " + str(test_time))
-        s1 = time.perf_counter()
-        for img, label in test_loader:
-            pred = model(img.cuda())
-        print("done")
-        s2 = time.perf_counter()
-        time1 = s2 - s1
-        print("time " + str(s1 - s2))
-        sys.stdout.flush()
-    print("done all")
+    with torch.no_grad():
+        model.eval()
+        for test_time in range(10):
+            print("test " + str(test_time))
+            s1 = time.perf_counter()
+            for img, label in test_loader:
+                pred = model(img.cuda())
+            print("done")
+            s2 = time.perf_counter()
+            time1 = s2 - s1
+            print("time " + str(s1 - s2))
+            sys.stdout.flush()
+        print("done all")
 
