@@ -125,7 +125,7 @@ if __name__ == "__main__":
         print("error: you didn't pick a model")
         exit(-1)
     model = model.to(device)
-    checkpoint = torch.load(model_path)
+    checkpoint = torch.load(args.load_model)
     model.load_state_dict(checkpoint["model"])
 
     s1 = time.perf_counter()
