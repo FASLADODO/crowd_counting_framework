@@ -1145,7 +1145,7 @@ class ListDataset(Dataset):
 
 def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech", visualize_mode=False, batch_size=1,
                    train_loader_for_eval_check=False, cache=False, pin_memory=False,
-                   debug=False):
+                   debug=False, test_size=1):
 
     if visualize_mode:
         transformer = transforms.Compose([
@@ -1196,7 +1196,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         debug=debug,
                         dataset_name=dataset_name, cache=cache),
             num_workers=0,
-            batch_size=1,
+            batch_size=test_size,
             pin_memory=pin_memory)
     else:
         val_loader = None
@@ -1210,7 +1210,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         debug=debug,
                         dataset_name=dataset_name),
             num_workers=0,
-            batch_size=1,
+            batch_size=test_size,
             pin_memory=pin_memory)
     else:
         test_loader = None

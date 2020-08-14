@@ -52,7 +52,8 @@ if __name__ == "__main__":
     train_loader, train_loader_eval, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name=dataset_name, batch_size=args.batch_size,
                                                                               train_loader_for_eval_check=True,
                                                                               cache=args.cache,
-                                                                              pin_memory=args.pin_memory)
+                                                                              pin_memory=args.pin_memory,
+                                                                              test_size=5)
 
     print("len train_loader ", len(train_loader))
 
@@ -128,19 +129,14 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.load_model)
     model.load_state_dict(checkpoint["model"])
 
-    s1 = time.perf_counter()
-    for img, label in test_loader:
-        pred = model(img.cuda())
-    print("done")
-    s2 = time.perf_counter()
-    time1 = s1 - s2
-    print("test 1 time " + str(s1 - s2))
+    for test_time in range(10):
+        print("test " + str(test_time))
+        s1 = time.perf_counter()
+        for img, label in test_loader:
+            pred = model(img.cuda())
+        print("done")
+        s2 = time.perf_counter()
+        time1 = s2 - s1
+        print("time " + str(s1 - s2))
 
-    s3 = time.perf_counter()
-    for img, label in test_loader:
-        pred = model(img.cuda())
-    print("done")
-    s4 = time.perf_counter()
-    time1 = s3 - s4
-    print("test 1 time " + str(s3 - s4))
 
