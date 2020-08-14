@@ -52,7 +52,7 @@ if __name__ == "__main__":
                                                                               train_loader_for_eval_check=True,
                                                                               cache=args.cache,
                                                                               pin_memory=args.pin_memory,
-                                                                              test_size=5)
+                                                                              test_size=20)
 
     print("len train_loader ", len(train_loader))
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
             print("done")
             s2 = time.perf_counter()
             time1 = s2 - s1
-            print("time " + str(s1 - s2))
+            print("time " + str(s2 - s1))
             sys.stdout.flush()
         print("done all")
 
