@@ -24,23 +24,6 @@ import time
 
 
 
-
-
-
-
-"""
-Document on save load model 
-https://pytorch.org/tutorials/beginner/saving_loading_models.html
-"""
-
-model_path = "/data/save_model/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth"
-checkpoint = torch.load(model_path)
-
-model = BigTail13i()
-model.load_state_dict(checkpoint["model"])
-print("done load")
-run_test_loader(model)
-
 if __name__ == "__main__":
     torch.set_num_threads(2)  # 4 thread
 
