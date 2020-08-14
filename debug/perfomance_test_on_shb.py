@@ -21,8 +21,7 @@ import os
 from model_util import get_lr, BestMetrics
 from ignite.contrib.handlers import PiecewiseLinear
 import time
-
-
+import sys
 
 if __name__ == "__main__":
     torch.set_num_threads(2)  # 4 thread
@@ -128,6 +127,7 @@ if __name__ == "__main__":
     model = model.to(device)
     checkpoint = torch.load(args.load_model)
     model.load_state_dict(checkpoint["model"])
+    model.eval()
 
     for test_time in range(10):
         print("test " + str(test_time))
@@ -138,5 +138,6 @@ if __name__ == "__main__":
         s2 = time.perf_counter()
         time1 = s2 - s1
         print("time " + str(s1 - s2))
-
+        sys.stdout.flush()
+    print("done all")
 

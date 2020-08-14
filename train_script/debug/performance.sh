@@ -1,4 +1,4 @@
-task="performance_shb_BigTail13i_t1"
+task="performance_shb_BigTail13i_t2"
 CUDA_VISIBLE_DEVICES=2 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python debug/perfomance_test_on_shb.py  \
 --task_id $task  \
 --model "BigTail13i" \
