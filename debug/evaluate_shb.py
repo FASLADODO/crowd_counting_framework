@@ -88,7 +88,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             error = abs(pred_count_num-gt_count_num)
             mae_s += error
             mse_s += error*error
-            log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + str(pred_count.item())
+            log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + " " + str(pred_count.item())
             print(log_str)
             log_f.write(log_str+"\n")
     log_f.close()
