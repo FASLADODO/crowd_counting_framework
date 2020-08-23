@@ -27,6 +27,7 @@ from data_util import ShanghaiTechDataPath
 import argparse
 import cv2
 import numpy as np
+import math
 from data_flow import get_train_val_list, get_dataloader, create_training_image_list
 """
 This file evaluation on SHB and get information on evaluation process
@@ -56,6 +57,9 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
                                                            debug=True)
 
     log_f = open(args.meta_data, "w")
+    mae_s = 0
+    mse_s = 0
+    n = 0
     with torch.no_grad():
         for item in test_loader:
             img, gt_density, debug_info = item
@@ -75,11 +79,20 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             print("shape compare " + str(predicted_density_map.shape) + " " + str(predicted_density_map_enlarge.shape))
             density_map_count = gt_density.detach().sum()
             pred_count = pred.detach().cpu().sum()
-            log_str = str(file_name) + " " + str(density_map_count.item()) + " " + str(gt_count.item()) + str(pred_count.item())
+            density_map_count_num = density_map_count.item()
+            gt_count_num = gt_count.item()
+            pred_count_num = pred_count.item()
+            error = abs(pred_count_num-gt_count_num)
+            mae_s += error
+            mse_s += error*error
+            log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + str(pred_count.item())
             print(log_str)
             log_f.write(log_str+"\n")
     log_f.close()
-
+    mae = mae_s / n
+    mse = math.sqrt(mse_s / n)
+    print("mae ", mae)
+    print("mse", mse)
 
 
 if __name__ == "__main__":
