@@ -789,7 +789,7 @@ def load_data_shanghaitech_keepfull(img_path, train=True):
     return img, target1
 
 
-def load_data_shanghaitech_keepfull_r50(img_path, train=True):
+def load_data_shanghaitech_keepfull_r50(img_path, train=True, debug=False):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img = Image.open(img_path).convert('RGB')
 
@@ -809,7 +809,10 @@ def load_data_shanghaitech_keepfull_r50(img_path, train=True):
         # get correct people head count from head annotation
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
-        return img, gt_count
+        if debug:
+            gt_file = h5py.File(gt_path, 'r')
+            target = np.asarray(gt_file['density'])
+        return img, gt_count, target
 
 def load_data_shanghaitech_keepfull_and_crop(img_path, train=True):
     """
@@ -1133,12 +1136,24 @@ class ListDataset(Dataset):
                 else:
                     self.cache_eval[index] = (img, target)
         if self.debug:
-            _, p_count = self.load_data_fn(img_path, train=False)
-            print(img_path + " " + str(target.sum()) + " " + str(p_count))
-            img_name = img_path.split("/")[-1]
-            debug_info = {"p_count": p_count,
-                          "name": img_name}
-            return img, target, debug_info
+            if self.train:
+                _, p_count = self.load_data_fn(img_path, train=False)
+                print(img_path + " " + str(target.sum()) + " " + str(p_count))
+                img_name = img_path.split("/")[-1]
+                # when debug, give information on p_count and img_name
+                debug_info = {"p_count": p_count,
+                              "name": img_name}
+                return img, target, debug_info
+            else:  # train=False
+                # when dataloader is not in train mode
+                # we get density gt, p_count from annotation
+                _, p_count, target = self.load_data_fn(img_path, train=False, debug=True)
+                print(img_path + " " + str(target.sum()) + " " + str(p_count))
+                img_name = img_path.split("/")[-1]
+                # when debug, give information on p_count and img_name
+                debug_info = {"p_count": p_count,
+                              "name": img_name}
+                return img, target, debug_info
         else:
             return img, target
 
