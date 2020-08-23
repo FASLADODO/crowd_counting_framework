@@ -48,12 +48,9 @@ def _parse():
 def visualize_evaluation_shanghaitech_keepfull(model, args):
     model = model.cuda()
     model.eval()
-    HARD_CODE = HardCodeVariable()
-    shanghaitech_data = ShanghaiTechDataPath(root=HARD_CODE.SHANGHAITECH_PATH)
-    shanghaitech_data_part_a_train = shanghaitech_data.get_a().get_train().get()
-    saved_folder = "visualize/evaluation_dataloader_shanghaitech"
+    saved_folder = args.output
     os.makedirs(saved_folder, exist_ok=True)
-    train_list, val_list = get_train_val_list(shanghaitech_data_part_a_train, test_size=0.2)
+    train_list, val_list = get_train_val_list(args.input, test_size=0.2)
     test_list = None
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_keepfull_r50", visualize_mode=False,
                                                            debug=True)
