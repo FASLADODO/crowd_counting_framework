@@ -208,7 +208,7 @@ if __name__ == "__main__":
             model = model.to(device)
             checkpoint = torch.load(args.load_model)
             model.load_state_dict(checkpoint["model"])
-        model.eval()
+        
         visualize_evaluation_shanghaitech_keepfull(model, args)
 
 
