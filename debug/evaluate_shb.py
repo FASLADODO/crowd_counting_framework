@@ -59,7 +59,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
     with torch.no_grad():
         for item in test_loader:
             img, gt_density, debug_info = item
-            gt_count = debug_info["gt_count"]
+            gt_count = debug_info["p_count"]
             file_name = debug_info["name"]
             save_path = os.path.join(saved_folder, "label_" + file_name +".png")
             save_pred_path = os.path.join(saved_folder, "pred_" + file_name +".png")
