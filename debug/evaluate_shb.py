@@ -48,6 +48,12 @@ def _parse():
 
 
 def visualize_evaluation_shanghaitech_keepfull(model, args):
+    """
+
+    :param model: model with param, if not model then do not output pred
+    :param args:
+    :return:
+    """
     model = model.cuda()
     model.eval()
     saved_folder = args.output
@@ -73,21 +79,27 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             save_path = os.path.join(saved_folder, "label_" + file_name_only +".png")
             save_pred_path = os.path.join(saved_folder, "pred_" + file_name_only +".png")
             save_density_map(gt_density.numpy()[0], save_path)
-            pred = model(img.cuda())
-            predicted_density_map = pred.detach().cpu().clone().numpy()
-            predicted_density_map_enlarge = cv2.resize(np.squeeze(predicted_density_map[0][0]), (int(predicted_density_map.shape[3] * 8), int(predicted_density_map.shape[2] * 8)), interpolation=cv2.INTER_CUBIC) / 64
-            save_density_map(predicted_density_map_enlarge, save_pred_path)
-            print("pred " + save_pred_path + " value " + str(predicted_density_map.sum()))
-            print("cont compare " + str(predicted_density_map.sum()) + " " + str(predicted_density_map_enlarge.sum()))
-            print("shape compare " + str(predicted_density_map.shape) + " " + str(predicted_density_map_enlarge.shape))
-            density_map_count = gt_density.detach().sum()
-            pred_count = pred.detach().cpu().sum()
-            density_map_count_num = density_map_count.item()
-            gt_count_num = gt_count.item()
-            pred_count_num = pred_count.item()
-            error = abs(pred_count_num-gt_count_num)
+            if model is not None:
+                pred = model(img.cuda())
+                predicted_density_map = pred.detach().cpu().clone().numpy()
+                predicted_density_map_enlarge = cv2.resize(np.squeeze(predicted_density_map[0][0]), (int(predicted_density_map.shape[3] * 8), int(predicted_density_map.shape[2] * 8)), interpolation=cv2.INTER_CUBIC) / 64
+                save_density_map(predicted_density_map_enlarge, save_pred_path)
+                print("pred " + save_pred_path + " value " + str(predicted_density_map.sum()))
+
+                print("cont compare " + str(predicted_density_map.sum()) + " " + str(predicted_density_map_enlarge.sum()))
+                print("shape compare " + str(predicted_density_map.shape) + " " + str(predicted_density_map_enlarge.shape))
+                density_map_count = gt_density.detach().sum()
+                pred_count = pred.detach().cpu().sum()
+                pred_count_num = pred_count.item()
+
+                error = abs(pred_count_num-gt_count_num)
+            else:
+                error = 0
             mae_s += error
             mse_s += error*error
+
+            density_map_count_num = density_map_count.item()
+            gt_count_num = gt_count.item()
             log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + " " + str(pred_count.item())
             print(log_str)
             log_f.write(log_str+"\n")
@@ -189,10 +201,10 @@ if __name__ == "__main__":
         elif model_name == "CompactCNNV9":
             model = CompactCNNV9()
         else:
-            print("error: you didn't pick a model")
-            exit(-1)
-        model = model.to(device)
+            print('no model ')
+            model = None
         if args.load_model is not None:
+            model = model.to(device)
             checkpoint = torch.load(args.load_model)
             model.load_state_dict(checkpoint["model"])
         model.eval()
