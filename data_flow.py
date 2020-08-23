@@ -477,7 +477,7 @@ def load_data_shanghaitech_flip_only(img_path, train=True):
         gt_count = count_gt_annotation_sha(mat_path)
         return img_origin, gt_count
 
-def load_data_shanghaitech_non_overlap(img_path, train=True):
+def load_data_shanghaitech_non_overlap(img_path, train=True, debug=False):
     """
     per sample, crop 4, non-overlap
     :param img_path:
@@ -525,6 +525,10 @@ def load_data_shanghaitech_non_overlap(img_path, train=True):
         # get correct people head count from head annotation
         mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
         gt_count = count_gt_annotation_sha(mat_path)
+        if debug:
+            gt_file = h5py.File(gt_path, 'r')
+            target = np.asarray(gt_file['density'])
+            return img_origin, gt_count, target
         return img_origin, gt_count
 
 def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
