@@ -61,9 +61,10 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             img, gt_density, debug_info = item
             gt_count = debug_info["p_count"]
             file_name = debug_info["name"]
-            print(file_name)
-            save_path = os.path.join(saved_folder, "label_" + file_name +".png")
-            save_pred_path = os.path.join(saved_folder, "pred_" + file_name +".png")
+            print(file_name[0].split["."][0])
+            file_name_only = file_name[0].split["."][0]
+            save_path = os.path.join(saved_folder, "label_" + file_name_only +".png")
+            save_pred_path = os.path.join(saved_folder, "pred_" + file_name_only +".png")
             save_density_map(gt_density.numpy()[0][0], save_path)
             pred = model(img.cuda())
             predicted_density_map = pred.detach().cpu().clone().numpy()
