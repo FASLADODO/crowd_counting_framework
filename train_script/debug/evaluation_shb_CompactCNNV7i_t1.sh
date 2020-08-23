@@ -5,7 +5,9 @@ CUDA_VISIBLE_DEVICES=2 OMP_NUM_THREADS=4 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --load_model  saved_model_best/g1_ccnn_v7_t3_shb/g1_ccnn_v7_t3_shb_checkpoint_valid_mae=-8.881268501281738.pth  \
 --meta_data logs/$task.txt  \
 --datasetname shanghaitech_non_overlap \
---epochs 1201 > logs/$task.log  &
+ > logs/$task.log  &
+
+echo logs/$task.log
 
 ##
 #def _parse():
