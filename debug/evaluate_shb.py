@@ -54,8 +54,9 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
     :param args:
     :return:
     """
-    model = model.cuda()
-    model.eval()
+    if model is not None:
+        model = model.cuda()
+        model.eval()
     saved_folder = args.output
     os.makedirs(saved_folder, exist_ok=True)
     train_list, val_list = get_train_val_list(args.input, test_size=0.2)
