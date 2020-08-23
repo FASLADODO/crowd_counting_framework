@@ -97,13 +97,16 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             else:
                 error = 0
                 pred_count = 0
-                pred_count_num = 0
+
             mae_s += error
             mse_s += error*error
             density_map_count = gt_density.detach().sum()
             density_map_count_num = density_map_count.item()
             gt_count_num = gt_count.item()
-            log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + " " + str(pred_count.item())
+            if model is not None:
+                log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + " " + str(pred_count.item())
+            else:
+                log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item())
             print(log_str)
             log_f.write(log_str+"\n")
     log_f.close()
