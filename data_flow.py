@@ -816,7 +816,8 @@ def load_data_shanghaitech_keepfull_r50(img_path, train=True, debug=False):
         if debug:
             gt_file = h5py.File(gt_path, 'r')
             target = np.asarray(gt_file['density'])
-        return img, gt_count, target
+            return img, gt_count, target
+        return img, gt_count
 
 def load_data_shanghaitech_keepfull_and_crop(img_path, train=True):
     """
