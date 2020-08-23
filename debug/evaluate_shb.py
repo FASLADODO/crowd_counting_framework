@@ -96,6 +96,8 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
                 error = abs(pred_count_num-gt_count_num)
             else:
                 error = 0
+                pred_count = 0
+                pred_count_num = 0
             mae_s += error
             mse_s += error*error
             density_map_count = gt_density.detach().sum()
