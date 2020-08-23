@@ -51,7 +51,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
     saved_folder = args.output
     os.makedirs(saved_folder, exist_ok=True)
     train_list, val_list = get_train_val_list(args.input, test_size=0.2)
-    test_list = None
+    test_list = create_image_list(args.input)
     train_loader, val_loader, test_loader = get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech_keepfull_r50", visualize_mode=False,
                                                            debug=True)
 
