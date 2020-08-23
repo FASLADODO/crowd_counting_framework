@@ -89,7 +89,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
 
                 print("cont compare " + str(predicted_density_map.sum()) + " " + str(predicted_density_map_enlarge.sum()))
                 print("shape compare " + str(predicted_density_map.shape) + " " + str(predicted_density_map_enlarge.shape))
-                density_map_count = gt_density.detach().sum()
+
                 pred_count = pred.detach().cpu().sum()
                 pred_count_num = pred_count.item()
 
@@ -98,7 +98,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
                 error = 0
             mae_s += error
             mse_s += error*error
-
+            density_map_count = gt_density.detach().sum()
             density_map_count_num = density_map_count.item()
             gt_count_num = gt_count.item()
             log_str = str(file_name_only) + " " + str(density_map_count_num) + " " + str(gt_count.item()) + " " + str(pred_count.item())
@@ -208,7 +208,7 @@ if __name__ == "__main__":
             model = model.to(device)
             checkpoint = torch.load(args.load_model)
             model.load_state_dict(checkpoint["model"])
-        
+
         visualize_evaluation_shanghaitech_keepfull(model, args)
 
 
