@@ -10,6 +10,9 @@ CUDA_VISIBLE_DEVICES=2 OMP_NUM_THREADS=4 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 
 echo logs/$task.log
 
+
+"/data/ShanghaiTech/part_A/test_data"
+
 ##
 #def _parse():
 #    parser = argparse.ArgumentParser(description='evaluatiuon SHB')

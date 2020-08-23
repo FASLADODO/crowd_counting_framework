@@ -33,12 +33,13 @@ from data_flow import get_train_val_list, get_dataloader, create_training_image_
 This file evaluation on SHB and get information on evaluation process
 """
 
+"/data/ShanghaiTech/part_A/test_data"
 
 def _parse():
     parser = argparse.ArgumentParser(description='evaluatiuon SHB')
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
     parser.add_argument('--output', action="store", type=str, default="visualize/verify_dataloader_shanghaitech")
-    parser.add_argument('--load_model', action="store", type=str, default="visualize/verify_dataloader_shanghaitech")
+    parser.add_argument('--load_model', action="store", type=str, default=None)
     parser.add_argument('--model', action="store", type=str, default="visualize/verify_dataloader_shanghaitech")
     parser.add_argument('--meta_data', action="store", type=str, default="data_info.txt")
     parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull_r50")
@@ -60,6 +61,8 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
     mae_s = 0
     mse_s = 0
     n = 0
+    train_loader_iter = iter(train_loader)
+    _, gt_density,_ = next(train_loader_iter)
     with torch.no_grad():
         for item in test_loader:
             img, gt_density, debug_info = item
@@ -69,7 +72,7 @@ def visualize_evaluation_shanghaitech_keepfull(model, args):
             file_name_only = file_name[0].split(".")[0]
             save_path = os.path.join(saved_folder, "label_" + file_name_only +".png")
             save_pred_path = os.path.join(saved_folder, "pred_" + file_name_only +".png")
-            save_density_map(gt_density.numpy()[0][0], save_path)
+            save_density_map(gt_density.numpy()[0], save_path)
             pred = model(img.cuda())
             predicted_density_map = pred.detach().cpu().clone().numpy()
             predicted_density_map_enlarge = cv2.resize(np.squeeze(predicted_density_map[0][0]), (int(predicted_density_map.shape[3] * 8), int(predicted_density_map.shape[2] * 8)), interpolation=cv2.INTER_CUBIC) / 64
@@ -104,18 +107,7 @@ if __name__ == "__main__":
         args = _parse()
         print(args)
 
-        DATA_PATH = args.input
-        TRAIN_PATH = os.path.join(DATA_PATH, "train_data_train_split")
-        VAL_PATH = os.path.join(DATA_PATH, "train_data_validate_split")
-        TEST_PATH = os.path.join(DATA_PATH, "test_data")
-        dataset_name = args.datasetname
-        if dataset_name == "shanghaitech":
-            print("will use shanghaitech dataset with crop ")
-        elif dataset_name == "shanghaitech_keepfull":
-            print("will use shanghaitech_keepfull")
-        else:
-            print("cannot detect dataset_name")
-            print("current dataset_name is ", dataset_name)
+
 
         # # create list
         # train_list = create_image_list(TRAIN_PATH)
@@ -200,8 +192,9 @@ if __name__ == "__main__":
             print("error: you didn't pick a model")
             exit(-1)
         model = model.to(device)
-        checkpoint = torch.load(args.load_model)
-        model.load_state_dict(checkpoint["model"])
+        if args.load_model is not None:
+            checkpoint = torch.load(args.load_model)
+            model.load_state_dict(checkpoint["model"])
         model.eval()
         visualize_evaluation_shanghaitech_keepfull(model, args)
 
