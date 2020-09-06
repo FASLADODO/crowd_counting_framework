@@ -7,6 +7,8 @@ import scipy.ndimage
 from PIL import Image
 import h5py
 from visualize_util import save_density_map
+import argparse
+import time
 
 def load_density_label(label_txt_path):
     """
@@ -109,7 +111,7 @@ def full_flow_jhucrowd(root_path):
     density_path_folder = os.path.join(ROOT, "ground-truth-h5")
     img_list = os.listdir(path=images_folder)
     os.makedirs(density_path_folder, exist_ok=True)
-    for img_name in img_list[:3]:
+    for img_name in img_list:
         name = img_name.split(".")[0]
         density_name = name + ".h5"
         gt_name = name + ".txt"
@@ -121,16 +123,34 @@ def full_flow_jhucrowd(root_path):
     print("done")
 
 
+def args_parser():
+    """
+    this is not dummy
+    if you are going to make all-in-one notebook, ignore this
+    :return:
+    """
+    parser = argparse.ArgumentParser(description='jhucrowd')
+    parser.add_argument("--task_id", action="store", default="dev")
+    parser.add_argument('--input', action="store",  type=str)
+    arg = parser.parse_args()
+    return arg
+
+
 if __name__ == "__main__":
+    start_time = time.time()
+    args = args_parser()
+    print("input ", args.input)
+    full_flow_jhucrowd(args.input)
     # full_flow_jhucrowd("/data/jhu_crowd_v2.0/val")
     # t_count("/data/jhu_crowd_v2.0/val/unittest/0003.h5", "/data/jhu_crowd_v2.0/val/gt/0003.txt")
     # t_single_density_map()
 
-    t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.h5", "/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.png")
-    t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.h5",
-                        "/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.png")
+    # t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.h5", "/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.png")
+    # t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.h5",
+    #                     "/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.png")
 
     # ROOT = "/data/jhu_crowd_v2.0/val"
     # images_folder = os.path.join(ROOT, "images")
     # gt_path_folder = os.path.join(ROOT, "gt")
+    print("--- %s seconds ---" % (time.time() - start_time))
 
