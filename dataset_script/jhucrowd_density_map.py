@@ -84,15 +84,51 @@ def t_single_density_map():
     print(out)
 
 
-def print_density_map(density_path, density_img_out):
+def t_count(density_path, label_path):
+    gt_file = h5py.File(density_path, 'r')
+    target = np.asarray(gt_file['density'])
+    density_count = target.sum()
+    label_count = len(load_density_label(label_path))
+    print("density count ", density_count)
+    print("label count ", label_count)
+    print("diff ", density_count - label_count)
+    print("diff percentage ", (density_count - label_count)/ label_count * 100)
+
+
+def t_print_density_map(density_path, density_img_out):
     gt_file = h5py.File(density_path, 'r')
     target = np.asarray(gt_file['density'])
     save_density_map(target, density_img_out)
     print("done print ", density_img_out)
 
+
+def full_flow_jhucrowd(root_path):
+    ROOT = root_path
+    images_folder = os.path.join(ROOT, "images")
+    gt_path_folder = os.path.join(ROOT, "gt")
+    density_path_folder = os.path.join(ROOT, "ground-truth-h5")
+    img_list = os.listdir(path=images_folder)
+    os.makedirs(density_path_folder, exist_ok=True)
+    for img_name in img_list[:3]:
+        name = img_name.split(".")[0]
+        density_name = name + ".h5"
+        gt_name = name + ".txt"
+        img_path = os.path.join(images_folder, img_name)
+        gt_path =  os.path.join(gt_path_folder, gt_name)
+        density_path = os.path.join(density_path_folder, density_name)
+        out = generate_density_map(img_path, gt_path, density_path)
+        print(out)
+    print("done")
+
+
 if __name__ == "__main__":
+    # full_flow_jhucrowd("/data/jhu_crowd_v2.0/val")
+    # t_count("/data/jhu_crowd_v2.0/val/unittest/0003.h5", "/data/jhu_crowd_v2.0/val/gt/0003.txt")
     # t_single_density_map()
-    print_density_map("/data/jhu_crowd_v2.0/val/unittest/0003.h5", "/data/jhu_crowd_v2.0/val/unittest/0003.png")
+
+    t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.h5", "/data/jhu_crowd_v2.0/val/ground-truth-h5/3556.png")
+    t_print_density_map("/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.h5",
+                        "/data/jhu_crowd_v2.0/val/ground-truth-h5/1632.png")
 
     # ROOT = "/data/jhu_crowd_v2.0/val"
     # images_folder = os.path.join(ROOT, "images")
