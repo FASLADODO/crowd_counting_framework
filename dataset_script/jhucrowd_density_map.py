@@ -47,6 +47,7 @@ def gaussian_filter_density(gt):
     distances, locations = tree.query(pts, k=4)
 
     print('generate density...')
+    print('total points ', len(pts))
     for i, pt in enumerate(pts):
         pt2d = np.zeros(gt.shape, dtype=np.float32)
         pt2d[pt[1], pt[0]] = 1.
