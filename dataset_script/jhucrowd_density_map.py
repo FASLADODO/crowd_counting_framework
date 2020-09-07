@@ -1,3 +1,5 @@
+from comet_ml import Experiment
+
 import os
 import pandas as pd
 import numpy as np
@@ -9,6 +11,9 @@ import h5py
 from visualize_util import save_density_map
 import argparse
 import time
+
+COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
+PROJECT_NAME = "crowd-counting-generate-ds"
 
 def load_density_label(label_txt_path):
     """
@@ -111,22 +116,28 @@ def t_print_density_map(density_path, density_img_out):
     print("done print ", density_img_out)
 
 
-def full_flow_jhucrowd(root_path):
+def full_flow_jhucrowd(root_path, experiment=None):
     ROOT = root_path
     images_folder = os.path.join(ROOT, "images")
     gt_path_folder = os.path.join(ROOT, "gt")
     density_path_folder = os.path.join(ROOT, "ground-truth-h5")
     img_list = os.listdir(path=images_folder)
     os.makedirs(density_path_folder, exist_ok=True)
+    count = 0
     for img_name in img_list:
         name = img_name.split(".")[0]
         density_name = name + ".h5"
         gt_name = name + ".txt"
+        if experiment is not None:
+            experiment.log_metric("name", name)
         img_path = os.path.join(images_folder, img_name)
         gt_path =  os.path.join(gt_path_folder, gt_name)
         density_path = os.path.join(density_path_folder, density_name)
         out = generate_density_map(img_path, gt_path, density_path)
         print(out)
+        count += 1
+        if experiment is not None:
+            experiment.log_metric("count", count)
     print("done")
 
 
@@ -144,10 +155,15 @@ def args_parser():
 
 
 if __name__ == "__main__":
+    experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
     start_time = time.time()
     args = args_parser()
+    experiment.set_name(args.task_id)
+    experiment.set_cmd_args()
+    experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
+
     print("input ", args.input)
-    full_flow_jhucrowd(args.input)
+    full_flow_jhucrowd(args.input, experiment)
     # full_flow_jhucrowd("/data/jhu_crowd_v2.0/val")
     # t_count("/data/jhu_crowd_v2.0/val/unittest/0003.h5", "/data/jhu_crowd_v2.0/val/gt/0003.txt")
     # t_single_density_map()
