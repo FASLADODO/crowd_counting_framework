@@ -49,7 +49,11 @@ def gaussian_filter_density(gt):
             sigma = (distances[i][1] + distances[i][2] + distances[i][3]) * 0.1
         else:
             sigma = np.average(np.array(gt.shape)) / 2. / 2.  # case: 1 point
-        density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+
+        ## try to fix OverflowError: cannot convert float infinity to integer
+        sigma = np.clip(sigma, 1, 100)
+        ##
+        density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant', truncate=3)
     print('done.')
     return density
 
@@ -61,6 +65,9 @@ def generate_density_map(img_path, label_path, output_path):
     :param output_path
     :return:
     """
+
+    if os.path.exists(output_path):
+        return "exist " + output_path
 
     gt = load_density_label(label_path)
     imgfile = Image.open(img_path).convert('RGB')
