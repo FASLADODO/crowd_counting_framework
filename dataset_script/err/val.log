@@ -1,0 +1,27 @@
+generate density...
+done.
+/data/rnd/thient/thient_data/jhu_crowd_plusplus/val/ground-truth-h5/3318.h5
+(250, 400)
+generate density...
+done.
+/data/rnd/thient/thient_data/jhu_crowd_plusplus/val/ground-truth-h5/1055.h5
+(667, 1000)
+generate density...
+done.
+/data/rnd/thient/thient_data/jhu_crowd_plusplus/val/ground-truth-h5/3199.h5
+(334, 500)
+generate density...
+Traceback (most recent call last):
+  File "dataset_script/jhucrowd_density_map.py", line 143, in <module>
+    full_flow_jhucrowd(args.input)
+  File "dataset_script/jhucrowd_density_map.py", line 121, in full_flow_jhucrowd
+    out = generate_density_map(img_path, gt_path, density_path)
+  File "dataset_script/jhucrowd_density_map.py", line 75, in generate_density_map
+    k = gaussian_filter_density(k)
+  File "dataset_script/jhucrowd_density_map.py", line 52, in gaussian_filter_density
+    density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+  File "/home/zdeploy/anaconda3/envs/thient_pytorch_gpu5/lib/python3.7/site-packages/scipy/ndimage/filters.py", line 299, in gaussian_filter
+    mode, cval, truncate)
+  File "/home/zdeploy/anaconda3/envs/thient_pytorch_gpu5/lib/python3.7/site-packages/scipy/ndimage/filters.py", line 214, in gaussian_filter1d
+    lw = int(truncate * sd + 0.5)
+OverflowError: cannot convert float infinity to integer
