@@ -119,7 +119,7 @@ def t_print_density_map(density_path, density_img_out):
 def full_flow_jhucrowd(root_path, experiment=None):
     ROOT = root_path
     images_folder = os.path.join(ROOT, "images")
-    gt_path_folder = os.path.join(ROOT, "gt")
+    gt_path_folder = os.path.join(ROOT, "ground-truth")
     density_path_folder = os.path.join(ROOT, "ground-truth-h5")
     img_list = os.listdir(path=images_folder)
     os.makedirs(density_path_folder, exist_ok=True)
