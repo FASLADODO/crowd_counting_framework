@@ -156,19 +156,19 @@ def full_flow_jhucrowd_parallel(root_path, experiment=None):
         density_name = name + ".h5"
         gt_name = name + ".txt"
         try:
-            if experiment is not None:
-                experiment.log_metric("name", name)
+            # if experiment is not None:
+            #     experiment.log_metric("name", name)
             img_path = os.path.join(images_folder, img_name)
             gt_path = os.path.join(gt_path_folder, gt_name)
             density_path = os.path.join(density_path_folder, density_name)
             out = generate_density_map(img_path, gt_path, density_path)
             print(out)
-            if experiment is not None:
-                experiment.log_metric("count", 1)
+            # if experiment is not None:
+            #     experiment.log_metric("count", 1)
         except Exception as e:
             track = traceback.format_exc()
             print(track)
-            experiment.log_metric("exception_at", name)
+            # experiment.log_metric("exception_at", name)
             print("exception at ", name)
 
 
