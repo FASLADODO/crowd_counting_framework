@@ -1,5 +1,5 @@
 from comet_ml import Experiment
-
+from joblib import Parallel, delayed
 import os
 import pandas as pd
 import numpy as np
@@ -11,7 +11,7 @@ import h5py
 from visualize_util import save_density_map
 import argparse
 import time
-
+import traceback
 COMET_ML_API = "S3mM1eMq6NumMxk2QJAXASkUM"
 PROJECT_NAME = "crowd-counting-generate-ds"
 
@@ -142,6 +142,60 @@ def full_flow_jhucrowd(root_path, experiment=None):
     print("done")
 
 
+
+def full_flow_jhucrowd_parallel(root_path, experiment=None):
+    ROOT = root_path
+    images_folder = os.path.join(ROOT, "images")
+    gt_path_folder = os.path.join(ROOT, "ground-truth")
+    density_path_folder = os.path.join(ROOT, "ground-truth-h5")
+    img_list = os.listdir(path=images_folder)
+    os.makedirs(density_path_folder, exist_ok=True)
+
+    def jhucrowd_single_file(img_name):
+        name = img_name.split(".")[0]
+        density_name = name + ".h5"
+        gt_name = name + ".txt"
+        try:
+            if experiment is not None:
+                experiment.log_metric("name", name)
+            img_path = os.path.join(images_folder, img_name)
+            gt_path = os.path.join(gt_path_folder, gt_name)
+            density_path = os.path.join(density_path_folder, density_name)
+            out = generate_density_map(img_path, gt_path, density_path)
+            print(out)
+            if experiment is not None:
+                experiment.log_metric("count", 1)
+        except Exception as e:
+            track = traceback.format_exc()
+            print(track)
+            experiment.log_metric("exception_at", name)
+            print("exception at ", name)
+
+
+    Parallel(n_jobs=8)(delayed(jhucrowd_single_file)(img_name) for img_name in img_list)
+
+    print("done")
+
+
+# def jhucrowd_single_file(img_name):
+#     # ROOT = root_path
+#     # images_folder = os.path.join(ROOT, "images")
+#     # gt_path_folder = os.path.join(ROOT, "ground-truth")
+#     # density_path_folder = os.path.join(ROOT, "ground-truth-h5")
+#     name = img_name.split(".")[0]
+#     density_name = name + ".h5"
+#     gt_name = name + ".txt"
+#     if experiment is not None:
+#         experiment.log_metric("name", name)
+#     img_path = os.path.join(images_folder, img_name)
+#     gt_path = os.path.join(gt_path_folder, gt_name)
+#     density_path = os.path.join(density_path_folder, density_name)
+#     out = generate_density_map(img_path, gt_path, density_path)
+#     print(out)
+#     if experiment is not None:
+#         experiment.log_metric("count", 1)
+
+
 def args_parser():
     """
     this is not dummy
@@ -161,10 +215,9 @@ if __name__ == "__main__":
     args = args_parser()
     experiment.set_name(args.task_id)
     experiment.set_cmd_args()
-    experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
 
     print("input ", args.input)
-    full_flow_jhucrowd(args.input, experiment)
+    full_flow_jhucrowd_parallel(args.input, experiment)
     # full_flow_jhucrowd("/data/jhu_crowd_v2.0/val")
     # t_count("/data/jhu_crowd_v2.0/val/unittest/0003.h5", "/data/jhu_crowd_v2.0/val/gt/0003.txt")
     # t_single_density_map()
