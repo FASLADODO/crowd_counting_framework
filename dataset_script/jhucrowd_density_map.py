@@ -21,8 +21,12 @@ def load_density_label(label_txt_path):
     :param label_txt_path: path to txt
     :return: numpy array, p[sample, a] with a is 0 for x and 1 for y
     """
-    df = pd.read_csv(label_txt_path, sep=" ", header=None)
-    p = df.to_numpy()
+    p = None
+    try:
+        df = pd.read_csv(label_txt_path, sep=" ", header=None)
+        p = df.to_numpy()
+    except Exception:
+        print("exception load csv ", label_txt_path)
     return p
 
 
@@ -82,10 +86,13 @@ def generate_density_map(img_path, label_path, output_path):
 
     # empty matrix zero
     k = np.zeros((img.shape[0], img.shape[1]))
-    for i in range(0, len(gt)):
-        if int(gt[i][1]) < img.shape[0] and int(gt[i][0]) < img.shape[1]:
-            k[int(gt[i][1]), int(gt[i][0])] = 1
-    k = gaussian_filter_density(k)
+    if gt is not None:
+        for i in range(0, len(gt)):
+            if int(gt[i][1]) < img.shape[0] and int(gt[i][0]) < img.shape[1]:
+                k[int(gt[i][1]), int(gt[i][0])] = 1
+        k = gaussian_filter_density(k)
+    # if gt is null, so we don't have count, let it be zero matrix
+
     with h5py.File(output_path, 'w') as hf:
         hf['density'] = k
     return output_path
@@ -172,7 +179,7 @@ def full_flow_jhucrowd_parallel(root_path, experiment=None):
             print("exception at ", name)
 
 
-    Parallel(n_jobs=8)(delayed(jhucrowd_single_file)(img_name) for img_name in img_list)
+    Parallel(n_jobs=20)(delayed(jhucrowd_single_file)(img_name) for img_name in img_list)
 
     print("done")
 
