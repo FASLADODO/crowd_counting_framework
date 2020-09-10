@@ -1055,7 +1055,7 @@ def load_data_jhucrowd_256(img_path, train=True, debug=False):
                          interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
-    return img, target1
+    return img, target1.astype('float32')
 
 
 def data_augmentation(img, target):
