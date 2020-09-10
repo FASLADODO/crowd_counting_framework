@@ -33,7 +33,7 @@ def very_simple_param_count(model):
 
 if __name__ == "__main__":
 
-    n_thread = os.environ['OMP_NUM_THREADS']
+    n_thread = int(os.environ['OMP_NUM_THREADS'])
     torch.set_num_threads(n_thread)  # 4 thread
     print("n_thread ", n_thread)
     experiment = Experiment(project_name=PROJECT_NAME, api_key=COMET_ML_API)
