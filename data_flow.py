@@ -1025,7 +1025,7 @@ def load_data_jhucrowd_256(img_path, train=True, debug=False):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img_origin = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
-    target = np.asarray(gt_file['density'])
+    target = np.asarray(gt_file['density']).astype('float32')
     target_factor = 8
     crop_sq_size = 256
     if train:
@@ -1055,7 +1055,7 @@ def load_data_jhucrowd_256(img_path, train=True, debug=False):
                          interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
     # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
-    return img, target1.astype('float32')
+    return img, target1
 
 
 def data_augmentation(img, target):
