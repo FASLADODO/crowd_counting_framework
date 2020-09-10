@@ -42,9 +42,14 @@ def count_gt_annotation_jhu(txt_path):
     :param mat_path:
     :return: count
     """
-    df = pd.read_csv(txt_path, sep=" ", header=None)
-    p = df.to_numpy()
-    return len(p)
+    result = 0
+    try:
+        df = pd.read_csv(txt_path, sep=" ", header=None)
+        p = df.to_numpy()
+        result = len(p)
+    except Exception:
+        print("exception count_gt_annotation_jhu ", txt_path)
+    return result
 
 
 
