@@ -1068,13 +1068,14 @@ def load_data_jhucrowd_downsample_512(img_path, train=True, debug=False):
     """
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img_origin = Image.open(img_path).convert('RGB')
-    gt_file = h5py.File(gt_path, 'r')
-    target = np.asarray(gt_file['density']).astype('float32')
+
     downsample_rate = 2
     target_factor = 8 * downsample_rate
     crop_sq_size = 512
 
     if train:
+        gt_file = h5py.File(gt_path, 'r')
+        target = np.asarray(gt_file['density']).astype('float32')
         crop_size = (crop_sq_size, crop_sq_size)
         dx = int(random.random() * (img_origin.size[0] - crop_sq_size))
         dy = int(random.random() * (img_origin.size[1] - crop_sq_size))
