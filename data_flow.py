@@ -1329,7 +1329,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         debug=debug,
                         batch_size=test_size,
-                        dataset_name=dataset_name, cache=cache),  # evaluation set always cache
+                        dataset_name=dataset_name, cache=True),  # evaluation set always cache
             num_workers=0,
             batch_size=test_size,
             pin_memory=pin_memory)
@@ -1344,7 +1344,7 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
                         train=False,
                         debug=debug,
                         batch_size=test_size,
-                        dataset_name=dataset_name, cache=cache),  # evaluation set always cache
+                        dataset_name=dataset_name, cache=True),  # evaluation set always cache
             num_workers=0,
             batch_size=test_size,
             pin_memory=pin_memory)
