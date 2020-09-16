@@ -1081,7 +1081,7 @@ def load_data_jhucrowd_downsample_256(img_path, train=True, debug=False):
         if img_origin.size[0] - crop_sq_size < 0 or img_origin.size[1] - crop_sq_size < 0:  # we crop more than we can chew, so...
             return None, None
         img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
-        img2 = img.resize((int(img_origin.size[0] / 2), int(img_origin.size[1] / 2)), resample=Image.ANTIALIAS)
+        img2 = img.resize((int(img.size[0] / 2), int(img.size[1] / 2)), resample=Image.ANTIALIAS)
         target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
         if random.random() > 0.8:
