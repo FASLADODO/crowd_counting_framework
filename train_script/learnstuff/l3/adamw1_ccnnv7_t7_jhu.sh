@@ -1,4 +1,4 @@
-task="adamw1_ccnnv7_t6_jhu.sh"
+task="adamw1_ccnnv7_t7_jhu.sh"
 
 CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=6 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
@@ -12,6 +12,6 @@ CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=6 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --datasetname jhucrowd_downsample_512 \
 --optim adamw \
 --skip_train_eval \
---epochs 401 > logs/$task.log  &
+--epochs 201 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
