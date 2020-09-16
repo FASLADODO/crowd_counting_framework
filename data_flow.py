@@ -1058,7 +1058,7 @@ def load_data_jhucrowd_256(img_path, train=True, debug=False):
     return img, target1
 
 
-def load_data_jhucrowd_downsample_256(img_path, train=True, debug=False):
+def load_data_jhucrowd_downsample_512(img_path, train=True, debug=False):
     """
     for jhucrowd
     crop fixed 256, allow batch in non-uniform dataset
@@ -1068,12 +1068,12 @@ def load_data_jhucrowd_downsample_256(img_path, train=True, debug=False):
     """
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
     img_origin = Image.open(img_path).convert('RGB')
-    # downsample by half
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density']).astype('float32')
-    downsample_factor = 2
-    target_factor = 8 / downsample_factor
-    crop_sq_size = 256 * downsample_factor
+    downsample_rate = 2
+    target_factor = 8 * downsample_rate
+    crop_sq_size = 512
+
     if train:
         crop_size = (crop_sq_size, crop_sq_size)
         dx = int(random.random() * (img_origin.size[0] - crop_sq_size))
@@ -1081,7 +1081,8 @@ def load_data_jhucrowd_downsample_256(img_path, train=True, debug=False):
         if img_origin.size[0] - crop_sq_size < 0 or img_origin.size[1] - crop_sq_size < 0:  # we crop more than we can chew, so...
             return None, None
         img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
-        img2 = img.resize((int(img.size[0] / 2), int(img.size[1] / 2)), resample=Image.ANTIALIAS)
+        img2 = img.resize((int(img.size[0] / downsample_rate), int(img.size[1] / downsample_rate)),
+                                       resample=Image.ANTIALIAS)
         target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
 
         if random.random() > 0.8:
@@ -1092,12 +1093,13 @@ def load_data_jhucrowd_downsample_256(img_path, train=True, debug=False):
         # get correct people head count from head annotation
         txt_path = img_path.replace('.jpg', '.txt').replace('images', 'ground-truth')
         gt_count = count_gt_annotation_jhu(txt_path)
-        img_out = img_origin.resize((int(img_origin.size[0] / 2), int(img_origin.size[1] / 2)), resample=Image.ANTIALIAS)
+        img_eval = img_origin.resize((int(img_origin.size[0] / downsample_rate), int(img_origin.size[1] / downsample_rate)),
+                   resample=Image.ANTIALIAS)
         if debug:
             gt_file = h5py.File(gt_path, 'r')
             target = np.asarray(gt_file['density'])
-            return img_origin, gt_count, target
-        return img_out, gt_count
+            return img_eval, gt_count, target
+        return img_eval, gt_count
 
     target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
                          interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
@@ -1201,8 +1203,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
             self.load_data_fn = load_data_shanghaitech_256
-        elif dataset_name == "jhucrowd_downsample_256":
-            self.load_data_fn = load_data_jhucrowd_downsample_256
+        elif dataset_name == "jhucrowd_downsample_512":
+            self.load_data_fn = load_data_jhucrowd_downsample_512
         elif dataset_name == "shanghaitech_non_overlap":
             self.load_data_fn = load_data_shanghaitech_non_overlap
         elif dataset_name == "shanghaitech_non_overlap_downsample":

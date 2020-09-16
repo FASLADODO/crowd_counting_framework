@@ -9,7 +9,7 @@ CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=6 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --decay 0.1 \
 --loss_fn "MSEL1Mean" \
 --batch_size 50 \
---datasetname jhucrowd_downsample_256 \
+--datasetname jhucrowd_downsample_512 \
 --optim adamw \
 --skip_train_eval \
 --epochs 401 > logs/$task.log  &
