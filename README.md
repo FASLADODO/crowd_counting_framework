@@ -11,11 +11,12 @@ conda install -c conda-forge opencv
 <!--  pip install comet_ml -->
 # conda install -c comet_ml -c conda-forge comet_ml  # maybe bug
 conda install ignite -c pytorch
+pip install pytorch-ignite  # if conda downgrade pytorch, then use pip
 conda install -c conda-forge h5py
 conda install scikit-learn
-conda install -c anaconda pillow
-conda install -c anaconda numpy
-conda install -c anaconda matplotlib
+conda install -c anaconda pillow  # consider conda-forge
+conda install -c anaconda numpy  # 
+conda install -c anaconda matplotlib  # 
 # pip install torchsummary 
 # pip install kornia # still buggy not recommended 
 ```
