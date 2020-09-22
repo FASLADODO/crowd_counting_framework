@@ -17,6 +17,7 @@ conda install scikit-learn
 conda install -c anaconda pillow  # consider conda-forge
 conda install -c anaconda numpy  # 
 conda install -c anaconda matplotlib  # 
+conda install pandas
 # pip install torchsummary 
 # pip install kornia # still buggy not recommended 
 ```
