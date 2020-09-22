@@ -1,5 +1,5 @@
 from comet_ml import Experiment
-
+import sys
 from args_util import meow_parse, lr_scheduler_milestone_builder
 from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         model = CompactCNNV9()
     else:
         print("error: you didn't pick a model")
-        exit(-1)
+        sys.exit(-1)
     n_param = very_simple_param_count(model)
     experiment.log_other("n_param", n_param)
     if hasattr(model, 'model_note'):

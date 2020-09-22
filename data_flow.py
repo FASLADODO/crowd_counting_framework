@@ -94,6 +94,7 @@ def load_data(img_path, train=True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
+    gt_file.close()
 
     target = cv2.resize(target, (int(target.shape[1] / 8), int(target.shape[0] / 8)),
                         interpolation=cv2.INTER_CUBIC) * 64
@@ -106,6 +107,7 @@ def load_data_shanghaitech(img_path, train=True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
+    gt_file.close()
 
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
@@ -142,7 +144,7 @@ def load_data_shanghaitech_rnd(img_path, train=True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
-
+    gt_file.close()
     if train:
         crop_size = (int(img.size[0] / 2), int(img.size[1] / 2))
         if random.randint(0, 9) <= 4:
@@ -735,6 +737,7 @@ def load_data_shanghaitech_256(img_path, train=True):
     img = Image.open(img_path).convert('RGB')
     gt_file = h5py.File(gt_path, 'r')
     target = np.asarray(gt_file['density'])
+    gt_file.close()
     target_factor = 8
     crop_sq_size = 256
     if train:
@@ -756,6 +759,45 @@ def load_data_shanghaitech_256(img_path, train=True):
     target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
     return img, target1
 
+def load_data_shanghaitech_256_v2(img_path, train=True):
+    """
+    crop fixed 256, allow batch in non-uniform dataset
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img_origin = Image.open(img_path).convert('RGB')
+    gt_file = h5py.File(gt_path, 'r')
+    target = np.asarray(gt_file['density'])
+    gt_file.close()
+    target_factor = 8
+    crop_sq_size = 256
+    if train:
+        crop_size = (crop_sq_size, crop_sq_size)
+        dx = int(random.random() * (img_origin.size[0] - crop_sq_size))
+        dy = int(random.random() * (img_origin.size[1] - crop_sq_size))
+        if img_origin.size[0] - crop_sq_size < 0 or img_origin.size[1] - crop_sq_size < 0:  # we crop more than we can chew, so...
+            # TODO if exception, do somehthing here
+            return None, None
+        img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+        target = target[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+        if random.random() > 0.8:
+            target = np.fliplr(target)
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
+        gt_count = count_gt_annotation_sha(mat_path)
+        return img_origin, gt_count
+
+    target1 = cv2.resize(target, (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+    target1 = np.expand_dims(target1, axis=0)  # make dim (batch size, channel size, x, y) to make model output
+    return img, target1
 
 def load_data_shanghaitech_same_size_density_map(img_path, train=True):
     gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
@@ -1255,6 +1297,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_shanghaitech_180
         elif dataset_name == "shanghaitech_256":
             self.load_data_fn = load_data_shanghaitech_256
+        elif dataset_name == "shanghaitech_256_v2":
+            self.load_data_fn = load_data_shanghaitech_256_v2
         elif dataset_name == "jhucrowd_downsample_512":
             self.load_data_fn = load_data_jhucrowd_downsample_512
         elif dataset_name == "jhucrowd_downsample_testonly_512":
