@@ -10,3 +10,5 @@ visualize/
 saved_model/
 
 debug/data_info.txt
+
+notebook/.ipynb_checkpoints/
