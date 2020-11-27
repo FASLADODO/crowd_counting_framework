@@ -1451,3 +1451,86 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
         return train_loader, train_loader_for_eval, val_loader, test_loader
     else:
         return train_loader, val_loader, test_loader
+
+
+def simple_predict_data_load_fn(img_path):
+    img_name = img_path.split("/")[-1]
+    # when debug, give information on p_count and img_name
+    debug_info = {"img_path":img_path,
+                  "name": img_name}
+    img_origin = Image.open(img_path).convert('RGB')
+    return img_origin, debug_info
+
+
+class PredictListDataset(Dataset):
+    def __init__(self, root, shape=None, shuffle=True, transform=None, batch_size=1,
+                 debug=False,
+                 num_workers=0):
+        """
+        if you have different image size, then batch_size must be 1
+        :param root:
+        :param shape:
+        :param shuffle:
+        :param transform:
+        :param train:
+        :param debug: will print path of image
+        :param seen:
+        :param batch_size:
+        :param num_workers:
+        """
+
+        if shuffle:
+            random.shuffle(root)
+
+        self.nSamples = len(root)
+        self.lines = root
+        self.transform = transform
+
+        self.cache_train = {}
+        self.cache_eval = {}
+        self.debug = debug
+        self.shape = shape
+
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+
+    def __len__(self):
+        return self.nSamples
+
+    def __getitem__(self, index):
+        assert index <= len(self), 'index range error'
+        img_path = self.lines[index]
+        # if self.debug:
+        #     print(img_path)
+        # try to check cache item if exist
+        img, info = simple_predict_data_load_fn(img_path)
+        if self.transform is not None:
+            if isinstance(img, list):
+                # for case of generate  multiple augmentation per sample
+                img_r = [self.transform(img_item) for img_item in img]
+                img = img_r
+            else:
+                img = self.transform(img)
+        return img, info
+
+
+def get_predict_dataloader(data_list, visualize_mode=False, batch_size=1,
+                   debug=False, test_size=1):
+
+    if visualize_mode:
+        transformer = transforms.Compose([
+            transforms.ToTensor()
+        ])
+    else:
+        transformer = transforms.Compose([
+            transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                        std=[0.229, 0.224, 0.225]),
+        ])
+
+    loader = torch.utils.data.DataLoader(PredictListDataset(
+        data_list,
+        shuffle=False,
+        transform=transformer
+    ))
+
+    return loader

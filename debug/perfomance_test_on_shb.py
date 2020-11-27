@@ -24,6 +24,9 @@ import time
 import sys
 
 if __name__ == "__main__":
+    """
+    go for speed
+    """
     torch.set_num_threads(2)  # 4 thread
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
