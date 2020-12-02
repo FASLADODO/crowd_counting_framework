@@ -1456,8 +1456,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
 def simple_predict_data_load_fn(img_path):
     img_name = img_path.split("/")[-1]
     # when debug, give information on p_count and img_name
+    img_id = img_name.split(".")[0].split("_")[-1]
     debug_info = {"img_path":img_path,
-                  "name": img_name}
+                  "name": img_name,
+                  "id": img_id}
     img_origin = Image.open(img_path).convert('RGB')
     return img_origin, debug_info
 

@@ -17,6 +17,18 @@ def save_density_map(density_map, name):
     plt.savefig(name, dpi=600, bbox_inches='tight', pad_inches=0)
     plt.close()
 
+
+def save_density_map_normalize(density_map, name):
+    den = density_map / density_map.max(density_map + 1e-20)
+    plt.figure(dpi=600)
+    plt.axis('off')
+    plt.margins(0, 0)
+    plt.imshow(den, cmap=CM.jet)
+    plt.savefig(name, dpi=600, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
+
+
 def save_density_map_with_colorrange(density_map, name, vmin, vmax):
     plt.figure(dpi=600)
     plt.axis('off')
@@ -25,6 +37,17 @@ def save_density_map_with_colorrange(density_map, name, vmin, vmax):
     plt.clim(vmin, vmax)
     plt.savefig(name, dpi=600, bbox_inches='tight', pad_inches=0)
     plt.close()
+
+def save_density_map_with_colorrange_max(density_map, name, vmin, vmax):
+    den = density_map/np.max(density_map+1e-20)
+    plt.figure(dpi=600)
+    plt.axis('off')
+    plt.margins(0, 0)
+    plt.imshow(den, cmap=CM.jet)
+    plt.clim(vmin, vmax)
+    plt.savefig(name, dpi=600, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
 
 def save_img(imgnp, name):
     # plt.imshow(imgnp[0].permute(1, 2, 0).numpy())
