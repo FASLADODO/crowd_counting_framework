@@ -10,7 +10,7 @@ if __name__ == "__main__":
     output into another folder 
     output density map and count in csv
     """
-    NAME="bao2"
+    NAME="for_question_forum"
     # INPUT_FOLDER = "/data/ShanghaiTech/part_B/test_data/images/"
     INPUT_FOLDER = "/home/tt/Downloads/bao2"
     OUTPUT_FOLDER = "/data/apps/tmp"
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     model = DCCNN()
     model.load_state_dict(loaded_file['model'])
     model.eval()
-    os.mkdir(os.path.join(OUTPUT_FOLDER, NAME))
+    os.makedirs(os.path.join(OUTPUT_FOLDER, NAME), exist_ok=True)
     log_file = open(os.path.join(OUTPUT_FOLDER, NAME, NAME +".log"), 'w')
     limit_count = 100
     count = 0
@@ -37,6 +37,7 @@ if __name__ == "__main__":
         log_line = info["name"][0] + "," + str(pred_count.item()) +"\n"
         log_file.write(log_line)
         save_density_map(pred, predict_path)
+        torch.save(pred, predict_path+".torch")
         print("save to ", predict_path)
         count += 1
     log_file.close()
