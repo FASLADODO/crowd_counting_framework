@@ -11,6 +11,7 @@ from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
+from models.csrnet import CSRNet
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8, BigTail6i, BigTail9i
 from models.meow_experiment.ccnn_tail import BigTail11i, BigTail10i, BigTail12i, BigTail13i, BigTail14i, BigTail15i
 from models.meow_experiment.ccnn_head import H1, H2, H3, H3i, H4i
@@ -138,6 +139,8 @@ if __name__ == "__main__":
         model = CompactCNNV8()
     elif model_name == "CompactCNNV9":
         model = CompactCNNV9()
+    elif model_name == "CSRNet":
+        model = CSRNet()
     else:
         print("error: you didn't pick a model")
         sys.exit(-1)
