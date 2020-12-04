@@ -17,6 +17,9 @@ class CSRNet(nn.Module):
             self._initialize_weights()
             for i in range(len(list(self.frontend.state_dict().items()))):
                 list(self.frontend.state_dict().items())[i][1].data[:] = list(mod.state_dict().items())[i][1].data[:]
+        # freeze the pretrain vgg
+        for param in self.frontend.parameters():
+            param.requires_grad = False
 
     def forward(self, x):
         x = self.frontend(x)
