@@ -13,6 +13,6 @@ CUDA_VISIBLE_DEVICES=2 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --datasetname my_bike_non_overlap \
 --optim adamw \
 --cache \
---epochs 600 > logs/$task.log  &
+--epochs 2001 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience

@@ -13,6 +13,6 @@ CUDA_VISIBLE_DEVICES=4 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --load_model /data/rnd/thient/crowd_counting_framework/saved_model_best/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth \
 --optim adamw \
 --cache \
---epochs 600 > logs/$task.log  &
+--epochs 2001 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
