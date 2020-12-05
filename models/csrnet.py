@@ -42,7 +42,7 @@ class CSRNet(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
 
-def make_layers(cfg, in_channels=3, batch_norm=False, dilation=False):
+def make_layers(cfg, in_channels=3, batch_norm=True, dilation=False):
     if dilation:
         d_rate = 2
     else:
@@ -54,8 +54,8 @@ def make_layers(cfg, in_channels=3, batch_norm=False, dilation=False):
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=d_rate, dilation=d_rate)
             if batch_norm:
-                layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
+                layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=False)]
             else:
-                layers += [conv2d, nn.ReLU(inplace=True)]
+                layers += [conv2d, nn.ReLU(inplace=False)]
             in_channels = v
     return nn.Sequential(*layers)
