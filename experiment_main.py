@@ -56,6 +56,9 @@ if __name__ == "__main__":
         print("will use shanghaitech dataset with crop ")
     elif dataset_name == "shanghaitech_keepfull":
         print("will use shanghaitech_keepfull")
+    elif dataset_name == "my_bike_non_overlap":
+        TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
+        VAL_PATH = os.path.join(DATA_PATH, "test_data")
     else:
         print("cannot detect dataset_name")
         print("current dataset_name is ", dataset_name)
