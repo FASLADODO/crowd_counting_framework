@@ -149,6 +149,7 @@ if __name__ == "__main__":
         sys.exit(-1)
     n_param = very_simple_param_count(model)
     experiment.log_other("n_param", n_param)
+    print("n_param", n_param)
     if hasattr(model, 'model_note'):
         experiment.log_other("model_note", model.model_note)
     model = model.to(device)
