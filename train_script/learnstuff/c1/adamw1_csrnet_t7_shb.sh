@@ -2,7 +2,7 @@ task="adamw1_csrnet_t7_shb"
 
 CUDA_VISIBLE_DEVICES=3 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python experiment_main.py  \
 --task_id $task  \
---note "adamW csrnet batchnorm and relu"  \
+--note "adamW csrnet batchnorm and relu, batchnorm only tail, freez vggg"  \
 --model "CSRNet" \
 --input /data/rnd/thient/thient_data/shanghaitech_with_people_density_map/ShanghaiTech_3/part_B  \
 --lr 1e-7 \
