@@ -1447,7 +1447,8 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
         ])
     train_collate_fn = my_collate
     if dataset_name == "shanghaitech_non_overlap" or\
-            dataset_name == "shanghaitech_non_overlap_downsample" or\
+            dataset_name == "shanghaitech_non_overlap_downsample" or \
+            dataset_name == "my_bike_non_overlap" or \
             dataset_name == "shanghaitech_flip_only":
         train_collate_fn = flatten_collate
     train_loader = torch.utils.data.DataLoader(
