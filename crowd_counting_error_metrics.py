@@ -104,3 +104,58 @@ class CrowdCountingMeanSquaredErrorWithCount(Metric):
             raise NotComputableError('MeanSquaredError must have at least one example before it can be computed.')
         return math.sqrt(self._sum_of_squared_errors / self._num_examples)
 
+####################
+import piq
+
+
+class CrowdCountingMeanSSIM(Metric):
+    """
+    Calculates ssim
+    require package https://github.com/photosynthesis-team/piq
+    - `update` must receive output of the form `(y_pred, y)`.
+    """
+    def reset(self):
+        self._sum = 0.0
+        self._num_examples = 0
+
+    def update(self, output):
+        y_pred, y = output
+        ssim_metric = piq.ssim(y, y_pred)
+
+        self._sum += ssim_metric.item() * y.shape[0]
+        # we multiply because ssim calculate mean of each image in batch
+        # we multiply so we will divide correctly
+
+        self._num_examples += y.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('CrowdCountingMeanSSIM must have at least one example before it can be computed.')
+        return self._sum / self._num_examples
+
+
+class CrowdCountingMeanPSNR(Metric):
+    """
+    Calculates ssim
+    require package https://github.com/photosynthesis-team/piq
+    - `update` must receive output of the form `(y_pred, y)`.
+    """
+    def reset(self):
+        self._sum = 0.0
+        self._num_examples = 0
+
+    def update(self, output):
+        y_pred, y = output
+        psnr_metric = piq.psnr(y, y_pred)
+
+        self._sum += psnr_metric.item() * y.shape[0]
+        # we multiply because ssim calculate mean of each image in batch
+        # we multiply so we will divide correctly
+
+        self._num_examples += y.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('CrowdCountingMeanPSNR must have at least one example before it can be computed.')
+        return self._sum / self._num_examples
+

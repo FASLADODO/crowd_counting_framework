@@ -20,6 +20,7 @@ conda install -c anaconda matplotlib  #
 conda install pandas
 # pip install torchsummary 
 # pip install kornia # still buggy not recommended 
+conda install -c photosynthesis-team piq 
 ```
 
 for CUDA 9.0

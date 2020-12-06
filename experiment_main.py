@@ -5,7 +5,7 @@ from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
-from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount, CrowdCountingMeanSSIM, CrowdCountingMeanPSNR
 from visualize_util import get_readable_time
 from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
@@ -229,7 +229,8 @@ if __name__ == "__main__":
                                             metrics={
                                                 'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
                                                 'mse': CrowdCountingMeanSquaredErrorWithCount(),
-                                               # 'loss': Loss(loss_fn)
+                                                'ssim': CrowdCountingMeanSSIM(),
+                                                'psnr': CrowdCountingMeanPSNR(),
                                             }, device=device)
 
     best_mae = BestMetrics(best_metric="mae")
