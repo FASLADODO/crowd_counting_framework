@@ -657,7 +657,13 @@ def load_data_shanghaitech_non_overlap_test_with_densitygt(img_path, train=True,
 
         gt_file = h5py.File(gt_path, 'r')
         target = np.asarray(gt_file['density'])
-        return img_origin, target
+        target1 = cv2.resize(target,
+                             (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                             interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+        # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+        target1 = np.expand_dims(target1,
+                                 axis=0)  # make dim (batch size, channel size, x, y) to make model output
+        return img_origin, target1
 
 
 def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
