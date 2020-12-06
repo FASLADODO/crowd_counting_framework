@@ -138,7 +138,11 @@ class CrowdCountingMeanSSIMabs(Metric):
         # pad_density_map_tensor[:, 0, :y_pred.shape[2],:y_pred.shape[3]] = y_pred
         # y_pred = pad_density_map_tensor
 
-        ssim_metric = piq.ssim(y, y_pred, reduction="sum")
+        rig_y = torch.sum(y)
+        rig_y_pred = torch.sum(y_pred)
+        # ssim_metric = piq.ssim(y, y_pred, reduction="sum")
+        ssim_metric = torch.abs(rig_y - rig_y_pred)
+
 
         self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
@@ -179,6 +183,7 @@ class CrowdCountingMeanPSNRabs(Metric):
         # y_pred = pad_density_map_tensor
 
         psnr_metric = piq.psnr(y, y_pred, reduction="sum")
+        # psnr_metric = torch.abs((y-y_pred).sum())
 
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
