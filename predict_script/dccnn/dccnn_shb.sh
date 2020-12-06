@@ -9,7 +9,7 @@ CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --batch_size 1 \
 --load_model /data/rnd/thient/crowd_counting_framework/saved_model_best/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth \
 --datasetname shanghaitech_non_overlap_test_with_densitygt \
---cache \
+--eval_density \
 --epochs 1201 > logs/$task.log  &
 
 echo logs/$task.log  # for convenience
