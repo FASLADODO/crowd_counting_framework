@@ -134,7 +134,7 @@ class CrowdCountingMeanSSIMabs(Metric):
         # print("y", y.shape)
 
         y_pred = F.interpolate(y_pred, scale_factor=8)/64
-        pad_density_map_tensor = torch.zeros((1, 1, y.shape[2], y.shape[3]))
+        pad_density_map_tensor = torch.zeros((1, 1, y.shape[2], y.shape[3])).cuda()
         pad_density_map_tensor[:, 0, :y_pred.shape[2],:y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
@@ -174,7 +174,7 @@ class CrowdCountingMeanPSNRabs(Metric):
         # print("y", y.shape)
 
         y_pred = F.interpolate(y_pred, scale_factor=8) / 64
-        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor = torch.zeros((1, 1, y.shape[2], y.shape[3])).cuda()
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
@@ -214,7 +214,7 @@ class CrowdCountingMeanSSIMclamp(Metric):
         # print("y", y.shape)
 
         y_pred = F.interpolate(y_pred, scale_factor=8) / 64
-        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor = torch.zeros((1, 1, y.shape[2], y.shape[3])).cuda()
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
@@ -252,7 +252,7 @@ class CrowdCountingMeanPSNRclamp(Metric):
         # print("y", y.shape)
 
         y_pred = F.interpolate(y_pred, scale_factor=8) / 64
-        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor = torch.zeros((1, 1, y.shape[2], y.shape[3])).cuda()
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
