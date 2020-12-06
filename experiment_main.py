@@ -371,7 +371,7 @@ if __name__ == "__main__":
         timestamp = get_readable_time()
 
         if args.eval_density:
-            print(timestamp + " Test set Results -  Avg ssim: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
+            print(timestamp + " Test set Results -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
                   .format(test_metrics['ssim'], test_metrics['psnr'], 0))
             experiment.log_metric("test_ssim", test_metrics['ssim'])
             experiment.log_metric("test_psnr", test_metrics['psnr'])
