@@ -112,7 +112,6 @@ class CrowdCountingMeanSquaredErrorWithCount(Metric):
 ####################
 import piq
 
-
 class CrowdCountingMeanSSIMabs(Metric):
     """
     Calculates ssim
@@ -130,10 +129,14 @@ class CrowdCountingMeanSSIMabs(Metric):
         # y = torch.clamp_min(y, min=0.0)
         y = torch.abs(y)
         y_pred = torch.abs(y_pred)
-        print("CrowdCountingMeanSSIMabs ")
-        print("y_pred", y_pred.shape)
-        print("y", y.shape)
+        # print("CrowdCountingMeanSSIMabs ")
+        # print("y_pred", y_pred.shape)
+        # print("y", y.shape)
 
+        y_pred = F.interpolate(y_pred, scale_factor=8)/64
+        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor[:, 0, :y_pred.shape[2],:y_pred.shape[3]] = y_pred
+        y_pred = pad_density_map_tensor
 
         ssim_metric = piq.ssim(y, y_pred)
 
@@ -166,14 +169,16 @@ class CrowdCountingMeanPSNRabs(Metric):
         # y = torch.clamp_min(y, min=0.0)
         y = torch.abs(y)
         y_pred = torch.abs(y_pred)
-        print("CrowdCountingMeanPSNRabs ")
-        print("y_pred", y_pred.shape)
-        print("y", y.shape)
+        # print("CrowdCountingMeanPSNRabs ")
+        # print("y_pred", y_pred.shape)
+        # print("y", y.shape)
+
+        y_pred = F.interpolate(y_pred, scale_factor=8) / 64
+        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
+        y_pred = pad_density_map_tensor
 
         psnr_metric = piq.psnr(y, y_pred)
-
-
-
 
         self._sum += psnr_metric.item() * y.shape[0]
         # we multiply because ssim calculate mean of each image in batch
@@ -204,9 +209,14 @@ class CrowdCountingMeanSSIMclamp(Metric):
         y = output[1]
         y_pred = torch.clamp_min(y_pred, min=0.0)
         y = torch.clamp_min(y, min=0.0)
-        print("CrowdCountingMeanSSIMclamp ")
-        print("y_pred", y_pred.shape)
-        print("y", y.shape)
+        # print("CrowdCountingMeanSSIMclamp ")
+        # print("y_pred", y_pred.shape)
+        # print("y", y.shape)
+
+        y_pred = F.interpolate(y_pred, scale_factor=8) / 64
+        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
+        y_pred = pad_density_map_tensor
 
         ssim_metric = piq.ssim(y, y_pred)
 
@@ -237,9 +247,14 @@ class CrowdCountingMeanPSNRclamp(Metric):
         y_pred = torch.clamp_min(y_pred, min=0.0)
         y = output[1]
         y = torch.clamp_min(y, min=0.0)
-        print("CrowdCountingMeanPSNRclamp ")
-        print("y_pred", y_pred.shape)
-        print("y", y.shape)
+        # print("CrowdCountingMeanPSNRclamp ")
+        # print("y_pred", y_pred.shape)
+        # print("y", y.shape)
+
+        y_pred = F.interpolate(y_pred, scale_factor=8) / 64
+        pad_density_map_tensor = torch.zeros((1, 3, y.shape[1], y.shape[2]))
+        pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
+        y_pred = pad_density_map_tensor
 
 
         psnr_metric = piq.psnr(y, y_pred)
