@@ -125,6 +125,7 @@ class CrowdCountingMeanSSIM(Metric):
     def update(self, output):
         y_pred = output[0]
         y = output[1]
+        y_pred = torch.clamp_min(y_pred, min=0)
         ssim_metric = piq.ssim(y, y_pred)
 
         self._sum += ssim_metric.item() * y.shape[0]
@@ -151,6 +152,7 @@ class CrowdCountingMeanPSNR(Metric):
 
     def update(self, output):
         y_pred = output[0]
+        y_pred = torch.clamp_min(y_pred, min=0)
         y = output[1]
         psnr_metric = piq.psnr(y, y_pred)
 
