@@ -140,9 +140,9 @@ class CrowdCountingMeanSSIMabs(Metric):
 
         # rig_y = torch.sum(y)
         # rig_y_pred = torch.sum(y_pred)
-        # y_max = torch.max(y)
-        # y_pred_max = torch.max(y_pred)
-        # max_value = y_max
+        y_max = torch.max(y)
+        y_pred_max = torch.max(y_pred)
+        max_value = y_max
         ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=max_value.item())
         # ssim_metric = torch.abs(rig_y - rig_y_pred)
 
