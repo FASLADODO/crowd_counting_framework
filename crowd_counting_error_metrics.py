@@ -16,7 +16,8 @@ class CrowdCountingMeanAbsoluteError(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, y = output
+        y_pred = output[0]
+        y = output[1]
         pred_count = torch.sum(y_pred)
         true_count = torch.sum(y)
         absolute_errors = torch.abs(pred_count - true_count)
@@ -40,7 +41,8 @@ class CrowdCountingMeanSquaredError(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, y = output
+        y_pred = output[0]
+        y = output[1]
         pred_count = torch.sum(y_pred)
         true_count = torch.sum(y)
         squared_errors = torch.pow(pred_count - true_count, 2)
@@ -67,7 +69,8 @@ class CrowdCountingMeanAbsoluteErrorWithCount(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, true_count = output
+        y_pred = output[0]
+        true_count = output[1]
         pred_count = torch.sum(y_pred)
         # true_count = torch.sum(y)
         absolute_errors = torch.abs(pred_count - true_count)
@@ -92,7 +95,8 @@ class CrowdCountingMeanSquaredErrorWithCount(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, true_count = output
+        y_pred = output[0]
+        true_count = output[1]
         pred_count = torch.sum(y_pred)
         # true_count = torch.sum(y)
         squared_errors = torch.pow(pred_count - true_count, 2)
@@ -119,7 +123,9 @@ class CrowdCountingMeanSSIM(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, y = output
+        y_pred = output[0]
+        true_count = output[1]
+        y = output[2]
         ssim_metric = piq.ssim(y, y_pred)
 
         self._sum += ssim_metric.item() * y.shape[0]
@@ -145,7 +151,9 @@ class CrowdCountingMeanPSNR(Metric):
         self._num_examples = 0
 
     def update(self, output):
-        y_pred, y = output
+        y_pred = output[0]
+        true_count = output[1]
+        y = output[2]
         psnr_metric = piq.psnr(y, y_pred)
 
         self._sum += psnr_metric.item() * y.shape[0]
