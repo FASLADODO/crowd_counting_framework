@@ -193,6 +193,8 @@ class CrowdCountingMeanPSNRabs(Metric):
         # psnr_metric = torch.abs((y-y_pred).sum())
 
         # self calculate
+        y = y/torch.max(y)*255
+        y_pred = y_pred / torch.max(y_pred) * 255
         EPS = 1e-20
         mse = torch.mean((y_pred - y) ** 2, dim=[2, 3])
         score = - 10 * torch.log10(mse + EPS)
