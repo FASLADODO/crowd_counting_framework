@@ -138,7 +138,7 @@ class CrowdCountingMeanSSIMabs(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2],:y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        ssim_metric = piq.ssim(y, y_pred, reduction=sum())
+        ssim_metric = piq.ssim(y, y_pred, reduction="sum")
 
         self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
@@ -178,7 +178,7 @@ class CrowdCountingMeanPSNRabs(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        psnr_metric = piq.psnr(y, y_pred, reduction=sum())
+        psnr_metric = piq.psnr(y, y_pred, reduction="sum")
 
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
@@ -218,7 +218,7 @@ class CrowdCountingMeanSSIMclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        ssim_metric = piq.ssim(y, y_pred, reduction=sum())
+        ssim_metric = piq.ssim(y, y_pred, reduction="sum")
 
         self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
@@ -256,7 +256,7 @@ class CrowdCountingMeanPSNRclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        psnr_metric = piq.psnr(y, y_pred, reduction=sum())
+        psnr_metric = piq.psnr(y, y_pred, reduction="sum")
 
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
