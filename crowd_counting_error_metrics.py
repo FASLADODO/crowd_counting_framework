@@ -138,9 +138,9 @@ class CrowdCountingMeanSSIMabs(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2],:y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        ssim_metric = piq.ssim(y, y_pred)
+        ssim_metric = piq.ssim(y, y_pred, reduction=sum())
 
-        self._sum += ssim_metric.item() * y.shape[0]
+        self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
         # we multiply so we will divide correctly
 
@@ -178,9 +178,9 @@ class CrowdCountingMeanPSNRabs(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        psnr_metric = piq.psnr(y, y_pred)
+        psnr_metric = piq.psnr(y, y_pred, reduction=sum())
 
-        self._sum += psnr_metric.item() * y.shape[0]
+        self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
         # we multiply so we will divide correctly
 
@@ -218,9 +218,9 @@ class CrowdCountingMeanSSIMclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        ssim_metric = piq.ssim(y, y_pred)
+        ssim_metric = piq.ssim(y, y_pred, reduction=sum())
 
-        self._sum += ssim_metric.item() * y.shape[0]
+        self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
         # we multiply so we will divide correctly
 
@@ -256,10 +256,9 @@ class CrowdCountingMeanPSNRclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
+        psnr_metric = piq.psnr(y, y_pred, reduction=sum())
 
-        psnr_metric = piq.psnr(y, y_pred)
-
-        self._sum += psnr_metric.item() * y.shape[0]
+        self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
         # we multiply so we will divide correctly
 
