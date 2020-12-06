@@ -140,10 +140,14 @@ class CrowdCountingMeanSSIMabs(Metric):
 
         # rig_y = torch.sum(y)
         # rig_y_pred = torch.sum(y_pred)
-        y_max = torch.max(y)
-        y_pred_max = torch.max(y_pred)
-        max_value = y_max
-        ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=max_value.item())
+        # y_max = torch.max(y)
+        # y_pred_max = torch.max(y_pred)
+        # max_value = y_max
+
+        y = y / torch.max(y) * 255
+        y_pred = y_pred / torch.max(y_pred) * 255
+
+        ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=255)
         # ssim_metric = torch.abs(rig_y - rig_y_pred)
 
 
@@ -238,10 +242,14 @@ class CrowdCountingMeanSSIMclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        y_max = torch.max(y)
-        y_pred_max = torch.max(y_pred)
-        max_value = torch.max(y_max, y_pred_max)
-        ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=max_value.item())
+        # y_max = torch.max(y)
+        # y_pred_max = torch.max(y_pred)
+        # max_value = torch.max(y_max, y_pred_max)
+
+        y = y / torch.max(y) * 255
+        y_pred = y_pred / torch.max(y_pred) * 255
+
+        ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=255)
 
         self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
