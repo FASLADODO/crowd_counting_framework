@@ -1440,6 +1440,19 @@ class ListDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.lines[index]
+
+        # hard code to calculate ssim and psnr
+        if self.dataset_name == "shanghaitech_non_overlap_test_with_densitygt" and not self.train:
+            img, count, target = self.load_data_fn(img_path, self.train)
+            if self.transform is not None:
+                if isinstance(img, list):
+                    # for case of generate  multiple augmentation per sample
+                    img_r = [self.transform(img_item) for img_item in img]
+                    img = img_r
+                else:
+                    img = self.transform(img)
+            return img, count, target
+
         # if self.debug:
         #     print(img_path)
         # try to check cache item if exist
