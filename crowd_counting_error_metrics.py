@@ -279,10 +279,12 @@ class CrowdCountingMeanPSNRclamp(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        y_max = torch.max(y)
-        y_pred_max = torch.max(y_pred)
-        max_value = torch.max(y_max, y_pred_max)
-        psnr_metric = piq.psnr(y, y_pred, reduction="sum", data_range=max_value.item())
+        y = y / torch.max(y) * 255
+        y_pred = y_pred / torch.max(y_pred) * 255
+        # y_max = torch.max(y)
+        # y_pred_max = torch.max(y_pred)
+        # max_value = torch.max(y_max, y_pred_max)
+        psnr_metric = piq.psnr(y, y_pred, reduction="sum", data_range=255)
 
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
