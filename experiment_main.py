@@ -348,18 +348,6 @@ if __name__ == "__main__":
         score = engine.state.metrics['mae']
         return -score
 
-    # docs on save and load
-    to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-    save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
-                              filename_prefix=args.task_id,
-                              n_saved=3)
-
-    save_handler_best = Checkpoint(to_save, DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
-                              filename_prefix=args.task_id, score_name="valid_mae", score_function=checkpoint_valid_mae_score_function,
-                              n_saved=3)
-
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
-    evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
 
     if args.eval_only:
         print("evaluation only, no training")
@@ -401,4 +389,18 @@ if __name__ == "__main__":
             print("evaluate_test_timer ", evaluate_test_timer.value())
             # experiment.log_metric("test_loss", test_metrics['loss'])
     else:
+        # docs on save and load
+        to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+        save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
+                                  filename_prefix=args.task_id,
+                                  n_saved=3)
+
+        save_handler_best = Checkpoint(to_save,
+                                       DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
+                                       filename_prefix=args.task_id, score_name="valid_mae",
+                                       score_function=checkpoint_valid_mae_score_function,
+                                       n_saved=3)
+
+        trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
+        evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
         trainer.run(train_loader, max_epochs=args.epochs)
