@@ -13,6 +13,7 @@ print(img_tensor.shape)
 print(density_map_tensor.shape)
 print(density_map_tensor.sum())
 density_map_tensor = torch.from_numpy(density_map_tensor).unsqueeze(dim=0).unsqueeze(dim=0)
+print("density_map_tensor.shape", density_map_tensor.shape)  # torch.Size([1, 1, 46, 82])
 # module = nn.UpsamplingBilinear2d(scale_factor=8)
 # upsampling_density_map_tensor = module(density_map_tensor)
 upsampling_density_map_tensor = nn.functional.interpolate(density_map_tensor, scale_factor=8)/64

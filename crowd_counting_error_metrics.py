@@ -1,6 +1,7 @@
 from __future__ import division
 
 import torch
+import torch.nn.functional as F
 import math
 from ignite.exceptions import NotComputableError
 from ignite.metrics.metric import Metric
@@ -129,6 +130,10 @@ class CrowdCountingMeanSSIMabs(Metric):
         # y = torch.clamp_min(y, min=0.0)
         y = torch.abs(y)
         y_pred = torch.abs(y_pred)
+        print("CrowdCountingMeanSSIMabs ")
+        print("y_pred", y_pred.shape)
+        print("y", y.shape)
+
 
         ssim_metric = piq.ssim(y, y_pred)
 
@@ -161,7 +166,12 @@ class CrowdCountingMeanPSNRabs(Metric):
         # y = torch.clamp_min(y, min=0.0)
         y = torch.abs(y)
         y_pred = torch.abs(y_pred)
+        print("CrowdCountingMeanPSNRabs ")
+        print("y_pred", y_pred.shape)
+        print("y", y.shape)
+
         psnr_metric = piq.psnr(y, y_pred)
+
 
 
 
@@ -194,7 +204,9 @@ class CrowdCountingMeanSSIMclamp(Metric):
         y = output[1]
         y_pred = torch.clamp_min(y_pred, min=0.0)
         y = torch.clamp_min(y, min=0.0)
-
+        print("CrowdCountingMeanSSIMclamp ")
+        print("y_pred", y_pred.shape)
+        print("y", y.shape)
 
         ssim_metric = piq.ssim(y, y_pred)
 
@@ -225,6 +237,10 @@ class CrowdCountingMeanPSNRclamp(Metric):
         y_pred = torch.clamp_min(y_pred, min=0.0)
         y = output[1]
         y = torch.clamp_min(y, min=0.0)
+        print("CrowdCountingMeanPSNRclamp ")
+        print("y_pred", y_pred.shape)
+        print("y", y.shape)
+
 
         psnr_metric = piq.psnr(y, y_pred)
 
