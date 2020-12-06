@@ -143,14 +143,10 @@ class CrowdCountingMeanSSIMabs(Metric):
         # y_max = torch.max(y)
         # y_pred_max = torch.max(y_pred)
         # max_value = y_max
-        # ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=max_value.item())
+        ssim_metric = piq.ssim(y, y_pred, reduction="sum", data_range=max_value.item())
         # ssim_metric = torch.abs(rig_y - rig_y_pred)
 
-        # self calculate
-        EPS = 1e-20
-        mse = torch.mean((y_pred - y) ** 2, dim=[2, 3])
-        score = - 10 * torch.log10(mse + EPS)
-        ssim_metric = score
+
 
         self._sum += ssim_metric.item()
         # we multiply because ssim calculate mean of each image in batch
@@ -179,8 +175,8 @@ class CrowdCountingMeanPSNRabs(Metric):
         # y_pred = torch.clamp_min(y_pred, min=0.0)
         y = output[1]
         # y = torch.clamp_min(y, min=0.0)
-        y = torch.abs(y)
-        y_pred = torch.abs(y_pred)
+        # y = torch.abs(y)
+        # y_pred = torch.abs(y_pred)
         # print("CrowdCountingMeanPSNRabs ")
         # print("y_pred", y_pred.shape)
         # print("y", y.shape)
@@ -190,11 +186,17 @@ class CrowdCountingMeanPSNRabs(Metric):
         pad_density_map_tensor[:, 0, :y_pred.shape[2], :y_pred.shape[3]] = y_pred
         y_pred = pad_density_map_tensor
 
-        y_max = torch.max(y)
-        y_pred_max = torch.max(y_pred)
-        max_value = y_max
-        psnr_metric = piq.psnr(y, y_pred, reduction="sum", data_range=max_value.item())
+        # y_max = torch.max(y)
+        # y_pred_max = torch.max(y_pred)
+        # max_value = y_max
+        # psnr_metric = piq.psnr(y, y_pred, reduction="sum", data_range=max_value.item())
         # psnr_metric = torch.abs((y-y_pred).sum())
+
+        # self calculate
+        EPS = 1e-20
+        mse = torch.mean((y_pred - y) ** 2, dim=[2, 3])
+        score = - 10 * torch.log10(mse + EPS)
+        psnr_metric = score
 
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
