@@ -195,11 +195,11 @@ class CrowdCountingMeanPSNRabs(Metric):
         # self calculate
         y = y/torch.max(y)*255
         y_pred = y_pred / torch.max(y_pred) * 255
-        EPS = 1e-20
-        mse = torch.mean((y_pred - y) ** 2, dim=[2, 3])
-        score = - 10 * torch.log10(mse + EPS)
-        psnr_metric = score
-
+        # EPS = 1e-20
+        # mse = torch.mean((y_pred - y) ** 2, dim=[2, 3])
+        # score = - 10 * torch.log10(mse + EPS)
+        # psnr_metric = score
+        psnr_metric = piq.psnr(y, y_pred, 255, "sum")
         self._sum += psnr_metric.item()
         # we multiply because ssim calculate mean of each image in batch
         # we multiply so we will divide correctly
