@@ -5,7 +5,11 @@ from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
-from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount, CrowdCountingMeanSSIM, CrowdCountingMeanPSNR
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError,\
+CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount,\
+CrowdCountingMeanSSIMabs, CrowdCountingMeanPSNRabs, \
+CrowdCountingMeanSSIMclamp, CrowdCountingMeanPSNRclamp
+
 from visualize_util import get_readable_time
 from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
@@ -228,8 +232,10 @@ if __name__ == "__main__":
     if args.eval_density:
         evaluator_test = create_supervised_evaluator(model,
                                                      metrics={
-                                                         'ssim': CrowdCountingMeanSSIM(),
-                                                         'psnr': CrowdCountingMeanPSNR(),
+                                                         'ssimabs': CrowdCountingMeanSSIMabs(),
+                                                         'psnrabs': CrowdCountingMeanPSNRabs(),
+                                                         'ssimclamp': CrowdCountingMeanSSIMclamp(),
+                                                         'psnrclamp': CrowdCountingMeanPSNRclamp(),
                                                      }, device=device)
     else:
         evaluator_test = create_supervised_evaluator(model,
@@ -371,10 +377,15 @@ if __name__ == "__main__":
         timestamp = get_readable_time()
 
         if args.eval_density:
-            print(timestamp + " Test set Results -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
-                  .format(test_metrics['ssim'], test_metrics['psnr'], 0))
-            experiment.log_metric("test_ssim", test_metrics['ssim'])
-            experiment.log_metric("test_psnr", test_metrics['psnr'])
+            print(timestamp + " Test set Results  ABS -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
+                  .format(test_metrics['ssimabs'], test_metrics['psnrabs'], 0))
+            experiment.log_metric("test_ssim abs", test_metrics['ssimabs'])
+            experiment.log_metric("test_psnr abs", test_metrics['psnrabs'])
+
+            print(timestamp + " Test set Results  CLAMP -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
+                  .format(test_metrics['ssimclamp'], test_metrics['psnrclamp'], 0))
+            experiment.log_metric("test_ssim clamp", test_metrics['ssimclamp'])
+            experiment.log_metric("test_psnr clamp", test_metrics['psnrclamp'])
         else:
             print(timestamp + " Test set Results -  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
                   .format( test_metrics['mae'], test_metrics['mse'], 0))

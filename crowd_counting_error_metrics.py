@@ -112,7 +112,7 @@ class CrowdCountingMeanSquaredErrorWithCount(Metric):
 import piq
 
 
-class CrowdCountingMeanSSIM(Metric):
+class CrowdCountingMeanSSIMabs(Metric):
     """
     Calculates ssim
     require package https://github.com/photosynthesis-team/piq
@@ -144,7 +144,7 @@ class CrowdCountingMeanSSIM(Metric):
         return self._sum / self._num_examples
 
 
-class CrowdCountingMeanPSNR(Metric):
+class CrowdCountingMeanPSNRabs(Metric):
     """
     Calculates ssim
     require package https://github.com/photosynthesis-team/piq
@@ -176,3 +176,65 @@ class CrowdCountingMeanPSNR(Metric):
             raise NotComputableError('CrowdCountingMeanPSNR must have at least one example before it can be computed.')
         return self._sum / self._num_examples
 
+#################3
+
+
+class CrowdCountingMeanSSIMclamp(Metric):
+    """
+    Calculates ssim
+    require package https://github.com/photosynthesis-team/piq
+    - `update` must receive output of the form `(y_pred, y)`.
+    """
+    def reset(self):
+        self._sum = 0.0
+        self._num_examples = 0
+
+    def update(self, output):
+        y_pred = output[0]
+        y = output[1]
+        y_pred = torch.clamp_min(y_pred, min=0.0)
+        y = torch.clamp_min(y, min=0.0)
+
+
+        ssim_metric = piq.ssim(y, y_pred)
+
+        self._sum += ssim_metric.item() * y.shape[0]
+        # we multiply because ssim calculate mean of each image in batch
+        # we multiply so we will divide correctly
+
+        self._num_examples += y.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('CrowdCountingMeanSSIM must have at least one example before it can be computed.')
+        return self._sum / self._num_examples
+
+
+class CrowdCountingMeanPSNRclamp(Metric):
+    """
+    Calculates ssim
+    require package https://github.com/photosynthesis-team/piq
+    - `update` must receive output of the form `(y_pred, y)`.
+    """
+    def reset(self):
+        self._sum = 0.0
+        self._num_examples = 0
+
+    def update(self, output):
+        y_pred = output[0]
+        y_pred = torch.clamp_min(y_pred, min=0.0)
+        y = output[1]
+        y = torch.clamp_min(y, min=0.0)
+
+        psnr_metric = piq.psnr(y, y_pred)
+
+        self._sum += psnr_metric.item() * y.shape[0]
+        # we multiply because ssim calculate mean of each image in batch
+        # we multiply so we will divide correctly
+
+        self._num_examples += y.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('CrowdCountingMeanPSNR must have at least one example before it can be computed.')
+        return self._sum / self._num_examples
