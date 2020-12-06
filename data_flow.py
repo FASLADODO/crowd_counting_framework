@@ -1412,7 +1412,7 @@ class ListDataset(Dataset):
         if self.debug:
             if self.train:
                 _, p_count = self.load_data_fn(img_path, train=False)
-                print(img_path + " " + str(target.sum()) + " " + str(p_count))
+                # print(img_path + " " + str(target.sum()) + " " + str(p_count))
                 img_name = img_path.split("/")[-1]
                 # when debug, give information on p_count and img_name
                 debug_info = {"p_count": p_count,
