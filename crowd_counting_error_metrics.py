@@ -175,8 +175,8 @@ class CrowdCountingMeanPSNRabs(Metric):
         # y_pred = torch.clamp_min(y_pred, min=0.0)
         y = output[1]
         # y = torch.clamp_min(y, min=0.0)
-        # y = torch.abs(y)
-        # y_pred = torch.abs(y_pred)
+        y = torch.abs(y)
+        y_pred = torch.abs(y_pred)
         # print("CrowdCountingMeanPSNRabs ")
         # print("y_pred", y_pred.shape)
         # print("y", y.shape)
