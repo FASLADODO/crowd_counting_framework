@@ -2,6 +2,7 @@ import os
 import torch
 from data_flow import get_predict_dataloader
 from models.dccnn import DCCNN
+from models.compact_cnn import CompactCNNV7
 from visualize_util import save_density_map_normalize, save_density_map
 
 if __name__ == "__main__":
@@ -10,15 +11,16 @@ if __name__ == "__main__":
     output into another folder 
     output density map and count in csv
     """
-    NAME="for_question_forum"
+    NAME="adamw1_ccnnv7_t4_bike_prediction"
     # INPUT_FOLDER = "/data/ShanghaiTech/part_B/test_data/images/"
-    INPUT_FOLDER = "/home/tt/Downloads/bao2"
-    OUTPUT_FOLDER = "/data/apps/tmp"
-    MODEL = "/home/tt/project/C-3-folder/trained_model/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth"
+    INPUT_FOLDER = "/data/my_crowd_image/dataset_batch1245/mybikedata/test_data/images/"
+    OUTPUT_FOLDER = "/data/my_crowd_image/dataset_batch1245/mybikedata/test_data/predicts/"
+    # MODEL = "/data/save_model/adamw1_bigtail13i_t1_bike/adamw1_bigtail13i_t1_bike_checkpoint_valid_mae=-2.8629838943481447.pth"
+    MODEL = "/data/save_model/adamw1_ccnnv7_t4_bike/adamw1_ccnnv7_t4_bike_checkpoint_valid_mae=-3.143752908706665.pth"
     input_list = [os.path.join(INPUT_FOLDER, dir) for dir in os.listdir(INPUT_FOLDER)]
     loader = get_predict_dataloader(input_list)
     loaded_file = torch.load(MODEL)
-    model = DCCNN()
+    model = CompactCNNV7()
     model.load_state_dict(loaded_file['model'])
     model.eval()
     os.makedirs(os.path.join(OUTPUT_FOLDER, NAME), exist_ok=True)
