@@ -651,10 +651,6 @@ def load_data_shanghaitech_non_overlap_test_with_densitygt(img_path, train=True,
         return crop_img, crop_label
 
     if not train:
-        # get correct people head count from head annotation
-        mat_path = img_path.replace('.jpg', '.mat').replace('images', 'ground-truth').replace('IMG', 'GT_IMG')
-        gt_count = count_gt_annotation_sha(mat_path)
-
         gt_file = h5py.File(gt_path, 'r')
         target = np.asarray(gt_file['density'])
         # target1 = cv2.resize(target,
