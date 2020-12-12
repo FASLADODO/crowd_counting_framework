@@ -12,10 +12,8 @@ if __name__ == "__main__":
     output density map and count in csv
     """
     NAME="adamw1_ccnnv7_t4_bike_prediction"
-    # INPUT_FOLDER = "/data/ShanghaiTech/part_B/test_data/images/"
     INPUT_FOLDER = "/data/my_crowd_image/dataset_batch1245/mybikedata/test_data/images/"
     OUTPUT_FOLDER = "/data/my_crowd_image/dataset_batch1245/mybikedata/test_data/predicts/"
-    # MODEL = "/data/save_model/adamw1_bigtail13i_t1_bike/adamw1_bigtail13i_t1_bike_checkpoint_valid_mae=-2.8629838943481447.pth"
     MODEL = "/data/save_model/adamw1_ccnnv7_t4_bike/adamw1_ccnnv7_t4_bike_checkpoint_valid_mae=-3.143752908706665.pth"
     input_list = [os.path.join(INPUT_FOLDER, dir) for dir in os.listdir(INPUT_FOLDER)]
     loader = get_predict_dataloader(input_list)

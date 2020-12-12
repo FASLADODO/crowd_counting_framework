@@ -1338,6 +1338,7 @@ def data_augmentation(img, target):
     return img, target
 
 
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
@@ -1597,6 +1598,9 @@ def simple_predict_data_load_fn(img_path):
 
 
 class PredictListDataset(Dataset):
+    """
+    only to predict without label
+    """
     def __init__(self, root, shape=None, shuffle=True, transform=None, batch_size=1,
                  debug=False,
                  num_workers=0):
@@ -1646,6 +1650,58 @@ class PredictListDataset(Dataset):
             else:
                 img = self.transform(img)
         return img, info
+
+
+from torchvision.io.video import read_video, write_video
+
+
+class PredictVideoDataset(Dataset):
+    """
+    only to predict without label
+    """
+    def __init__(self, video_path, shape=None, transform=None, batch_size=1,
+                 debug=False,
+                 num_workers=0):
+        """
+        if you have different image size, then batch_size must be 1
+        :param video_path: path to video file
+        :param shape:
+        :param shuffle:
+        :param transform:
+        :param debug: will print path of image
+        :param batch_size:
+        :param num_workers:
+        """
+        v, a, info = read_video(video_path, pts_unit='sec')
+
+        if transform is None:
+            transform = transforms.Compose([
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225]),
+            ])
+
+        self.video_tensor = v
+        self.nSamples = self.video_tensor.shape[0]
+
+        self.transform = transform
+        self.debug = debug
+        self.shape = shape
+
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+
+    def __len__(self):
+        return self.nSamples
+
+    def __getitem__(self, index):
+        assert index <= len(self), 'index range error'
+        img = self.video_tensor[index]
+        img = img.permute(2, 0, 1)
+
+        if self.transform is not None:
+            img = self.transform(img)
+        return img
+
 
 
 def get_my_bike_count_from_json(json_full_path):

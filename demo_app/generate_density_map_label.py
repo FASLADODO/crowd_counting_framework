@@ -46,8 +46,8 @@ if __name__ == "__main__":
         pred_count = pred.sum()
         log_line = info["name"][0] + "," + str(pred_count.item()) +"\n"
         log_file.write(log_line)
-        save_density_map(pred, predict_path)
-        torch.save(pred, predict_path+".torch")
+        # save_density_map(pred, predict_path)
+        # torch.save(pred, predict_path+".torch")
         print("save to ", predict_path)
         count += 1
     log_file.close()
