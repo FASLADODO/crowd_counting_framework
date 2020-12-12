@@ -1,25 +1,29 @@
 from torchvision.io.video import read_video, write_video
-from torchvision.io import write_png
+import torch
+from args_util import meow_parse
+from data_flow import PredictVideoDataset
+from models import create_model
 import os
 
 
-video_path = "/home/tt/Videos/VID_20201202_133703_090.mp4"
+video_path = "/data/mybikedata/VID_20201204_134210_960.mp4"
 out_path = "../visualize/vid"
 
-
 if __name__ == "__main__":
-    v, a, info = read_video("/home/tt/Videos/VID_20201202_133703_090.mp4", pts_unit='sec')
-    print("v type", type(v))
-    print("a type", type(a))
-    print(v.shape)  # torch.Size([467, 1080, 1920, 3])
-    single_frame = v[100]
-    print(single_frame.shape)  # torch.Size([1080, 1920, 3])
+    # n_thread = int(os.environ['OMP_NUM_THREADS'])
+    # torch.set_num_threads(n_thread)  # 4 thread
+    # print("n_thread ", n_thread)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(device)
+    # args = meow_parse()
+    # print(args)
+    # input_path = args.input
+    input_path = video_path
+    loader = PredictVideoDataset(input_path)
+    single_frame = None
+    for frame in loader:
+        # print("meow")
+        print(frame.shape)
+        # single_frame = frame
 
-    batch_size_one = single_frame.unsqueeze(0)
-    print(batch_size_one.shape)
-
-    # single_frame = single_frame.permute(2, 0, 1)  # to CHW
-    # print(single_frame.shape)
-    # file_out = os.path.join(out_path, "single_frame.png")
-    # write_png(single_frame, file_out)
-    # print("done write to ", file_out)from torchvision.io import write_png
+    print(single_frame)

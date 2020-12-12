@@ -1697,7 +1697,7 @@ class PredictVideoDataset(Dataset):
         assert index <= len(self), 'index range error'
         img = self.video_tensor[index]
         img = img.permute(2, 0, 1)
-
+        img = img.float()
         if self.transform is not None:
             img = self.transform(img)
         return img
