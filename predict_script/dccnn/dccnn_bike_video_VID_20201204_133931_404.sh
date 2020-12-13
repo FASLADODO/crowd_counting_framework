@@ -1,4 +1,4 @@
-task="eval_adamw1_bigtail13i_t1_bike_VID_20201204_133807_086"
+task="eval_adamw1_bigtail13i_t1_bike_VID_20201204_133931_404"
 # HTTPS_PROXY="http://10.60.28.99:86"
 CUDA_VISIBLE_DEVICES=2 OMP_NUM_THREADS=4 PYTHONWARNINGS="ignore" HTTPS_PROXY="http://10.60.28.99:86" nohup python predict_video_server.py  \
 --task_id $task  \
