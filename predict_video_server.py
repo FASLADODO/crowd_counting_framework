@@ -46,6 +46,7 @@ if __name__ == "__main__":
     log_file = open(os.path.join(OUTPUT_FOLDER, NAME, NAME + ".log"), 'w')
     count = 0
     experiment.log_other("total length", len(loader))
+    print("total length ", len(loader))
     for frame, info in loader:
         frame = frame.to(device)
         experiment.log_metric("count", count)
