@@ -58,7 +58,7 @@ if __name__ == "__main__":
         predict_path = os.path.join(OUTPUT_FOLDER, NAME, predict_name)
         pred = model(frame)
         if args.batch_size == 1:
-            pred_np = pred.detach().numpy()[0][0]
+            pred_np = pred.detach().cpu().numpy()[0][0]
             pred_count = pred_np.sum()
             log_line = str(index) + "," + str(pred_count.item()) +"\n"
             log_file.write(log_line)
