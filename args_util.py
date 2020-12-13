@@ -109,6 +109,7 @@ def meow_parse():
     parser.add_argument('--note', action="store", default="write anything")
 
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--output', action="store",  type=str, default="/data/meow")
     parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
 
     # args with default value

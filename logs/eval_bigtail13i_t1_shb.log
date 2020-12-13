@@ -1,0 +1,69 @@
+n_thread  2
+COMET INFO: Experiment is live on comet.ml https://www.comet.ml/ttpro1995/crowd-counting-train-val/67dce33104b74c3c825f5ebb493bb0ec
+
+cuda
+Namespace(batch_size=1, cache=True, datasetname='shanghaitech_non_overlap', decay=0.005, epochs=1201, eval_only=True, input='/data/ShanghaiTech/part_B', load_model='/data/save_model/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth', loss_fn='MSE', lr=1e-08, lr_list='1e-1,1e-2,1e-3', lr_scheduler=False, model='BigTail13i', momentum=0.9, no_norm=False, note='eval dccnn adamw1_bigtail13i_t1_shb shb', optim='adam', pin_memory=False, skip_train_eval=False, step_list='10,20,30', task_id='eval_bigtail13i_t1_shb', test=False)
+cannot detect dataset_name
+current dataset_name is  shanghaitech_non_overlap
+root * 1 because dataset  shanghaitech_non_overlap
+in ListDataset dataset_name is |shanghaitech_non_overlap|
+in ListDataset dataset_name is |shanghaitech_non_overlap|
+in ListDataset dataset_name is |shanghaitech_non_overlap|
+in ListDataset dataset_name is |shanghaitech_non_overlap|
+len train_loader  0
+n_param 73009
+use MSELoss
+use adam
+BigTail13i(
+  (red_cnn): Conv2d(3, 10, kernel_size=(9, 9), stride=(1, 1), padding=(4, 4))
+  (green_cnn): Conv2d(3, 14, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+  (blue_cnn): Conv2d(3, 16, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+  (c0): Conv2d(40, 40, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (max_pooling): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (avg_pooling): AvgPool2d(kernel_size=2, stride=2, padding=0)
+  (c1): Conv2d(40, 60, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c2): Conv2d(60, 40, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c3): Conv2d(40, 20, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (c4): Conv2d(20, 10, kernel_size=(3, 3), stride=(1, 1), padding=(2, 2), dilation=(2, 2))
+  (output): Conv2d(10, 1, kernel_size=(1, 1), stride=(1, 1))
+  (bn_red): BatchNorm2d(10, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn_green): BatchNorm2d(14, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn_blue): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn00): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn0): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn1): BatchNorm2d(60, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn2): BatchNorm2d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn3): BatchNorm2d(20, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn4): BatchNorm2d(10, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+)
+Namespace(batch_size=1, cache=True, datasetname='shanghaitech_non_overlap', decay=0.005, epochs=1201, eval_only=True, input='/data/ShanghaiTech/part_B', load_model='/data/save_model/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth', loss_fn='MSE', lr=1e-08, lr_list='1e-1,1e-2,1e-3', lr_scheduler=False, model='BigTail13i', momentum=0.9, no_norm=False, note='eval dccnn adamw1_bigtail13i_t1_shb shb', optim='adam', pin_memory=False, skip_train_eval=False, step_list='10,20,30', task_id='eval_bigtail13i_t1_shb', test=False)
+load mode /data/save_model/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth
+load model complete
+change lr to  1e-08
+evaluation only, no training
+Traceback (most recent call last):
+  File "experiment_main.py", line 367, in <module>
+    evaluator_validate.run(val_loader)
+  File "/home/tt/miniconda3/envs/pytorch_gpu4_37/lib/python3.7/site-packages/ignite/engine/engine.py", line 833, in run
+    raise ValueError("Input data has zero size. Please provide non-empty data")
+ValueError: Input data has zero size. Please provide non-empty data
+COMET INFO: ---------------------------
+COMET INFO: Comet.ml Experiment Summary
+COMET INFO: ---------------------------
+COMET INFO:   Data:
+COMET INFO:     display_summary_level : 1
+COMET INFO:     url                   : https://www.comet.ml/ttpro1995/crowd-counting-train-val/67dce33104b74c3c825f5ebb493bb0ec
+COMET INFO:   Others:
+COMET INFO:     Name       : eval_bigtail13i_t1_shb
+COMET INFO:     model      : BigTail13i
+COMET INFO:     model_note : BigTail12i, batchnorm default setting, add bn red, green, blue, i mean discard inplace
+COMET INFO:     n_param    : 73009
+COMET INFO:   Uploads:
+COMET INFO:     environment details : 1
+COMET INFO:     filename            : 1
+COMET INFO:     git metadata        : 1
+COMET INFO:     installed packages  : 1
+COMET INFO:     os packages         : 1
+COMET INFO:     text-sample         : 1
+COMET INFO: ---------------------------
+COMET INFO: Uploading stats to Comet before program termination (may take several seconds)

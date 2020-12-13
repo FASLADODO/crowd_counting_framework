@@ -1674,11 +1674,6 @@ class PredictVideoDataset(Dataset):
         """
         v, a, info = read_video(video_path, pts_unit='sec')
 
-        if transform is None:
-            transform = transforms.Compose([
-                transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225]),
-            ])
 
         self.video_tensor = v
         self.nSamples = self.video_tensor.shape[0]
@@ -1695,13 +1690,32 @@ class PredictVideoDataset(Dataset):
 
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
+        info = {"index": index}
         img = self.video_tensor[index]
         img = img.permute(2, 0, 1)
         img = img.float()
         if self.transform is not None:
             img = self.transform(img)
-        return img
+        return img, info
 
+def get_predict_video_dataloader(video_path, visualize_mode = False, batch_size = 1):
+    if visualize_mode:
+        transformer = transforms.Compose([
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225]),
+        ])
+    else:
+        transformer = None
+
+    loader = torch.utils.data.DataLoader(PredictVideoDataset(
+        video_path,
+        batch_size= batch_size,
+        transform= transformer
+    ),
+        batch_size= batch_size,
+    )
+
+    return loader
 
 
 def get_my_bike_count_from_json(json_full_path):
@@ -1732,3 +1746,4 @@ def get_predict_dataloader(data_list, visualize_mode=False, batch_size=1,
     ))
 
     return loader
+
