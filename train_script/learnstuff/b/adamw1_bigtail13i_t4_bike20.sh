@@ -8,7 +8,7 @@ CUDA_VISIBLE_DEVICES=5 OMP_NUM_THREADS=3 PYTHONWARNINGS="ignore" HTTPS_PROXY="ht
 --lr 1e-4 \
 --decay 0.01 \
 --loss_fn "MSEL1Mean" \
---batch_size 5 \
+--batch_size 2 \
 --datasetname my_bike_non_overlap \
 --load_model /data/rnd/thient/crowd_counting_framework/saved_model_best/adamw1_bigtail13i_t1_shb/adamw1_bigtail13i_t1_shb_checkpoint_valid_mae=-7.574910521507263.pth \
 --optim adamw \
