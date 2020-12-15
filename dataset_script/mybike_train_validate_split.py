@@ -25,8 +25,8 @@ if __name__ == "__main__":
 
     # should contain 3 sub-folder: image, ground-truth, ground-truth-h5
     # hey, no trailing slash
-    DATA_PATH = "/data/my_crowd_image/dataset_batch1245/mybikedata/unsort"
-    OUTPUT_PREFIX = "/data/my_crowd_image/dataset_batch1245/mybikedata"
+    DATA_PATH = "/data/my_crowd_image/data_bike_20_q100/unsort"
+    OUTPUT_PREFIX = "/data/my_crowd_image/data_bike_20_q100/"
     # args = train_test_split_parse()
     # DATA_PATH = args.input
 

@@ -39,10 +39,10 @@ def preprocess_args_parse():
     return arg
 
 # where it have /images
-__DATASET_ROOT = "/data/my_crowd_image/dataset_batch1245/mybikedata/unsort"
+__DATASET_ROOT = "/data/my_crowd_image/data_bike_20_q100/unsort"
 
 # where should it write ground-truth-h5
-__OUTPUT_NAME = "/data/my_crowd_image/dataset_batch1245/mybikedata/unsort"
+__OUTPUT_NAME = "/data/my_crowd_image/data_bike_20_q100/unsort"
 
 # args = preprocess_args_parse()
 # __DATASET_ROOT = args.root
