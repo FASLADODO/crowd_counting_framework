@@ -1699,7 +1699,7 @@ class PredictVideoDataset(Dataset):
         return img, info
 
 def get_predict_video_dataloader(video_path, visualize_mode = False, batch_size = 1):
-    if visualize_mode:
+    if not visualize_mode:
         transformer = transforms.Compose([
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225]),
