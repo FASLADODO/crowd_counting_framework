@@ -4,6 +4,7 @@ import torch
 from data_flow import get_predict_dataloader
 from models.dccnn import DCCNN
 from models.compact_cnn import CompactCNNV7
+from models import create_model
 from visualize_util import save_density_map_normalize, save_density_map
 from args_util import meow_parse
 
@@ -40,11 +41,11 @@ if __name__ == "__main__":
     NAME = args.task_id
     INPUT_FOLDER = args.input
     OUTPUT_FOLDER = args.output
-    MODEL = args.model
+    MODEL = args.load_model
     input_list = [os.path.join(INPUT_FOLDER, dir) for dir in os.listdir(INPUT_FOLDER)]
     loader = get_predict_dataloader(input_list)
     loaded_file = torch.load(MODEL)
-    model = CompactCNNV7()
+    model = create_model(model_name)
     model.load_state_dict(loaded_file['model'])
     model.eval()
     model = model.to(device)
