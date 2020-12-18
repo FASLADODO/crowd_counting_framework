@@ -1,10 +1,10 @@
+from comet_ml import Experiment
 import os
 import torch
 from data_flow import get_predict_dataloader
 from models.dccnn import DCCNN
 from models.compact_cnn import CompactCNNV7
 from visualize_util import save_density_map_normalize, save_density_map
-from comet_ml import Experiment
 from args_util import meow_parse
 
 if __name__ == "__main__":
