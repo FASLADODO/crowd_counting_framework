@@ -5,6 +5,13 @@ from torch import nn
 import os
 
 def overlay_img_with_density(img_path, density_map_path, output_path):
+    """
+    combine output density map with image to create the red heatmap overlay
+    :param img_path:
+    :param density_map_path: output .torch of density map
+    :param output_path:
+    :return:
+    """
     img_tensor = read_image(img_path)
     density_map_tensor = torch.load(density_map_path)
 
