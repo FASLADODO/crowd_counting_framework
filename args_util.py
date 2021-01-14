@@ -109,6 +109,7 @@ def meow_parse():
     parser.add_argument('--note', action="store", default="write anything")
 
     parser.add_argument('--input', action="store",  type=str, default=HardCodeVariable().SHANGHAITECH_PATH_PART_A)
+    parser.add_argument('--output', action="store",  type=str, default="/data/meow")
     parser.add_argument('--datasetname', action="store", default="shanghaitech_keepfull")
 
     # args with default value
@@ -137,6 +138,7 @@ def meow_parse():
     parser.add_argument('--loss_fn', action="store", default="MSE", type=str)
     parser.add_argument('--optim', action="store", default="adam", type=str)
     parser.add_argument('--eval_only', action="store_true", default=False, help="only evaluate no train")
+    parser.add_argument('--eval_density', action="store_true", default=False, help="only evaluate no train")
     arg = parser.parse_args()
     return arg
 

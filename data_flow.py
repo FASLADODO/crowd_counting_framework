@@ -496,6 +496,62 @@ def load_data_shanghaitech_flip_only(img_path, train=True):
         gt_count = count_gt_annotation_sha(mat_path)
         return img_origin, gt_count
 
+
+def load_data_my_bike_non_overlap(img_path, train=True, debug=False):
+    """
+    per sample, crop 4, non-overlap
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img_origin = Image.open(img_path).convert('RGB')
+    crop_size = (int(img_origin.size[0] / 2), int(img_origin.size[1] / 2))
+    gt_file = h5py.File(gt_path, 'r')
+    target_origin = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        # for each image
+        # create 8 patches, 4 non-overlap 4 corner
+        # for each of 4 patch, create another 4 flip
+        crop_img = []
+        crop_label = []
+        for i in range(2):
+            for j in range(2):
+                # crop non-overlap
+                dx = int(i * img_origin.size[0] * 1. / 2)
+                dy = int(j * img_origin.size[1] * 1. / 2)
+                img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+                target = target_origin[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+                # flip
+                for x in range(2):
+                    if x == 1:
+                        target = np.fliplr(target)
+                        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                    target1 = cv2.resize(target,
+                                         (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+                    target1 = np.expand_dims(target1,
+                                             axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                    crop_img.append(img)
+                    crop_label.append(target1)
+
+        return crop_img, crop_label
+
+    if not train:
+        # get correct people head count from head annotation
+        mat_path = img_path.replace('.jpg', '.json').replace('images', 'jsons')
+        gt_count = get_my_bike_count_from_json(mat_path)
+        if debug:
+            gt_file = h5py.File(gt_path, 'r')
+            target = np.asarray(gt_file['density'])
+            return img_origin, gt_count, target
+        return img_origin, gt_count
+
+
 def load_data_shanghaitech_non_overlap(img_path, train=True, debug=False):
     """
     per sample, crop 4, non-overlap
@@ -549,6 +605,62 @@ def load_data_shanghaitech_non_overlap(img_path, train=True, debug=False):
             target = np.asarray(gt_file['density'])
             return img_origin, gt_count, target
         return img_origin, gt_count
+
+def load_data_shanghaitech_non_overlap_test_with_densitygt(img_path, train=True, debug=False):
+    """
+    per sample, crop 4, non-overlap
+    :param img_path:
+    :param train:
+    :return:
+    """
+    gt_path = img_path.replace('.jpg', '.h5').replace('images', 'ground-truth-h5')
+    img_origin = Image.open(img_path).convert('RGB')
+    crop_size = (int(img_origin.size[0] / 2), int(img_origin.size[1] / 2))
+    gt_file = h5py.File(gt_path, 'r')
+    target_origin = np.asarray(gt_file['density'])
+    target_factor = 8
+
+    if train:
+        # for each image
+        # create 8 patches, 4 non-overlap 4 corner
+        # for each of 4 patch, create another 4 flip
+        crop_img = []
+        crop_label = []
+        for i in range(2):
+            for j in range(2):
+                # crop non-overlap
+                dx = int(i * img_origin.size[0] * 1. / 2)
+                dy = int(j * img_origin.size[1] * 1. / 2)
+                img = img_origin.crop((dx, dy, crop_size[0] + dx, crop_size[1] + dy))
+                target = target_origin[dy:crop_size[1] + dy, dx:crop_size[0] + dx]
+
+                # flip
+                for x in range(2):
+                    if x == 1:
+                        target = np.fliplr(target)
+                        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                    target1 = cv2.resize(target,
+                                         (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+                                         interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+                    # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+                    target1 = np.expand_dims(target1,
+                                             axis=0)  # make dim (batch size, channel size, x, y) to make model output
+                    crop_img.append(img)
+                    crop_label.append(target1)
+
+        return crop_img, crop_label
+
+    if not train:
+        gt_file = h5py.File(gt_path, 'r')
+        target = np.asarray(gt_file['density'])
+        # target1 = cv2.resize(target,
+        #                      (int(target.shape[1] / target_factor), int(target.shape[0] / target_factor)),
+        #                      interpolation=cv2.INTER_CUBIC) * target_factor * target_factor
+        # # target1 = target1.unsqueeze(0)  # make dim (batch size, channel size, x, y) to make model output
+        target1 = np.expand_dims(target,
+                                 axis=0)  # make dim (batch size, channel size, x, y) to make model output
+        return img_origin, target1
+
 
 def load_data_shanghaitech_non_overlap_downsample(img_path, train=True):
     """
@@ -1226,6 +1338,7 @@ def data_augmentation(img, target):
     return img, target
 
 
+
 class ListDataset(Dataset):
     def __init__(self, root, shape=None, shuffle=True, transform=None, train=False, seen=0, batch_size=1,
                  debug=False,
@@ -1305,6 +1418,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_jhucrowd_downsample_testonly_512
         elif dataset_name == "shanghaitech_non_overlap":
             self.load_data_fn = load_data_shanghaitech_non_overlap
+        elif dataset_name == "shanghaitech_non_overlap_test_with_densitygt":
+            self.load_data_fn = load_data_shanghaitech_non_overlap_test_with_densitygt
         elif dataset_name == "shanghaitech_non_overlap_downsample":
             self.load_data_fn = load_data_shanghaitech_non_overlap_downsample
         elif dataset_name == "shanghaitech_flip_only":
@@ -1317,6 +1432,8 @@ class ListDataset(Dataset):
             self.load_data_fn = load_data_ucf_cc50_pacnn
         elif dataset_name == "shanghaitech_pacnn":
             self.load_data_fn = load_data_shanghaitech_pacnn
+        elif dataset_name == "my_bike_non_overlap":
+            self.load_data_fn = load_data_my_bike_non_overlap
         elif dataset_name == "shanghaitech_pacnn_with_perspective":
             self.load_data_fn = load_data_shanghaitech_pacnn_with_perspective
 
@@ -1326,6 +1443,20 @@ class ListDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), 'index range error'
         img_path = self.lines[index]
+
+        # hard code to calculate ssim and psnr
+        # fail dont do this
+        # if self.dataset_name == "shanghaitech_non_overlap_test_with_densitygt" and not self.train:
+        #     img, count, target = self.load_data_fn(img_path, self.train)
+        #     if self.transform is not None:
+        #         if isinstance(img, list):
+        #             # for case of generate  multiple augmentation per sample
+        #             img_r = [self.transform(img_item) for img_item in img]
+        #             img = img_r
+        #         else:
+        #             img = self.transform(img)
+        #     return img, count, target
+
         # if self.debug:
         #     print(img_path)
         # try to check cache item if exist
@@ -1354,7 +1485,7 @@ class ListDataset(Dataset):
         if self.debug:
             if self.train:
                 _, p_count = self.load_data_fn(img_path, train=False)
-                print(img_path + " " + str(target.sum()) + " " + str(p_count))
+                # print(img_path + " " + str(target.sum()) + " " + str(p_count))
                 img_name = img_path.split("/")[-1]
                 # when debug, give information on p_count and img_name
                 debug_info = {"p_count": p_count,
@@ -1389,8 +1520,10 @@ def get_dataloader(train_list, val_list, test_list, dataset_name="shanghaitech",
         ])
     train_collate_fn = my_collate
     if dataset_name == "shanghaitech_non_overlap" or\
-            dataset_name == "shanghaitech_non_overlap_downsample" or\
-            dataset_name == "shanghaitech_flip_only":
+        dataset_name == "shanghaitech_non_overlap_test_with_densitygt" or \
+        dataset_name == "shanghaitech_non_overlap_downsample" or \
+        dataset_name == "my_bike_non_overlap" or \
+        dataset_name == "shanghaitech_flip_only":
         train_collate_fn = flatten_collate
     train_loader = torch.utils.data.DataLoader(
         ListDataset(train_list,
@@ -1465,6 +1598,9 @@ def simple_predict_data_load_fn(img_path):
 
 
 class PredictListDataset(Dataset):
+    """
+    only to predict without label
+    """
     def __init__(self, root, shape=None, shuffle=True, transform=None, batch_size=1,
                  debug=False,
                  num_workers=0):
@@ -1516,6 +1652,89 @@ class PredictListDataset(Dataset):
         return img, info
 
 
+from torchvision.io.video import read_video, write_video
+
+
+class PredictVideoDataset(Dataset):
+    """
+    only to predict without label
+    """
+    def __init__(self, video_path, shape=None, transform=None, batch_size=1,
+                 debug=False,
+                 num_workers=0):
+        """
+        if you have different image size, then batch_size must be 1
+        :param video_path: path to video file
+        :param shape:
+        :param shuffle:
+        :param transform:
+        :param debug: will print path of image
+        :param batch_size:
+        :param num_workers:
+        """
+        v, a, info = read_video(video_path, pts_unit='sec')
+
+        self.video_tensor = v
+        self.nSamples = self.video_tensor.shape[0]
+
+        self.transform = transform
+        self.debug = debug
+        self.shape = shape
+
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+
+    def __len__(self):
+        return self.nSamples
+
+    def __getitem__(self, index):
+        assert index <= len(self), 'index range error'
+        info = {"index": index}
+        img = self.video_tensor[index]
+        img = img.permute(2, 0, 1)
+        img = img.float()
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, info
+
+def get_predict_video_dataloader(video_path, visualize_mode = False, batch_size = 1):
+    if visualize_mode:
+        transformer = transforms.Compose([
+            transforms.ToTensor()
+        ])
+    else:
+        transformer = transforms.Compose([
+            transforms.ToTensor(), transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                        std=[0.229, 0.224, 0.225]),
+        ])
+
+    # if not visualize_mode:
+    #     transformer = transforms.Compose([
+    #         transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    #                              std=[0.229, 0.224, 0.225]),
+    #     ])
+    # else:
+    #     transformer = None
+
+    loader = torch.utils.data.DataLoader(PredictVideoDataset(
+        video_path,
+        batch_size= batch_size,
+        transform= transformer
+    ),
+        batch_size= batch_size,
+    )
+
+    return loader
+
+
+def get_my_bike_count_from_json(json_full_path):
+    count_human = 0
+    with open(json_full_path) as json_file:
+        json_data = json.load(json_file)
+        count_human = json_data['human_num']
+    return count_human
+
+
 def get_predict_dataloader(data_list, visualize_mode=False, batch_size=1,
                    debug=False, test_size=1):
 
@@ -1536,3 +1755,4 @@ def get_predict_dataloader(data_list, visualize_mode=False, batch_size=1,
     ))
 
     return loader
+

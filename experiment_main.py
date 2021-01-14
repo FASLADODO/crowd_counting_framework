@@ -5,12 +5,17 @@ from data_flow import get_dataloader, create_image_list
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Loss
 from ignite.handlers import Checkpoint, DiskSaver, Timer
-from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError, CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount
+from crowd_counting_error_metrics import CrowdCountingMeanAbsoluteError, CrowdCountingMeanSquaredError,\
+CrowdCountingMeanAbsoluteErrorWithCount, CrowdCountingMeanSquaredErrorWithCount,\
+CrowdCountingMeanSSIMabs, CrowdCountingMeanPSNRabs, \
+CrowdCountingMeanSSIMclamp, CrowdCountingMeanPSNRclamp
+
 from visualize_util import get_readable_time
 from mse_l1_loss import MSEL1Loss, MSE4L1Loss
 import torch
 from torch import nn
 from models.meow_experiment.kitten_meow_1 import M1, M2, M3, M4
+from models.csrnet import CSRNet
 from models.meow_experiment.ccnn_tail import BigTailM1, BigTailM2, BigTail3, BigTail4, BigTail5, BigTail6, BigTail7, BigTail8, BigTail6i, BigTail9i
 from models.meow_experiment.ccnn_tail import BigTail11i, BigTail10i, BigTail12i, BigTail13i, BigTail14i, BigTail15i
 from models.meow_experiment.ccnn_head import H1, H2, H3, H3i, H4i
@@ -55,6 +60,9 @@ if __name__ == "__main__":
         print("will use shanghaitech dataset with crop ")
     elif dataset_name == "shanghaitech_keepfull":
         print("will use shanghaitech_keepfull")
+    elif dataset_name == "my_bike_non_overlap":
+        TRAIN_PATH = os.path.join(DATA_PATH, "train_data")
+        VAL_PATH = os.path.join(DATA_PATH, "test_data")
     else:
         print("cannot detect dataset_name")
         print("current dataset_name is ", dataset_name)
@@ -138,11 +146,14 @@ if __name__ == "__main__":
         model = CompactCNNV8()
     elif model_name == "CompactCNNV9":
         model = CompactCNNV9()
+    elif model_name == "CSRNet":
+        model = CSRNet()
     else:
         print("error: you didn't pick a model")
         sys.exit(-1)
     n_param = very_simple_param_count(model)
     experiment.log_other("n_param", n_param)
+    print("n_param", n_param)
     if hasattr(model, 'model_note'):
         experiment.log_other("model_note", model.model_note)
     model = model.to(device)
@@ -218,12 +229,20 @@ if __name__ == "__main__":
                                                # 'loss': Loss(loss_fn)
                                             }, device=device)
 
-    evaluator_test = create_supervised_evaluator(model,
-                                            metrics={
-                                                'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
-                                                'mse': CrowdCountingMeanSquaredErrorWithCount(),
-                                               # 'loss': Loss(loss_fn)
-                                            }, device=device)
+    if args.eval_density:
+        evaluator_test = create_supervised_evaluator(model,
+                                                     metrics={
+                                                         'ssimabs': CrowdCountingMeanSSIMabs(),
+                                                         'psnrabs': CrowdCountingMeanPSNRabs(),
+                                                         'ssimclamp': CrowdCountingMeanSSIMclamp(),
+                                                         'psnrclamp': CrowdCountingMeanPSNRclamp(),
+                                                     }, device=device)
+    else:
+        evaluator_test = create_supervised_evaluator(model,
+                                                metrics={
+                                                    'mae': CrowdCountingMeanAbsoluteErrorWithCount(),
+                                                    'mse': CrowdCountingMeanSquaredErrorWithCount(),
+                                                }, device=device)
 
     best_mae = BestMetrics(best_metric="mae")
     best_mse = BestMetrics(best_metric="mse")
@@ -340,57 +359,54 @@ if __name__ == "__main__":
         score = engine.state.metrics['mae']
         return -score
 
-    # docs on save and load
-    to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
-    save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
-                              filename_prefix=args.task_id,
-                              n_saved=3)
-
-    save_handler_best = Checkpoint(to_save, DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
-                              filename_prefix=args.task_id, score_name="valid_mae", score_function=checkpoint_valid_mae_score_function,
-                              n_saved=3)
-
-    trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
-    evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
 
     if args.eval_only:
         print("evaluation only, no training")
-        evaluate_validate_timer.resume()
-        evaluator_validate.run(val_loader)
-        evaluate_validate_timer.pause()
-        evaluate_validate_timer.step()
 
-        metrics = evaluator_validate.state.metrics
         timestamp = get_readable_time()
-        print(timestamp + " Validation set Results -  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
-              .format( metrics['mae'], metrics['mse'], 0))
-        experiment.log_metric("valid_mae", metrics['mae'])
-        experiment.log_metric("valid_mse", metrics['mse'])
 
-        # timer
-        experiment.log_metric("evaluate_valid_timer", evaluate_validate_timer.value())
-        print("evaluate_valid_timer ", evaluate_validate_timer.value())
+        # if flag_mae or flag_mse:
+        #     experiment.log_metric("valid_best_mae", metrics['mae'])
+        #     experiment.log_metric("valid_best_mse", metrics['mse'])
+        #     print("BEST VAL, evaluating on test set")
+        evaluate_test_timer.resume()
+        evaluator_test.run(test_loader)
+        evaluate_test_timer.pause()
+        evaluate_test_timer.step()
+        test_metrics = evaluator_test.state.metrics
+        timestamp = get_readable_time()
 
-        # check if that validate is best
-        flag_mae = best_mae.checkAndRecord(metrics['mae'], metrics['mse'])
-        flag_mse = best_mse.checkAndRecord(metrics['mae'], metrics['mse'])
+        if args.eval_density:
+            print(timestamp + " Test set Results  ABS -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
+                  .format(test_metrics['ssimabs'], test_metrics['psnrabs'], 0))
+            experiment.log_metric("test_ssim abs", test_metrics['ssimabs'])
+            experiment.log_metric("test_psnr abs", test_metrics['psnrabs'])
 
-        if flag_mae or flag_mse:
-            experiment.log_metric("valid_best_mae", metrics['mae'])
-            experiment.log_metric("valid_best_mse", metrics['mse'])
-            print("BEST VAL, evaluating on test set")
-            evaluate_test_timer.resume()
-            evaluator_test.run(test_loader)
-            evaluate_test_timer.pause()
-            evaluate_test_timer.step()
-            test_metrics = evaluator_test.state.metrics
-            timestamp = get_readable_time()
+            print(timestamp + " Test set Results  CLAMP -  Avg ssim: {:.2f} Avg psnr: {:.2f} Avg loss: {:.2f}"
+                  .format(test_metrics['ssimclamp'], test_metrics['psnrclamp'], 0))
+            experiment.log_metric("test_ssim clamp", test_metrics['ssimclamp'])
+            experiment.log_metric("test_psnr clamp", test_metrics['psnrclamp'])
+        else:
             print(timestamp + " Test set Results -  Avg mae: {:.2f} Avg mse: {:.2f} Avg loss: {:.2f}"
                   .format( test_metrics['mae'], test_metrics['mse'], 0))
             experiment.log_metric("test_mae", test_metrics['mae'])
             experiment.log_metric("test_mse", test_metrics['mse'])
-            experiment.log_metric("evaluate_test_timer", evaluate_test_timer.value())
-            print("evaluate_test_timer ", evaluate_test_timer.value())
-            # experiment.log_metric("test_loss", test_metrics['loss'])
+        experiment.log_metric("evaluate_test_timer", evaluate_test_timer.value())
+        print("evaluate_test_timer ", evaluate_test_timer.value())
+        # experiment.log_metric("test_loss", test_metrics['loss'])
     else:
+        # docs on save and load
+        to_save = {'trainer': trainer, 'model': model, 'optimizer': optimizer}
+        save_handler = Checkpoint(to_save, DiskSaver('saved_model/' + args.task_id, create_dir=True, atomic=True),
+                                  filename_prefix=args.task_id,
+                                  n_saved=3)
+
+        save_handler_best = Checkpoint(to_save,
+                                       DiskSaver('saved_model_best/' + args.task_id, create_dir=True, atomic=True),
+                                       filename_prefix=args.task_id, score_name="valid_mae",
+                                       score_function=checkpoint_valid_mae_score_function,
+                                       n_saved=3)
+
+        trainer.add_event_handler(Events.EPOCH_COMPLETED(every=10), save_handler)
+        evaluator_validate.add_event_handler(Events.EPOCH_COMPLETED(every=1), save_handler_best)
         trainer.run(train_loader, max_epochs=args.epochs)
